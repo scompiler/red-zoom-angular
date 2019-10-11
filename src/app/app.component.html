@@ -13,12 +13,11 @@
         <path class="logo__part-two" d="M246,39 L243,39 C241.895,39 241,38.105 241,37 L241,14.921 C241,14.144 240.002,13.823 239.550,14.456 L232.898,23.746 C232.334,24.533 231.426,25 230.458,25 L228.542,25 C227.574,25 226.666,24.533 226.103,23.746 L219.451,14.456 C218.998,13.823 218,14.144 218,14.921 L218,37 C218,38.105 217.105,39 216,39 L213,39 C211.895,39 211,38.105 211,37 L211,2.200 C211,0.985 211.985,-0 213.200,-0 L215.458,-0 C216.426,-0 217.334,0.467 217.898,1.254 L228.687,16.333 C229.086,16.891 229.914,16.891 230.313,16.333 L241.103,1.254 C241.666,0.467 242.574,-0 243.542,-0 L245.800,-0 C247.015,-0 248,0.985 248,2.200 L248,37 C248,38.105 247.105,39 246,39 ZM187.500,39 C176.730,39 168,30.270 168,19.500 C168,8.730 176.730,-0 187.500,-0 C198.270,-0 207,8.730 207,19.500 C207,30.270 198.270,39 187.500,39 ZM187.500,7 C180.596,7 175,12.596 175,19.500 C175,26.404 180.596,32 187.500,32 C194.404,32 200,26.404 200,19.500 C200,12.596 194.404,7 187.500,7 ZM144.500,39 C133.730,39 125,30.270 125,19.500 C125,8.730 133.730,-0 144.500,-0 C155.270,-0 164,8.730 164,19.500 C164,30.270 155.270,39 144.500,39 ZM144.500,7 C137.596,7 132,12.596 132,19.500 C132,26.404 137.596,32 144.500,32 C151.404,32 157,26.404 157,19.500 C157,12.596 151.404,7 144.500,7 ZM122,39 L97,39 C95.900,39 95,38.100 95,37 L95,33.404 C95,32.495 95.310,31.613 95.878,30.904 L114.369,7.812 C114.632,7.485 114.398,7 113.979,7 L97,7 C95.900,7 95,6.100 95,5 L95,2 C95,0.900 95.900,-0 97,-0 L122,-0 C123.100,-0 124,0.900 124,2 L124,5.595 C124,6.504 123.690,7.387 123.122,8.096 L104.621,31.187 C104.359,31.515 104.592,32 105.011,32 L122,32 C123.100,32 124,32.900 124,34 L124,37 C124,38.100 123.100,39 122,39 Z"/>
     </svg>
     <div class="intro__version">
-        <a href="https://github.com/scompiler/red-zoom/releases">Version 1.0.0</a>
+        <a href="https://github.com/scompiler/red-zoom/releases">Version {{ version }}</a>
     </div>
     <div class="intro__text">
-        RedParts is a responsive HTML template with a unique
-        Spaceship header layout designed specifically for your auto
-        parts store.
+        RedZoom is a modern very easy-to-use image zoom library which made as
+        Angular directive and fully stylable via CSS/SCSS.
     </div>
 
     <div class="intro__code">
@@ -31,22 +30,97 @@
 </div>
 
 
-<section class="section">
+<app-example-n01></app-example-n01>
+<app-example-n02></app-example-n02>
+<app-example-n03></app-example-n03>
 
-    <div class="image">
-        <img [src]="image" alt="" width="320" [libNgxRedZoom]="imageFull" [redZoomLazy]="true" class="zoom">
+
+<div class="changelog">
+    <h2>Features</h2>
+    <ul>
+        <li>Responsive;</li>
+        <li>Support server side rendering (SSR);</li>
+        <li>Chrome (and others based on chrome), Safari, Firefox, Edge;</li>
+        <li>Customizing via CSS/SCSS;</li>
+    </ul>
+</div>
+
+
+<div class="changelog">
+    <h2>Anatomy And Terms</h2>
+    ...
+</div>
+
+<div class="api">
+    <div class="typography">
+
+        <h2>API</h2>
+
+        <h3>Attributes</h3>
+
+        <ul>
+            <li>RedZoom</li>
+            <li>RedZoomLazy - boolean, if true image will loaded only after activation of zoom (for example, on mouseover event)</li>
+            <li>RedZoomMouseWheelZoom - boolean (default: false) TODO: not implemented</li>
+            <li>RedZoomPinchToZoom - boolean (default: false) TODO: not implemented</li>
+            <li>RedZoomTrigger - hover, click TODO: not implemented</li>
+            <li>RedZoomClass - </li>
+        </ul>
+
+        <h3>Methods</h3>
+
+        <i>Describe "export as"</i>
     </div>
-</section>
+</div>
 
-<section class="section">
 
-    <img [src]="image" alt="" width="320" [libNgxRedZoom]="imageFull" [redZoomLazy]="false" class="zoom">
-</section>
 
-<section class="section">
+<app-section-css-variables></app-section-css-variables>
 
-    <img [src]="image" alt="" width="320" [libNgxRedZoom]="imageFull" [redZoomLazy]="false" redZoomClass="red-zoom--style--two red-zoom--style--two5" class="zoom">
-</section>
+
+<div class="variables">
+    <div class="typography">
+        <h2>FAQ</h2>
+        <ul>
+            <li>How to limit zoom ratio? TODO: describe</li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="roadmap">
+    <h2>Roadmap</h2>
+    <ul>
+        <li>Changing zoom ratio with mouse wheel</li>
+        <li>Changing zoom ratio with touch gestures (pinch to zoom)</li>
+        <li>Support touch events</li>
+        <li>Support click trigger</li>
+        <li>Image load error handling</li>
+        <li>Support lazy loading</li>
+        <li>Support &lt;source&gt; tag and srcset attribute</li>
+        <li>Support hot swap image</li>
+        <li>Support keyboard</li>
+
+        <li>------</li>
+
+        <li>Describe how to set zoom ratio via CSS/SCSS</li>
+    </ul>
+</div>
+
+
+<div class="changelog">
+    <h2>Changelog</h2>
+    <ul>
+        <li>
+            October 19, 2019 — Version 0.1.0
+
+            <ul>
+                <li>Initial release</li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
 
 
 <div style="margin-top: 48px;">
@@ -55,20 +129,18 @@
 
     <strong>TODO:</strong>
 
-    <ul>
-        <li>Change full image url on the fly</li>
-    </ul>
-
-    <ol>
-        <li>Window size and position</li>
-        <li>Mouse Wheel</li>
-    </ol>
 
     Forget about JS when styling
 
 
     Image lazy loading (not initialization)
+
+
+    <br>
+    Browsers support
 </div>
 
-
-
+<div class="copyright">
+    Released under the MIT License<!-- Code licensed under an MIT License --><br>
+    Copyright © {{ year }} Konstantin Veselovsky
+</div>

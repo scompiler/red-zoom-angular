@@ -1,0 +1,32 @@
+<div class="example__body">
+    <div class="example__image">
+        <img
+            src="../assets/image-1.jpg"
+            alt=""
+            width="320"
+            libNgxRedZoom="../assets/image-1-full.jpg"
+            [redZoomLazy]="false"
+            [redZoomClass]="'red-zoom--style--'+style"
+            class="zoom">
+    </div>
+    <div class="example__content">
+        <div class="typography">
+            <h2>Customization And Styles</h2>
+
+            {{ 'red-zoom--style--'+style }}
+
+            <p>
+                RedZoom comes with several pre-made styles:
+            </p>
+
+            <p>
+                You can also create your own amazing style. RedZoom provides extensive style customization options.
+            </p>
+
+            <div>
+                <button type="button" (click)="style = '01';">01</button>
+                <button type="button" (click)="style = '02';">02</button>
+            </div>
+        </div>
+    </div>
+</div>

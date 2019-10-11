@@ -1,0 +1,35 @@
+<div class="example__body">
+    <div class="example__image">
+        <img src="../assets/image-1.jpg" alt="" width="320" libNgxRedZoom="../assets/image-1-full.jpg" redZoomTrigger="click" redZoomClass="red-zoom--style--01" [redZoomLazy]="true" class="zoom">
+    </div>
+    <div class="example__content">
+        <div class="typography">
+            <h2>Getting Started</h2>
+
+            <ol>
+                <li>
+                    To install RedZoom, run the command below:<br>
+                    <code>npm install ngx-red-zoom</code>
+                </li>
+                <li>import library:
+                    <pre><code>import {{ '{' }} RedZoomModule } from 'ngx-red-zoom';
+
+@NgModule({{ '{' }}
+    imports: [
+        RedZoomModule
+    ]
+})
+export class AppModule {{ '{' }} }</code></pre>
+                </li>
+                <li>
+                    Import styles
+                    <pre><code>@import '~/red-zoom/styles/base.scss';</code></pre>
+                </li>
+                <li>
+                    Add directive to your image tag:
+                    <pre><code>&lt;img src="example.jpg" <strong>redZoom="example.full.jpg"</strong>&gt;</code></pre>
+                </li>
+            </ol>
+        </div>
+    </div>
+</div>

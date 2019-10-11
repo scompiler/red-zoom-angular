@@ -1,0 +1,26 @@
+<div class="example__body">
+    <div class="example__image">
+        <img src="../assets/image-1.jpg" alt="" width="320" libNgxRedZoom="../assets/image-1-full.jpg" redZoomClass="red-zoom--style--01" [redZoomLazy]="false" class="zoom">
+    </div>
+    <div class="example__content">
+        <div class="typography">
+            <h2>Size And Position Of The Preview</h2>
+
+            You can set any size of preview image via CSS/SCSS, red-zoom automatically detect it, and you do not need to edit ts/html files for this purpose.
+            This also means that you can set different sizes of preview depend on screen size using CSS media queries.
+
+            <p>Use the following CSS variables to position the preview relative to the thumbnail:</p>
+
+            <ul>
+                <li>--red-zoom-thumbnail-[x/y] – Thumbnail position relative to the page.</li>
+                <li>--red-zoom-thumbnail-[w/h] – Thumbnail size in pixels.</li>
+                <li>--red-zoom-thumbnail-size-[max/min] – Thumbnail size in pixels. TODO: not implemented</li>
+            </ul>
+
+            <button>Square</button>
+            <button>Landscape</button>
+            <button>Portrait</button>
+            <button>Fixed (200x200)</button>
+        </div>
+    </div>
+</div>

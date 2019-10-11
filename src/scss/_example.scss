@@ -1,0 +1,21 @@
+.example {
+    max-width: 920px;
+    margin: 0 auto;
+    display: block;
+
+    & + & {
+        margin-top: 48px;
+    }
+}
+.example__body {
+    display: flex;
+}
+.example__image {
+    img {
+        display: block;
+    }
+}
+.example__content {
+    margin-left: 56px;
+    margin-top: 20px;
+}
