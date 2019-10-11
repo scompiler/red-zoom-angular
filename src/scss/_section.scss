@@ -1,0 +1,9 @@
+.section {
+    max-width: 920px;
+    margin: 0 auto;
+    display: flex;
+
+    & + & {
+        margin-top: 48px;
+    }
+}

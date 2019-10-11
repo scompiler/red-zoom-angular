@@ -17,7 +17,15 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "ngx-red-zoom": [
+        "dist/ngx-red-zoom"
+      ],
+      "ngx-red-zoom/*": [
+        "dist/ngx-red-zoom/*"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

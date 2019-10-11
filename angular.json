@@ -119,6 +119,41 @@
           }
         }
       }
+    },
+    "ngx-red-zoom": {
+      "projectType": "library",
+      "root": "projects/ngx-red-zoom",
+      "sourceRoot": "projects/ngx-red-zoom/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/ngx-red-zoom/tsconfig.lib.json",
+            "project": "projects/ngx-red-zoom/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ngx-red-zoom/src/test.ts",
+            "tsConfig": "projects/ngx-red-zoom/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-red-zoom/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/ngx-red-zoom/tsconfig.lib.json",
+              "projects/ngx-red-zoom/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }},
   "defaultProject": "red-zoom"
 }
