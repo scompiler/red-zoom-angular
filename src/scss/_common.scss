@@ -20,3 +20,11 @@ body {
     line-height: 1.5;
     overflow-y: scroll;
 }
+
+a {
+    color: #e50032;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}

@@ -8,10 +8,12 @@
 @import 'scss/section';
 @import 'scss/example';
 @import 'scss/typography';
+@import 'scss/copyright';
 // red-zoom
 @import 'scss/base';
 @import 'scss/styles/01';
 @import 'scss/styles/02';
+@import 'scss/styles/03';
 
 
 @keyframes red-zoom-loader-animation {
@@ -24,9 +26,7 @@
 }
 
 
-body {
-    padding: 0 48px 48px;
-}
+
 .zoom {
     cursor: crosshair;
 }

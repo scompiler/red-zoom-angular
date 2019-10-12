@@ -1,4 +1,4 @@
-$red-zoom-style-name:          '02'                     ;
+$red-zoom-style-name:          '03'                     ;
 $red-zoom-overlay-color:       rgba(#fff, .6)           ;
 $red-zoom-transition-duration: .5s                      ;
 $red-zoom-lens-border-width:   6px                      ;
@@ -45,7 +45,6 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .4) ;
     .red-zoom__window {
         border: $red-zoom-window-border;
         position: absolute;
-        display: block;
         left: var(--red-zoom-thumbnail-x);
         top: var(--red-zoom-thumbnail-y);
         width: var(--red-zoom-thumbnail-w);
@@ -56,18 +55,10 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .4) ;
         opacity: 0;
         transition: opacity $red-zoom-transition-duration;
     }
-    .red-zoom__window-body {
-        box-shadow: $red-zoom-window-shadow;
-        border-radius: 20px;
-        left: calc(var(--red-zoom-mouse-x, 0px) - 100px - var(--red-zoom-thumbnail-x));
-        top: calc(var(--red-zoom-mouse-y, 0px) - 100px - var(--red-zoom-thumbnail-y));
-        width: 200px;
-        height: 200px;
-    }
     .red-zoom__window-image {
         transform:
-            translateX(calc(var(--red-zoom-preview-image-x, 0px) + var(--red-zoom-preview-image-offset-x, 0px)))
-            translateY(calc(var(--red-zoom-preview-image-y, 0px) + var(--red-zoom-preview-image-offset-y, 0px)))
+            translateX(var(--red-zoom-preview-image-x, 0px))
+            translateY(var(--red-zoom-preview-image-y, 0px))
             translateZ(0);
     }
 
