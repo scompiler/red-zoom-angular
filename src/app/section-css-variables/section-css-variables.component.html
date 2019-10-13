@@ -1,4 +1,102 @@
 <div class="typography">
+    <h2>Features</h2>
+    <ul>
+        <li>Responsive;</li>
+        <li>Support server side rendering (SSR);</li>
+        <li>Chrome (and others based on chrome), Safari, Firefox, Edge;</li>
+        <li>Customizing via CSS/SCSS;</li>
+        <li>Lazy loading;</li>
+    </ul>
+
+    <h2>Anatomy And Terms</h2>
+
+    <table>
+        <tbody>
+        <tr>
+            <th>thumbnail</th>
+            <td><i>TODO: Describe.</i></td>
+        </tr>
+        <tr>
+            <th>overlay</th>
+            <td><i>TODO: Describe.</i></td>
+        </tr>
+        <tr>
+            <th>lens</th>
+            <td>
+                <i>TODO: Describe.</i><br>
+                <i>TODO: Rename to 'frame'.</i><br>
+            </td>
+        </tr>
+        <tr>
+            <th>window</th>
+            <td>
+                <i>TODO: Describe.</i><br>
+                <i>TODO: Rename to 'lens'.</i><br>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>API</h2>
+
+    <h3>Attributes</h3>
+
+    <table>
+        <tbody>
+        <tr>
+            <th>redZoom</th>
+            <td>string</td>
+            <td>
+                The path to the full version of the image. Required. Can be empty.<br>
+                <i>If left blank, the path to the full version of the image will be the same as in the <code>src</code> attribute TODO: not implemented.</i>
+            </td>
+        </tr>
+        <tr>
+            <th>redZoomLazy</th>
+            <td>boolean</td>
+            <td>If true, the full version of the image will only start loading after the activation event (mouseenter/mousedown) is triggered. (default: false)</td>
+        </tr>
+        <tr>
+            <th>redZoomTrigger</th>
+            <td>string</td>
+            <td>
+                Activation event. (default: 'hover')<br>
+                Possible values: <code>'hover'</code>, <code>'click'</code>
+                <div class="alert">
+                    TODO: It might be worth renaming 'click' to 'grab'.<br>
+                    TODO: It might be worth renaming 'trigger' to 'behaviour'.
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>redZoomClass</th>
+            <td>string</td>
+            <td>A list of CSS classes that should be applied to the root (<code>.red-zoom</code>) element.</td>
+        </tr>
+        <tr>
+            <th>redZoomMouseWheel</th>
+            <td>boolean</td>
+            <td>
+                Enables or disables changing the magnification factor using the mouse wheel. (default: true)
+            </td>
+        </tr>
+        <tr>
+            <th>redZoomTouch</th>
+            <td>boolean</td>
+            <td><i>TODO: Not implemented.</i></td>
+        </tr>
+        <tr>
+            <th>redZoomGestures</th>
+            <td>boolean</td>
+            <td><i>TODO: Not implemented.</i></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h3>Methods</h3>
+
+    <i>Describe "export as"</i>
+
     <h2>CSS variables</h2>
 
     <table>
@@ -25,5 +123,36 @@
 
     <ul>
         <li>--red-zoom-mouse-snap-[x/y] – Snapped mouse position. TODO: Not implemented.</li>
+    </ul>
+
+    <h2>FAQ</h2>
+    <ul>
+        <li>How to limit zoom ratio? TODO: describe</li>
+    </ul>
+
+    <h2>Roadmap</h2>
+    <ul>
+        <li>Changing zoom ratio with touch gestures (pinch to zoom)</li>
+        <li>Support touch events</li>
+        <li>Image load error handling</li>
+        <li>Support &lt;source&gt; tag and srcset attribute</li>
+        <li>Support hot swap image</li>
+        <li>Support keyboard</li>
+        <li>Reflect some settings in the CSS classes of the root element</li>
+
+        <li>------</li>
+
+        <li>Describe how to set zoom ratio via CSS/SCSS</li>
+    </ul>
+
+    <h2>Changelog</h2>
+    <ul class="changelog">
+        <li class="changelog__item">
+            <div class="changelog__title">October 19, 2019 — Version 0.1.0</div>
+
+            <ul class="changelog__list">
+                <li>Initial release</li>
+            </ul>
+        </li>
     </ul>
 </div>

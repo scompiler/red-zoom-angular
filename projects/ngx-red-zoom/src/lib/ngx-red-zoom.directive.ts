@@ -55,6 +55,25 @@ interface RedZoomImage {
 }
 
 
+class RedZoomTemplate {
+    template: HTMLDivElement;
+    window: HTMLDivElement;
+    windowBody: HTMLDivElement;
+    windowImage: HTMLImageElement;
+    lens: HTMLDivElement;
+    lensBody: HTMLDivElement;
+    lensImage: HTMLImageElement;
+
+    constructor() {
+        this.template = makeTemplate();
+        this.window = this.template.querySelector('.red-zoom__window');
+        this.windowBody = this.template.querySelector('.red-zoom__window-body');
+        this.lens = this.template.querySelector('.red-zoom__lens');
+        this.lensBody = this.template.querySelector('.red-zoom__lens-body');
+    }
+}
+
+
 @Directive({
     selector: '[libNgxRedZoom]',
     exportAs: 'ngxRedZoom',
@@ -68,6 +87,8 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
 
     @Input('redZoomTrigger') trigger: 'hover' | 'click' = 'hover';
 
+    @Input('redZoomMouseWheel') wheel: boolean = true;
+
     constructor(
         private element: ElementRef,
         private renderer: Renderer2,
@@ -78,6 +99,8 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
     @Input('src')
     @HostBinding('attr.src')
     src;
+
+    template2: RedZoomTemplate;
 
     template: HTMLDivElement;
     window: HTMLDivElement;
@@ -91,6 +114,10 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
     lensImageLoaded: boolean = false;
 
     thumbnailImageLoaded: boolean = false;
+
+    get imagesLoaded(): boolean {
+        return this.windowImageLoaded && this.lensImageLoaded && this.lensImageLoaded;
+    }
 
 
     triggerListener: () => void  = () => {};
@@ -115,18 +142,38 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
         this.loaded = false;
     }
 
+    @HostBinding('draggable') get draggable(): boolean {
+        return this.trigger !== 'click';
+    }
+
+    listen(): void {
+        const startEventName = {
+            'hover': 'mouseenter',
+            'click': 'mousedown',
+        }[this.trigger];
+        const endEventName = {
+            'hover': 'mouseleave',
+            'click': 'mouseup',
+        }[this.trigger];
+
+        this.triggerListener();
+        this.triggerListener = this.renderer.listen(this.element.nativeElement, startEventName, e => this.mouseEnter(e, endEventName));
+    }
+
     ngAfterContentInit(): void {
         this.initialized = true;
 
         this.zone.runOutsideAngular(() => {
-            this.triggerListener = this.renderer.listen(this.element.nativeElement, 'mouseenter', this.mouseEnter);
-            // TODO: mouse down
+            this.listen();
 
-            this.template = makeTemplate();
-            this.window = this.template.querySelector('.red-zoom__window');
-            this.windowBody = this.template.querySelector('.red-zoom__window-body');
-            this.lens = this.template.querySelector('.red-zoom__lens');
-            this.lensBody = this.template.querySelector('.red-zoom__lens-body');
+            this.template2 = new RedZoomTemplate();
+
+
+            this.template = this.template2.template;
+            this.window = this.template2.window;
+            this.windowBody = this.template2.windowBody;
+            this.lens = this.template2.lens;
+            this.lensBody = this.template2.lensBody;
 
             this.windowImage = document.createElement('img');
             this.windowImage.classList.add('red-zoom__window-image');
@@ -169,8 +216,8 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
 
             this.updateState();
         }
-        if ('redZoomTrigger' in changes && !changes.redZoomTrigger.firstChange) {
-
+        if ('trigger' in changes && !changes.trigger.firstChange) {
+            this.listen();
         }
         if ('classes' in changes && !changes.classes.firstChange) {
             this.template.classList.remove(...changes.classes.previousValue.trim().replace(/ +/, ' ').split(' '));
@@ -250,7 +297,12 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
         }
     }
 
-    mouseEnter = (event: MouseEvent) => {
+    mouseEnter = (event: MouseEvent, endEventName) => {
+        if (event.cancelable) {
+            event.preventDefault();
+        }
+
+
         this.session = {
             active: false,
             thumbnailRect: null,
@@ -265,7 +317,7 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
         };
 
         const onWheel = (wheelEvent: WheelEvent) => {
-            if (!wheelEvent.cancelable) {
+            if (!wheelEvent.cancelable || !this.imagesLoaded || !this.wheel) {
                 return;
             }
 
@@ -284,7 +336,16 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
             this.windowImage.style.width = `${this.windowImageMeta.w * this.windowImageMeta.z}px`;
             this.windowImage.style.height = `${this.windowImageMeta.h * this.windowImageMeta.z}px`;
 
-            // TODO: check image size again, because it can be limited
+            if (this.windowImage.width != Math.round(this.windowImageMeta.w * this.windowImageMeta.z)) {
+                this.windowImageMeta.z = this.windowImage.width / this.windowImageMeta.w;
+                this.windowImage.style.width = `${this.windowImageMeta.w * this.windowImageMeta.z}px`;
+                this.windowImage.style.height = `${this.windowImageMeta.h * this.windowImageMeta.z}px`;
+            }
+            if (this.windowImage.height != Math.round(this.windowImageMeta.h * this.windowImageMeta.z)) {
+                this.windowImageMeta.z = this.windowImage.height / this.windowImageMeta.h;
+                this.windowImage.style.width = `${this.windowImageMeta.w * this.windowImageMeta.z}px`;
+                this.windowImage.style.height = `${this.windowImageMeta.h * this.windowImageMeta.z}px`;
+            }
 
             this.calcLensSize();
             this.onMouseMove(wheelEvent);
@@ -310,7 +371,7 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
         this.onMouseMove(event);
 
         const unListenMove = this.renderer.listen(this.element.nativeElement, 'mousemove', onMove);
-        const unListenLeave = this.renderer.listen(this.element.nativeElement, 'mouseleave', onLeave);
+        const unListenLeave = this.renderer.listen(this.element.nativeElement, endEventName, onLeave);
         const unListenWheel = this.renderer.listen(this.element.nativeElement, 'mousewheel', onWheel);
 
         this.element.nativeElement.getBoundingClientRect(); // force reflow
