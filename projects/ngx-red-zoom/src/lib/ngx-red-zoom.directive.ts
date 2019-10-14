@@ -8,9 +8,9 @@ import {
     Renderer2,
     OnChanges,
     SimpleChanges,
-    HostBinding, HostListener, OnDestroy
+    HostBinding, HostListener, OnDestroy, PLATFORM_ID
 } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { RedZoomTemplate } from './template';
 
 
@@ -62,6 +62,7 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
         private element: ElementRef,
         private renderer: Renderer2,
         private zone: NgZone,
+        @Inject(PLATFORM_ID) private platformId: string,
         @Inject(DOCUMENT) private document: any,
     ) { }
 
@@ -117,18 +118,21 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
     }
 
     ngAfterContentInit(): void {
+        if (!isPlatformBrowser(this.platformId)) {
+            return;
+        }
+
         this.zone.runOutsideAngular(() => {
             this.listen();
 
             this.template2 = new RedZoomTemplate();
             this.template2.state = 'pending';
             this.template2.classes = this.classes;
+            this.template2.errorMessage.innerHTML = this.errorMessage;
 
 
             this.windowBody = this.template2.windowBody;
             this.lensBody = this.template2.lensBody;
-
-            this.template2.errorMessage.innerHTML = this.errorMessage;
 
             this.windowImage = document.createElement('img');
             this.windowImage.classList.add('red-zoom__window-image');
@@ -148,6 +152,10 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
     }
 
     ngOnChanges(changes: SimpleChanges): void {
+        if (!isPlatformBrowser(this.platformId)) {
+            return;
+        }
+
         if ('thumbnailSrc' in changes && !changes.thumbnailSrc.firstChange) {
             this.thumbnailImageLoaded = false;
             this.thumbnailImageError = false;
@@ -184,6 +192,14 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
 
 
         // TODO: reload preview if changed
+    }
+
+    ngOnDestroy(): void {
+        if (!isPlatformBrowser(this.platformId)) {
+            return;
+        }
+
+        // TODO: stop session
     }
 
     loadWindowImage() {
@@ -488,10 +504,6 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
             '--red-zoom-preview-image-offset-x': `${posX === posX2 ? 0 : posX - posX2}px`,
             '--red-zoom-preview-image-offset-y': `${posY === posY2 ? 0 : posY - posY2}px`,
         });
-    }
-
-    ngOnDestroy(): void {
-        // TODO: stop session
     }
 
     destroy(): void {
