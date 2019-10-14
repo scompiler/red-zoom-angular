@@ -349,7 +349,7 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
 
         const unListenMove = this.renderer.listen(this.element.nativeElement, 'mousemove', onMove);
         const unListenLeave = this.renderer.listen(this.element.nativeElement, endEventName, onLeave);
-        const unListenWheel = this.renderer.listen(this.element.nativeElement, 'mousewheel', onWheel);
+        const unListenWheel = this.renderer.listen(this.element.nativeElement, 'wheel', onWheel);
 
         this.onMouseMove(event);
 
