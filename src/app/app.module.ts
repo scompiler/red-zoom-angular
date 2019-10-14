@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { NgxRedZoomModule } from 'ngx-red-zoom';
+import { RedZoomModule } from 'ngx-red-zoom';
 import { Angulartics2Module } from 'angulartics2';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -25,7 +25,7 @@ import { ExampleN05Component } from './example-n05/example-n05.component';
     imports: [
         BrowserModule,
         AppRoutingModule,
-        NgxRedZoomModule,
+        RedZoomModule,
         Angulartics2Module.forRoot(),
     ],
     providers: [],

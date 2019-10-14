@@ -39,7 +39,7 @@ interface RedZoomImage {
     selector: '[redZoom]',
     exportAs: 'redZoom',
 })
-export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestroy {
+export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy {
     @Input('src') @HostBinding('attr.src') thumbnailSrc: string;
 
     get thumbnailCurrentSrc(): string {
