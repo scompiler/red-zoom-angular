@@ -29,6 +29,10 @@
 // lens
 .red-zoom__lens {
     position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--red-zoom-lens-w, 0px);
+    height: var(--red-zoom-lens-h, 0px);
     transform:
         translateX(var(--red-zoom-lens-x, 0px))
         translateY(var(--red-zoom-lens-y, 0px));

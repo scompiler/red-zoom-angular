@@ -11,6 +11,7 @@ import {
     HostBinding, HostListener, OnDestroy
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { RedZoomTemplate } from './template';
 
 
 interface Session {
@@ -26,30 +27,6 @@ interface Session {
     prevMouseY: number;
 }
 
-const makeTemplate = (() => {
-    let template: HTMLTemplateElement = null;
-
-    return () => {
-        if (!template) {
-            template = document.createElement('template');
-            template.innerHTML = `<div class="red-zoom">
-                <div class="red-zoom__overlay"></div>
-                <div class="red-zoom__lens">
-                    <div class="red-zoom__lens-body"></div>
-                </div>
-                <div class="red-zoom__window">
-                    <div class="red-zoom__window-body"></div>
-                </div>
-                <div class="red-zoom__error">
-                    <div class="red-zoom__error-message"></div>
-                </div>
-            </div>`;
-        }
-
-        return template.content.cloneNode(true).firstChild as HTMLDivElement;
-    };
-})();
-
 
 interface RedZoomImage {
     w: number;
@@ -58,35 +35,18 @@ interface RedZoomImage {
 }
 
 
-class RedZoomTemplate {
-    template: HTMLDivElement;
-    window: HTMLDivElement;
-    windowBody: HTMLDivElement;
-    windowImage: HTMLImageElement;
-    lens: HTMLDivElement;
-    lensBody: HTMLDivElement;
-    lensImage: HTMLImageElement;
-    error: HTMLDivElement;
-    errorMessage: HTMLDivElement;
-
-    constructor() {
-        this.template = makeTemplate();
-        this.window = this.template.querySelector('.red-zoom__window');
-        this.windowBody = this.template.querySelector('.red-zoom__window-body');
-        this.lens = this.template.querySelector('.red-zoom__lens');
-        this.lensBody = this.template.querySelector('.red-zoom__lens-body');
-        this.error = this.template.querySelector('.red-zoom__error');
-        this.errorMessage = this.template.querySelector('.red-zoom__error-message');
-    }
-}
-
-
 @Directive({
-    selector: '[libNgxRedZoom]',
-    exportAs: 'ngxRedZoom',
+    selector: '[redZoom]',
+    exportAs: 'redZoom',
 })
 export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestroy {
-    @Input('libNgxRedZoom') libNgxRedZoom: string;
+    @Input('src') @HostBinding('attr.src') thumbnailSrc: string;
+
+    get thumbnailCurrentSrc(): string {
+        return this.element.nativeElement.currentSrc;
+    }
+
+    @Input('redZoom') fullSrc: string;
 
     @Input('redZoomLazy') lazy: boolean = false;
 
@@ -105,52 +65,37 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
         @Inject(DOCUMENT) private document: any,
     ) { }
 
-    @Input('src')
-    @HostBinding('attr.src')
-    src;
-
     template2: RedZoomTemplate;
 
-    template: HTMLDivElement;
-    window: HTMLDivElement;
     windowBody: HTMLDivElement;
     windowImage: HTMLImageElement;
     windowImageLoaded: boolean = false;
     windowImageError: boolean = false;
     windowImageMeta: RedZoomImage;
-    lens: HTMLDivElement;
     lensBody: HTMLDivElement;
     lensImage: HTMLImageElement;
     lensImageLoaded: boolean = false;
     lensImageError: boolean = false;
 
     thumbnailImageLoaded: boolean = false;
+    thumbnailImageError: boolean = false;
 
     get imagesLoaded(): boolean {
         return this.windowImageLoaded && this.lensImageLoaded && this.lensImageLoaded;
     }
 
-
     triggerListener: () => void  = () => {};
-
 
     session: Session;
 
-    loaded = false;
-    initialized = false;
-
-    appliedClasses: string[] = [];
-
     @HostListener('load') load() {
         this.thumbnailImageLoaded = true;
-
-
-
-        this.loaded = true;
+        this.afterLoadImages();
     }
 
     @HostListener('error') error() {
-        this.loaded = false;
+        this.thumbnailImageError = true;
+        this.afterErrorImages();
     }
 
     @HostBinding('draggable') get draggable(): boolean {
@@ -172,18 +117,15 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
     }
 
     ngAfterContentInit(): void {
-        this.initialized = true;
-
         this.zone.runOutsideAngular(() => {
             this.listen();
 
             this.template2 = new RedZoomTemplate();
+            this.template2.state = 'pending';
+            this.template2.classes = this.classes;
 
 
-            this.template = this.template2.template;
-            this.window = this.template2.window;
             this.windowBody = this.template2.windowBody;
-            this.lens = this.template2.lens;
             this.lensBody = this.template2.lensBody;
 
             this.template2.errorMessage.innerHTML = this.errorMessage;
@@ -198,12 +140,6 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
             this.lensImage.addEventListener('load', this.onLensImageLoad);
             this.lensImage.addEventListener('error', this.onLensImageError);
 
-            if (this.classes.trim()) {
-                this.template.classList.add(...this.classes.trim().replace(/ +/, ' ').split(' '));
-            }
-
-            this.template.addEventListener('transitionend', this.onTransitionEnd);
-
             if (!this.lazy) {
                 this.loadWindowImage();
                 this.loadLensImage();
@@ -212,9 +148,11 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if ('src' in changes && !changes.src.firstChange) {
+        if ('thumbnailSrc' in changes && !changes.thumbnailSrc.firstChange) {
             this.thumbnailImageLoaded = false;
+            this.thumbnailImageError = false;
             this.lensImageLoaded = false;
+            this.lensImageError = false;
 
             if (!this.lazy) {
                 this.loadLensImage();
@@ -222,7 +160,7 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
 
             this.updateState();
         }
-        if ('libNgxRedZoom' in changes && !changes.libNgxRedZoom.firstChange) {
+        if ('fullSrc' in changes && !changes.fullSrc.firstChange) {
             this.windowImageLoaded = false;
             this.windowImageError = false;
 
@@ -236,15 +174,12 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
             this.listen();
         }
         if ('classes' in changes && !changes.classes.firstChange) {
-            this.template.classList.remove(...changes.classes.previousValue.trim().replace(/ +/, ' ').split(' '));
-            this.template.classList.add(...changes.classes.currentValue.trim().replace(/ +/, ' ').split(' '));
+            this.template2.classes = this.classes;
 
             // TODO: invalidate if session active
         }
         if ('errorMessage' in changes && !changes.errorMessage.firstChange) {
-            if (this.template2) {
-                this.template2.errorMessage.innerHTML = this.errorMessage;
-            }
+            this.template2.errorMessage.innerHTML = this.errorMessage;
         }
 
 
@@ -253,18 +188,18 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
 
     loadWindowImage() {
         if (!this.windowImageLoaded) {
-            this.windowImage.setAttribute('src', this.libNgxRedZoom);
+            this.windowImage.setAttribute('src', this.fullSrc);
         }
     }
 
     loadLensImage() {
         if (!this.lensImageLoaded) {
-            this.lensImage.setAttribute('src', this.src);
+            this.lensImage.setAttribute('src', this.thumbnailSrc);
         }
     }
 
     onWindowImageLoad = () => {
-        console.log('onWindowImageLoad');
+        // console.log('onWindowImageLoad');
         this.windowImageLoaded = true;
 
         const originalWidth = this.windowImage.style.width;
@@ -284,8 +219,10 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
         this.windowImage.style.width = originalWidth;
         this.windowImage.style.height = originalHeight;
 
-        this.template.style.setProperty('--red-zoom-preview-w', `${this.windowImageMeta.w}px`);
-        this.template.style.setProperty('--red-zoom-preview-h', `${this.windowImageMeta.h}px`);
+        this.template2.setProperties({
+            '--red-zoom-preview-w': `${this.windowImageMeta.w}px`,
+            '--red-zoom-preview-h': `${this.windowImageMeta.h}px`,
+        });
 
         this.afterLoadImages();
     };
@@ -296,7 +233,7 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
     };
 
     onLensImageLoad = () => {
-        console.log('onLensImageLoad');
+        // console.log('onLensImageLoad');
         this.lensImageLoaded = true;
         this.afterLoadImages();
     };
@@ -306,33 +243,26 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
         this.afterErrorImages();
     };
 
-    onTransitionEnd = (event: TransitionEvent) => {
-        if (event.propertyName === 'visibility' && getComputedStyle(this.template).visibility === 'hidden') {
-            this.template.remove();
-        }
-    };
-
     afterLoadImages(): void {
-        if (this.session && this.windowImageLoaded && this.lensImageLoaded) {
-            this.template.classList.remove('red-zoom--loading');
-            this.template.classList.add('red-zoom--loaded');
-            this.calcLensSize();
-            this.move(this.session.prevMouseX, this.session.prevMouseY);
+        if (this.thumbnailImageLoaded && this.windowImageLoaded && this.lensImageLoaded) {
+            this.template2.state = 'loaded';
 
-            this.windowImageMeta.z = this.windowImage.width / this.windowImageMeta.w;
-            this.windowImageMeta.z = Math.max(
-                this.windowImageMeta.z,
-                this.session.previewContainerRect.width / this.windowImageMeta.w,
-                this.session.previewContainerRect.height / this.windowImageMeta.h,
-            );
+            if (this.session) {
+                this.calcLensSize();
+                this.move(this.session.prevMouseX, this.session.prevMouseY);
+
+                this.windowImageMeta.z = this.windowImage.width / this.windowImageMeta.w;
+                this.windowImageMeta.z = Math.max(
+                    this.windowImageMeta.z,
+                    this.session.previewContainerRect.width / this.windowImageMeta.w,
+                    this.session.previewContainerRect.height / this.windowImageMeta.h,
+                );
+            }
         }
     }
 
     afterErrorImages(): void {
-        if (this.session) {
-            this.template.classList.remove('red-zoom--loading');
-            this.template.classList.add('red-zoom--error');
-        }
+        this.template2.state = 'error';
     }
 
     mouseEnter = (event: MouseEvent, endEventName) => {
@@ -394,41 +324,35 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
         };
         const onLeave = () => {
             this.session = null;
-
-            this.template.classList.remove('red-zoom--active', 'red-zoom--loading', 'red-zoom--loaded', 'red-zoom--error');
-
-            if (getComputedStyle(this.template).visibility === 'hidden') {
-                this.template.remove();
-            }
+            this.template2.detach();
 
             unListenMove();
             unListenLeave();
             unListenWheel();
         };
 
-        this.onMouseMove(event);
-
         const unListenMove = this.renderer.listen(this.element.nativeElement, 'mousemove', onMove);
         const unListenLeave = this.renderer.listen(this.element.nativeElement, endEventName, onLeave);
         const unListenWheel = this.renderer.listen(this.element.nativeElement, 'mousewheel', onWheel);
 
-        this.element.nativeElement.getBoundingClientRect(); // force reflow
+        this.onMouseMove(event);
 
-        this.template.classList.add('red-zoom--active');
+        this.forceReflow();
+        this.template2.activate();
 
         if (!this.windowImageError && !this.lensImageError) {
             if (!this.windowImageLoaded || !this.lensImageLoaded) {
-                this.template.classList.add('red-zoom--loading');
+                this.template2.state = 'loading';
                 this.loadWindowImage();
                 this.loadLensImage();
             }
         } else {
-            this.template.classList.add('red-zoom--error');
+            this.template2.state = 'error';
         }
     };
 
     onMouseMove = (event: MouseEvent) => {
-        if (!this.loaded) {
+        if (!this.thumbnailImageLoaded || this.thumbnailImageError) {
             return;
         }
 
@@ -447,17 +371,18 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
             const w = thumbnailRect.width;
             const h = thumbnailRect.height;
 
-
-            this.document.body.appendChild(this.template);
+            this.template2.attach();
             this.windowBody.appendChild(this.windowImage);
             this.lensBody.appendChild(this.lensImage);
 
-            this.template.style.setProperty('--red-zoom-thumbnail-x', `${x}px`);
-            this.template.style.setProperty('--red-zoom-thumbnail-y', `${y}px`);
-            this.template.style.setProperty('--red-zoom-thumbnail-w', `${w}px`);
-            this.template.style.setProperty('--red-zoom-thumbnail-h', `${h}px`);
-            this.template.style.setProperty('--red-zoom-thumbnail-size-max', `${Math.max(w, h)}px`);
-            this.template.style.setProperty('--red-zoom-thumbnail-size-min', `${Math.min(w, h)}px`);
+            this.template2.setProperties({
+                '--red-zoom-thumbnail-x': `${x}px`,
+                '--red-zoom-thumbnail-y': `${y}px`,
+                '--red-zoom-thumbnail-w': `${w}px`,
+                '--red-zoom-thumbnail-h': `${h}px`,
+                '--red-zoom-thumbnail-size-max': `${Math.max(w, h)}px`,
+                '--red-zoom-thumbnail-size-min': `${Math.min(w, h)}px`,
+            });
 
             this.calcLensSize();
 
@@ -465,8 +390,7 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
             this.lensImage.style.height = `${h}px`;
 
             if (this.windowImageLoaded && this.lensImageLoaded) {
-                this.template.classList.remove('red-zoom--loading');
-                this.template.classList.add('red-zoom--loaded');
+                this.template2.state = 'loaded';
                 this.windowImageMeta.z = this.windowImage.width / this.windowImageMeta.w;
                 this.windowImageMeta.z = Math.max(
                     this.windowImageMeta.z,
@@ -495,10 +419,10 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
         this.session.lensW = Math.round(thumbnailRect.width * (previewContainerRect.width / previewImageRect.width));
         this.session.lensH = Math.round(thumbnailRect.height * (previewContainerRect.height / previewImageRect.height));
 
-        this.lens.style.width = `${this.session.lensW}px`;
-        this.lens.style.height = `${this.session.lensH}px`;
-        this.lens.style.left = `0px`;
-        this.lens.style.top = `0px`;
+        this.template2.setProperties({
+            '--red-zoom-lens-w': `${this.session.lensW}px`,
+            '--red-zoom-lens-h': `${this.session.lensH}px`,
+        });
     }
 
     move(x: number, y: number): void {
@@ -512,8 +436,10 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
         const thumbnailLeft = thumbnailRect.left + scrollDeltaX;
         const thumbnailTop = thumbnailRect.top + scrollDeltaY;
 
-        this.template.style.setProperty('--red-zoom-mouse-x', `${x + scrollX}px`);
-        this.template.style.setProperty('--red-zoom-mouse-y', `${y + scrollY}px`);
+        this.template2.setProperties({
+            '--red-zoom-mouse-x': `${x + scrollX}px`,
+            '--red-zoom-mouse-y': `${y + scrollY}px`,
+        });
 
         const lensXr = x - lensW / 2;
         const lensX = Math.round(Math.min(
@@ -532,10 +458,12 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
             )
         );
 
-        this.template.style.setProperty('--red-zoom-lens-x', `${Math.round(lensX) + scrollX}px`);
-        this.template.style.setProperty('--red-zoom-lens-y', `${Math.round(lensY) + scrollY}px`);
-        this.template.style.setProperty('--red-zoom-lens-image-x', `${Math.round(-lensX + thumbnailLeft)}px`);
-        this.template.style.setProperty('--red-zoom-lens-image-y', `${Math.floor(-lensY + thumbnailTop)}px`);
+        this.template2.setProperties({
+            '--red-zoom-lens-x': `${Math.round(lensX) + scrollX}px`,
+            '--red-zoom-lens-y': `${Math.round(lensY) + scrollY}px`,
+            '--red-zoom-lens-image-x': `${Math.round(-lensX + thumbnailLeft)}px`,
+            '--red-zoom-lens-image-y': `${Math.floor(-lensY + thumbnailTop)}px`,
+        });
 
         const posX = thumbnailRect.width - lensW === 0 ? 0 : Math.max(
             0,
@@ -554,10 +482,12 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
         );
         const posY2 = thumbnailRect.height - lensH === 0 ? 0 : ((lensYr - thumbnailTop) / (thumbnailRect.height - lensH)) * (previewImageRect.height - previewContainerRect.height);
 
-        this.template.style.setProperty('--red-zoom-preview-image-x', `${-posX}px`);
-        this.template.style.setProperty('--red-zoom-preview-image-y', `${-posY}px`);
-        this.template.style.setProperty('--red-zoom-preview-image-offset-x', `${posX === posX2 ? 0 : posX - posX2}px`);
-        this.template.style.setProperty('--red-zoom-preview-image-offset-y', `${posY === posY2 ? 0 : posY - posY2}px`);
+        this.template2.setProperties({
+            '--red-zoom-preview-image-x': `${-posX}px`,
+            '--red-zoom-preview-image-y': `${-posY}px`,
+            '--red-zoom-preview-image-offset-x': `${posX === posX2 ? 0 : posX - posX2}px`,
+            '--red-zoom-preview-image-offset-y': `${posY === posY2 ? 0 : posY - posY2}px`,
+        });
     }
 
     ngOnDestroy(): void {
@@ -574,8 +504,11 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
         }
 
         if (this.windowImageLoaded && this.lensImageLoaded && this.thumbnailImageLoaded) {
-            this.template.classList.remove('red-zoom--loading');
-            this.template.classList.add('red-zoom--loaded');
+            this.template2.state = 'loaded';
         }
+    }
+
+    forceReflow(): void {
+        this.element.nativeElement.getBoundingClientRect();
     }
 }

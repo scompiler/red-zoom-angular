@@ -39,6 +39,14 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .4) ;
             opacity: 0;
         }
     }
+    .red-zoom__error {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #333;
+        padding: 32px;
+        visibility: hidden;
+    }
     .red-zoom__lens {
         display: none;
     }
@@ -80,23 +88,35 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .4) ;
         }
     }
 
-    &.red-zoom--loading {
+    &.red-zoom--state--loading {
         .red-zoom__overlay:before {
             opacity: 1;
             animation-play-state: running;
         }
     }
 
-    &.red-zoom--loaded {
+    &.red-zoom--state--loaded {
         .red-zoom__window,
         .red-zoom__lens {
             opacity: 1;
         }
     }
 
-    &.red-zoom--error {
-        .red-zoom__overlay:after {
-            content: 'Loading error';
+    &.red-zoom--state--error {
+        .red-zoom__lens,
+        .red-zoom__window {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0;
+            height: 0;
+            display: none;
+        }
+        .red-zoom__overlay {
+            background: rgba(#fff, .8);
+        }
+        .red-zoom__error {
+            visibility: visible;
         }
     }
 }

@@ -78,30 +78,7 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .2)  !default;
         transition: opacity $red-zoom-transition-duration;
     }
 
-    &.red-zoom--active {
-        transition-delay: 0s;
-        visibility: visible;
-
-        .red-zoom__overlay {
-            opacity: 1;
-        }
-    }
-
-    &.red-zoom--loading {
-        .red-zoom__overlay:before {
-            opacity: 1;
-            animation-play-state: running;
-        }
-    }
-
-    &.red-zoom--loaded {
-        .red-zoom__window,
-        .red-zoom__lens {
-            opacity: 1;
-        }
-    }
-
-    &.red-zoom--error {
+    &.red-zoom--state--error {
         .red-zoom__lens,
         .red-zoom__window {
             position: absolute;
@@ -111,11 +88,37 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .2)  !default;
             height: 0;
             display: none;
         }
+    }
+
+    &.red-zoom--active {
+        transition-delay: 0s;
+        visibility: visible;
+
         .red-zoom__overlay {
-            background: rgba(#e50032, .8);
+            opacity: 1;
         }
-        .red-zoom__error {
-            visibility: visible;
+
+        &.red-zoom--state--loading {
+            .red-zoom__overlay:before {
+                opacity: 1;
+                animation-play-state: running;
+            }
+        }
+
+        &.red-zoom--state--loaded {
+            .red-zoom__window,
+            .red-zoom__lens {
+                opacity: 1;
+            }
+        }
+
+        &.red-zoom--state--error {
+            .red-zoom__overlay {
+                background: rgba(#e50032, .8);
+            }
+            .red-zoom__error {
+                visibility: visible;
+            }
         }
     }
 }
