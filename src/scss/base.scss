@@ -1,8 +1,9 @@
 .red-zoom {
     pointer-events: none;
 }
-// overlay
-.red-zoom__overlay {
+// overlay, error
+.red-zoom__overlay,
+.red-zoom__error {
     position: absolute;
     left: var(--red-zoom-thumbnail-x, 0px);
     top: var(--red-zoom-thumbnail-y, 0px);

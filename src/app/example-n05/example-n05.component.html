@@ -1,0 +1,22 @@
+<div class="example__body">
+    <div class="example__image">
+        <img src="./assets/image-1.jpg" alt="" width="320" [libNgxRedZoom]="url" redZoomClass="red-zoom--style--01" [redZoomLazy]="true" class="zoom">
+    </div>
+    <div class="example__content">
+        <div class="typography">
+            <h2>Error Handling</h2>
+
+            <p>RedZoom correctly handle errors and displays the corresponding message. Provider custom error message:</p>
+
+            <pre><code>&lt;img
+    redZoom="{{ url }}"
+    redZoomErrorMessage="Custom error message"
+&gt;</code></pre>
+
+            <div>
+                <button type="button" (click)="url = './assets/image-1-full.jpg'">Set correct URL</button>
+                <button type="button" (click)="url = './assets/404.jpg'">Set incorrect URL</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -9,6 +9,7 @@ import { ExampleN02Component } from './example-n02/example-n02.component';
 import { ExampleN03Component } from './example-n03/example-n03.component';
 import { SectionCssVariablesComponent } from './section-css-variables/section-css-variables.component';
 import { ExampleN04Component } from './example-n04/example-n04.component';
+import { ExampleN05Component } from './example-n05/example-n05.component';
 
 @NgModule({
     declarations: [
@@ -17,7 +18,8 @@ import { ExampleN04Component } from './example-n04/example-n04.component';
         ExampleN02Component,
         ExampleN03Component,
         SectionCssVariablesComponent,
-        ExampleN04Component
+        ExampleN04Component,
+        ExampleN05Component
     ],
     imports: [
         BrowserModule,
