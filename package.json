@@ -9,7 +9,10 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build-library": "ng build ngx-red-zoom --watch",
-    "build-docs": "ng build --base-href /red-zoom/ --output-path docs"
+    "build-docs": "ng build --base-href /red-zoom/ --output-path docs",
+    "library:build": "ng build ngx-red-zoom",
+    "pack": "npm run library:build && npm run pack:scss",
+    "pack:scss": "./node_modules/.bin/gulp pack"
   },
   "private": true,
   "dependencies": {
@@ -32,10 +35,11 @@
     "@angular/cli": "~8.1.0",
     "@angular/compiler-cli": "~8.1.0",
     "@angular/language-service": "~8.1.0",
-    "@types/node": "~8.9.4",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
+    "@types/node": "~8.9.4",
     "codelyzer": "^5.0.0",
+    "gulp": "^4.0.2",
     "jasmine-core": "~3.4.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~4.1.0",
