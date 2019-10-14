@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Angulartics2GoogleAnalytics } from 'angulartics2/ga';
 import * as packageJson from '../../projects/ngx-red-zoom/package.json';
 
 @Component({
@@ -6,9 +7,15 @@ import * as packageJson from '../../projects/ngx-red-zoom/package.json';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
     version = packageJson.version;
     year = new Date().getFullYear();
-    image = '../assets/image-1.jpg';
-    imageFull = '../assets/image-1-full.jpg';
+
+    constructor(
+        private analytics: Angulartics2GoogleAnalytics,
+    ) {}
+
+    ngOnInit(): void {
+        this.analytics.startTracking();
+    }
 }

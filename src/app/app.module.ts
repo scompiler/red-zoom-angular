@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { NgxRedZoomModule } from 'ngx-red-zoom';
+import { Angulartics2Module } from 'angulartics2';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -19,12 +20,13 @@ import { ExampleN05Component } from './example-n05/example-n05.component';
         ExampleN03Component,
         SectionCssVariablesComponent,
         ExampleN04Component,
-        ExampleN05Component
+        ExampleN05Component,
     ],
     imports: [
         BrowserModule,
         AppRoutingModule,
-        NgxRedZoomModule
+        NgxRedZoomModule,
+        Angulartics2Module.forRoot(),
     ],
     providers: [],
     bootstrap: [AppComponent]
