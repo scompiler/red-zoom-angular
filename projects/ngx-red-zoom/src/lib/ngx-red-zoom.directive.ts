@@ -88,6 +88,7 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
     triggerListener: () => void  = () => {};
 
     session: Session;
+    requestAnimationFrameId = null;
 
     @HostListener('load') load() {
         this.thumbnailImageLoaded = true;
@@ -420,7 +421,11 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
         this.session.prevMouseY = event.clientY;
 
         if (this.windowImageLoaded && this.lensImageLoaded) {
-            this.move(event.clientX, event.clientY);
+            cancelAnimationFrame(this.requestAnimationFrameId);
+
+            this.requestAnimationFrameId = requestAnimationFrame(() => {
+                this.move(event.clientX, event.clientY);
+            });
         }
     };
 
@@ -442,6 +447,10 @@ export class NgxRedZoomDirective implements AfterContentInit, OnChanges, OnDestr
     }
 
     move(x: number, y: number): void {
+        if (!this.session) {
+            return;
+        }
+
         const thumbnailRect = this.session.thumbnailRect;
         const previewContainerRect = this.session.previewContainerRect;
         const previewImageRect = this.session.previewImageRect;
