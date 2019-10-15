@@ -375,46 +375,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
 
         if (!this.session.active) {
             this.session.active = true;
-            this.session.thumbnailRect = this.element.nativeElement.getBoundingClientRect();
-            this.session.scrollX = scrollX;
-            this.session.scrollY = scrollY;
-
-            // TODO: show preloader if preview doesn't loaded
-
-            const thumbnailRect = this.session.thumbnailRect;
-
-            const x = thumbnailRect.left + scrollX;
-            const y = thumbnailRect.top + scrollY;
-            const w = thumbnailRect.width;
-            const h = thumbnailRect.height;
-
-            this.template2.attach();
-            this.windowBody.appendChild(this.windowImage);
-            this.lensBody.appendChild(this.lensImage);
-
-            this.template2.setProperties({
-                '--red-zoom-thumbnail-x': `${x}px`,
-                '--red-zoom-thumbnail-y': `${y}px`,
-                '--red-zoom-thumbnail-w': `${w}px`,
-                '--red-zoom-thumbnail-h': `${h}px`,
-                '--red-zoom-thumbnail-size-max': `${Math.max(w, h)}px`,
-                '--red-zoom-thumbnail-size-min': `${Math.min(w, h)}px`,
-            });
-
-            this.calcLensSize();
-
-            this.lensImage.style.width = `${w}px`;
-            this.lensImage.style.height = `${h}px`;
-
-            if (this.windowImageLoaded && this.lensImageLoaded) {
-                this.template2.state = 'loaded';
-                this.windowImageMeta.z = this.windowImage.width / this.windowImageMeta.w;
-                this.windowImageMeta.z = Math.max(
-                    this.windowImageMeta.z,
-                    this.session.previewContainerRect.width / this.windowImageMeta.w,
-                    this.session.previewContainerRect.height / this.windowImageMeta.h,
-                );
-            }
+            this.initSession();
         }
 
         this.session.prevMouseX = event.clientX;
@@ -428,6 +389,49 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             });
         }
     };
+
+    initSession(): void {
+        this.session.thumbnailRect = this.element.nativeElement.getBoundingClientRect();
+        this.session.scrollX = scrollX;
+        this.session.scrollY = scrollY;
+
+        // TODO: show preloader if preview doesn't loaded
+
+        const thumbnailRect = this.session.thumbnailRect;
+
+        const x = thumbnailRect.left + scrollX;
+        const y = thumbnailRect.top + scrollY;
+        const w = thumbnailRect.width;
+        const h = thumbnailRect.height;
+
+        this.template2.attach();
+        this.windowBody.appendChild(this.windowImage);
+        this.lensBody.appendChild(this.lensImage);
+
+        this.template2.setProperties({
+            '--red-zoom-thumbnail-x': `${x}px`,
+            '--red-zoom-thumbnail-y': `${y}px`,
+            '--red-zoom-thumbnail-w': `${w}px`,
+            '--red-zoom-thumbnail-h': `${h}px`,
+            '--red-zoom-thumbnail-size-max': `${Math.max(w, h)}px`,
+            '--red-zoom-thumbnail-size-min': `${Math.min(w, h)}px`,
+        });
+
+        this.calcLensSize();
+
+        this.lensImage.style.width = `${w}px`;
+        this.lensImage.style.height = `${h}px`;
+
+        if (this.windowImageLoaded && this.lensImageLoaded) {
+            this.template2.state = 'loaded';
+            this.windowImageMeta.z = this.windowImage.width / this.windowImageMeta.w;
+            this.windowImageMeta.z = Math.max(
+                this.windowImageMeta.z,
+                this.session.previewContainerRect.width / this.windowImageMeta.w,
+                this.session.previewContainerRect.height / this.windowImageMeta.h,
+            );
+        }
+    }
 
     calcLensSize(): void {
         this.session.previewContainerRect = this.windowBody.getBoundingClientRect();
@@ -513,6 +517,26 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             '--red-zoom-preview-image-offset-x': `${posX === posX2 ? 0 : posX - posX2}px`,
             '--red-zoom-preview-image-offset-y': `${posY === posY2 ? 0 : posY - posY2}px`,
         });
+    }
+
+    invalidate() {
+        if (this.session && this.session.active) {
+            this.initSession();
+            this.move(this.session.prevMouseX, this.session.prevMouseY);
+        }
+    }
+
+    disable(): void {
+        this.template2.template.classList.add('red-zoom--disabled');
+    }
+
+    enable(): void {
+        if (this.session && this.session.active) {
+            this.initSession();
+            this.move(this.session.prevMouseX, this.session.prevMouseY);
+        }
+
+        this.template2.template.classList.remove('red-zoom--disabled');
     }
 
     destroy(): void {

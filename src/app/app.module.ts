@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RedZoomModule } from 'ngx-red-zoom';
 import { Angulartics2Module } from 'angulartics2';
+import { CarouselModule } from 'ngx-owl-carousel-o';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -12,6 +14,7 @@ import { SectionCssVariablesComponent } from './section-css-variables/section-cs
 import { ExampleN04Component } from './example-n04/example-n04.component';
 import { ExampleN05Component } from './example-n05/example-n05.component';
 import { ExampleN06Component } from './example-n06/example-n06.component';
+import { ExampleN07Component } from './example-n07/example-n07.component';
 
 @NgModule({
     declarations: [
@@ -23,12 +26,15 @@ import { ExampleN06Component } from './example-n06/example-n06.component';
         ExampleN04Component,
         ExampleN05Component,
         ExampleN06Component,
+        ExampleN07Component,
     ],
     imports: [
         BrowserModule,
         AppRoutingModule,
         RedZoomModule,
         Angulartics2Module.forRoot(),
+        CarouselModule,
+        NoopAnimationsModule,
     ],
     providers: [],
     bootstrap: [AppComponent]

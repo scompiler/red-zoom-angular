@@ -38,6 +38,8 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .2)  !default;
             animation-play-state: paused;
             opacity: 0;
         }
+
+        z-index: 1;
     }
     .red-zoom__error {
         display: flex;
@@ -46,6 +48,8 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .2)  !default;
         color: #fff;
         padding: 32px;
         visibility: hidden;
+
+        z-index: 1;
     }
     .red-zoom__lens {
         opacity: 0;
@@ -62,6 +66,8 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .2)  !default;
             box-sizing: content-box;
             box-shadow: $red-zoom-lens-shadow;
         }
+
+        z-index: 1;
     }
     .red-zoom__window {
         box-shadow: $red-zoom-window-shadow;
@@ -72,7 +78,7 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .2)  !default;
         top: var(--red-zoom-thumbnail-y, 0px);
         width: calc(var(--red-zoom-thumbnail-w, 0px) * 2);
         height: var(--red-zoom-thumbnail-h, 0px);
-        z-index: 1;
+        z-index: 2;
 
         opacity: 0;
         transition: opacity $red-zoom-transition-duration;
@@ -119,6 +125,18 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .2)  !default;
             .red-zoom__error {
                 visibility: visible;
             }
+        }
+    }
+
+    &.red-zoom--disabled {
+        transition-delay: 0s;
+        visibility: hidden;
+
+        .red-zoom__overlay,
+        .red-zoom__lens,
+        .red-zoom__window {
+            transition-duration: 0s !important;
+            opacity: 0 !important;
         }
     }
 }
