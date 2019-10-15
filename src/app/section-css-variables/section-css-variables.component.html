@@ -6,6 +6,7 @@
         <li>Chrome (and others based on chrome), Safari, Firefox, Edge;</li>
         <li>Customizing via CSS/SCSS;</li>
         <li>Lazy loading;</li>
+        <li>Error Handling;</li>
     </ul>
 
     <h2>Anatomy And Terms</h2>
@@ -140,10 +141,7 @@
         <tr>
             <th>redZoomErrorMessage</th>
             <td>string</td>
-            <td>
-
-                <i>TODO: Not implemented.</i>
-            </td>
+            <td>Use this attribute to provide your own error message.</td>
         </tr>
         </tbody>
     </table>
@@ -176,13 +174,32 @@
             <th>--red-zoom-preview-[w/h]</th>
             <td>Original size of preview image in pixels.</td>
         </tr>
+        <tr>
+            <th>--red-zoom-lens-[x/y]</th>
+            <td>Position of the lens relative to the page in pixels.</td>
+        </tr>
+        <tr>
+            <th>--red-zoom-lens-[w/h]</th>
+            <td>Size of the lens in pixels.</td>
+        </tr>
+        <tr>
+            <th>--red-zoom-lens-image-[x/y]</th>
+            <td>Position of the lens image relative to the lens in pixels.</td>
+        </tr>
+        <tr>
+            <th>--red-zoom-mouse-[x/y]</th>
+            <td>Mouse position relative to the page in pixels.</td>
+        </tr>
+        <tr>
+            <th>--red-zoom-preview-image-[x/y]</th>
+            <td>Preview image position relative to the preview in pixels.</td>
+        </tr>
+        <tr>
+            <th>--red-zoom-preview-image-offset-[x/y]</th>
+            <td>TODO: describe.</td>
+        </tr>
         </tbody>
     </table>
-
-
-    <ul>
-        <li>--red-zoom-mouse-snap-[x/y] – Snapped mouse position. TODO: Not implemented.</li>
-    </ul>
 
     <h2>FAQ</h2>
     <ul>
@@ -193,7 +210,6 @@
     <ul>
         <li>Changing zoom ratio with touch gestures (pinch to zoom)</li>
         <li>Support touch events</li>
-        <li>Image load error handling</li>
         <li>Support &lt;source&gt; tag and srcset attribute</li>
         <li>Support hot swap image</li>
         <li>Support keyboard</li>
@@ -209,7 +225,7 @@
     <h2>Changelog</h2>
     <ul class="changelog">
         <li class="changelog__item">
-            <div class="changelog__title">October 19, 2019 — Version 0.1.0</div>
+            <div class="changelog__title">October 14, 2019 — Version 0.1.0</div>
 
             <ul class="changelog__list">
                 <li>Initial release</li>
