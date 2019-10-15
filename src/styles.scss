@@ -10,6 +10,7 @@
 @import 'scss/typography';
 @import 'scss/copyright';
 @import 'scss/changelog';
+@import 'scss/gallery';
 // red-zoom
 @import 'scss/base';
 @import 'scss/styles/01';
@@ -30,11 +31,4 @@
 
 .zoom {
     cursor: crosshair;
-}
-
-
-.red-zoom__window-image {
-    //width: 100%;
-    //max-width: calc(var(--red-zoom-preview-w));
-    //max-width: calc(var(--red-zoom-thumbnail-w) * 2);
 }

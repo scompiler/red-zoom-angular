@@ -11,6 +11,7 @@ import { ExampleN03Component } from './example-n03/example-n03.component';
 import { SectionCssVariablesComponent } from './section-css-variables/section-css-variables.component';
 import { ExampleN04Component } from './example-n04/example-n04.component';
 import { ExampleN05Component } from './example-n05/example-n05.component';
+import { ExampleN06Component } from './example-n06/example-n06.component';
 
 @NgModule({
     declarations: [
@@ -21,6 +22,7 @@ import { ExampleN05Component } from './example-n05/example-n05.component';
         SectionCssVariablesComponent,
         ExampleN04Component,
         ExampleN05Component,
+        ExampleN06Component,
     ],
     imports: [
         BrowserModule,

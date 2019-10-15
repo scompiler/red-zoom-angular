@@ -1,0 +1,26 @@
+.gallery {}
+.gallery__thumbnails-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 16px;
+    display: flex;
+}
+.gallery__thumbnail {
+    $local-gutter: 12px;
+
+    width: calc((100% - #{$local-gutter * 2}) / 3);
+
+    & + & {
+        margin-left: $local-gutter;
+    }
+
+    img {
+        max-width: 100%;
+        opacity: .4;
+    }
+}
+.gallery__thumbnail--current {
+    img {
+        opacity: 1;
+    }
+}
