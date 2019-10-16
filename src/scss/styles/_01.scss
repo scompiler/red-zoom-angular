@@ -83,6 +83,10 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .2)  !default;
         opacity: 0;
         transition: opacity $red-zoom-transition-duration;
     }
+    .red-zoom__window-image {
+        min-width: 100%;
+        min-height: 100%;
+    }
 
     &.red-zoom--state--error {
         .red-zoom__lens,

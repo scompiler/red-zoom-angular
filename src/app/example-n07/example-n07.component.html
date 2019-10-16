@@ -1,5 +1,5 @@
 <div class="example__body">
-    <div class="example__image" [src]="currentImage.thumbnail" [redZoom]="currentImage.full" [redZoomThumbnail]="currentImage.thumbnail" redZoomClass="red-zoom--style--01" [redZoomLazy]="true" #redZoom="redZoom">
+    <div class="example__image" [redZoom]="currentImage.full" [redZoomThumbnail]="currentImage.thumbnail" redZoomClass="red-zoom--style--01" [redZoomLazy]="true" #redZoom="redZoom">
         <owl-carousel-o [options]="options" (dragging)="dragged($event)" (translated)="translated($event)" (transitionend)="transitionEnd($event)">
             <ng-container *ngFor="let image of images">
                 <ng-template carouselSlide>

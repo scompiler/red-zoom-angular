@@ -1,4 +1,4 @@
-type RedZoomState = 'pending'|'loading'|'loaded'|'error';
+import { RedZoomStatus } from './red-zoom-status.type';
 
 
 const makeTemplate = (() => {
@@ -27,7 +27,7 @@ const makeTemplate = (() => {
 
 
 export class RedZoomTemplate {
-    _state: RedZoomState = null;
+    _state: RedZoomStatus = null;
 
     template: HTMLDivElement;
     window: HTMLDivElement;
@@ -51,9 +51,10 @@ export class RedZoomTemplate {
         this.errorMessage = this.template.querySelector('.red-zoom__error-message');
 
         this.template.addEventListener('transitionend', this.onTransitionEnd);
+        this.state = 'pending';
     }
 
-    set state(state: RedZoomState) {
+    set state(state: RedZoomStatus) {
         if (this._state !== null) {
             this.template.classList.remove(`red-zoom--state--${this._state}`);
         }
@@ -62,7 +63,7 @@ export class RedZoomTemplate {
         this.template.classList.add(`red-zoom--state--${state}`);
     }
 
-    get state(): RedZoomState {
+    get state(): RedZoomStatus {
         return this._state;
     }
 

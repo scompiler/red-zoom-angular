@@ -1,4 +1,4 @@
-export type RedZoomImageStatus = 'pending' | 'loading' | 'loaded' | 'error';
+import { RedZoomStatus } from './red-zoom-status.type';
 
 
 export class RedZoomImage {
@@ -24,7 +24,7 @@ export class RedZoomImage {
         return this.element.style;
     }
 
-    get status(): RedZoomImageStatus {
+    get status(): RedZoomStatus {
         if (this.pending) {
             return 'pending';
         }
@@ -68,6 +68,7 @@ export class RedZoomImage {
 
     reset(): void {
         this.pending = true;
+        this.listener();
     }
 
     destroy: () => void;
