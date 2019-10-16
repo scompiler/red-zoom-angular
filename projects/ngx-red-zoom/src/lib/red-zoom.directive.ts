@@ -8,10 +8,11 @@ import {
     Renderer2,
     OnChanges,
     SimpleChanges,
-    HostBinding, HostListener, OnDestroy, PLATFORM_ID
+    HostBinding, OnDestroy, PLATFORM_ID
 } from '@angular/core';
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { RedZoomTemplate } from './template';
+import { RedZoomImage as RedZoomImage2, RedZoomImageStatus } from './image';
 
 
 interface Session {
@@ -40,13 +41,11 @@ interface RedZoomImage {
     exportAs: 'redZoom',
 })
 export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy {
-    @Input('src') @HostBinding('attr.src') thumbnailSrc: string;
+    @Input('src') @HostBinding('attr.src') src: string;
 
-    get thumbnailCurrentSrc(): string {
-        return this.element.nativeElement.currentSrc;
-    }
+    @Input('redZoom') fullSrc: string; // TODO: rename to lensSrc
 
-    @Input('redZoom') fullSrc: string;
+    @Input('redZoomThumbnail') thumbnailSrc: string;
 
     @Input('redZoomLazy') lazy: boolean = false;
 
@@ -63,45 +62,39 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         private renderer: Renderer2,
         private zone: NgZone,
         @Inject(PLATFORM_ID) private platformId: string,
-        @Inject(DOCUMENT) private document: any,
     ) { }
 
     template2: RedZoomTemplate;
 
-    windowBody: HTMLDivElement;
-    windowImage: HTMLImageElement;
-    windowImageLoaded: boolean = false;
-    windowImageError: boolean = false;
-    windowImageMeta: RedZoomImage;
-    lensBody: HTMLDivElement;
-    lensImage: HTMLImageElement;
-    lensImageLoaded: boolean = false;
-    lensImageError: boolean = false;
+    thumbImage: RedZoomImage2;
+    frameImage: RedZoomImage2;
+    lensImage: RedZoomImage2;
 
-    thumbnailImageLoaded: boolean = false;
-    thumbnailImageError: boolean = false;
-
-    get imagesLoaded(): boolean {
-        return this.windowImageLoaded && this.lensImageLoaded && this.lensImageLoaded;
-    }
+    z = 1;
 
     triggerListener: () => void  = () => {};
 
     session: Session;
     requestAnimationFrameId = null;
 
-    @HostListener('load') load() {
-        this.thumbnailImageLoaded = true;
-        this.afterLoadImages();
+    get isImage(): boolean {
+        return this.element.nativeElement.tagName === 'IMG';
     }
 
-    @HostListener('error') error() {
-        this.thumbnailImageError = true;
-        this.afterErrorImages();
-    }
+    get status(): RedZoomImageStatus {
+        let status: RedZoomImageStatus = 'loaded';
 
-    @HostBinding('draggable') get draggable(): boolean {
-        return this.trigger !== 'click';
+        for (let image of [this.thumbImage, this.frameImage, this.lensImage]) {
+            if (status === 'error' || image.status === 'error') {
+                status = 'error';
+            } else if (status === 'loading' || image.status === 'loading') {
+                status = 'loading';
+            } else if (status === 'pending' || image.status === 'pending') {
+                status = 'pending';
+            }
+        }
+
+        return status;
     }
 
     listen(): void {
@@ -118,12 +111,43 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         this.triggerListener = this.renderer.listen(this.element.nativeElement, startEventName, e => this.mouseEnter(e, endEventName));
     }
 
+    onImageChangeStatus = () => {
+        if (this.status === 'loaded') {
+            this.template2.state = 'loaded';
+            this.template2.setProperties({
+                '--red-zoom-preview-w': `${this.lensImage.naturalWidth}px`,
+                '--red-zoom-preview-h': `${this.lensImage.naturalHeight}px`,
+            });
+
+            if (this.session) {
+                this.calcLensSize();
+                this.move(this.session.prevMouseX, this.session.prevMouseY);
+
+                this.z = this.lensImage.width / this.lensImage.naturalWidth;
+                this.z = Math.max(
+                    this.z,
+                    this.session.previewContainerRect.width / this.lensImage.naturalWidth,
+                    this.session.previewContainerRect.height / this.lensImage.naturalHeight,
+                );
+            }
+        } else if (this.status === 'error') {
+            this.template2.state = 'error';
+        }
+    };
+
     ngAfterContentInit(): void {
         if (!isPlatformBrowser(this.platformId)) {
             return;
         }
 
         this.zone.runOutsideAngular(() => {
+            if (this.isImage) {
+                this.thumbImage = new RedZoomImage2(this.element.nativeElement, this.onImageChangeStatus);
+            } else {
+                this.thumbImage = new RedZoomImage2(null, this.onImageChangeStatus);
+                this.thumbImage.element.setAttribute('src', this.getThumbSrc());
+            }
+
             this.listen();
 
             this.template2 = new RedZoomTemplate();
@@ -131,23 +155,15 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             this.template2.classes = this.classes;
             this.template2.errorMessage.innerHTML = this.errorMessage;
 
+            this.lensImage = new RedZoomImage2(null, this.onImageChangeStatus);
+            this.lensImage.element.classList.add('red-zoom__window-image');
 
-            this.windowBody = this.template2.windowBody;
-            this.lensBody = this.template2.lensBody;
-
-            this.windowImage = document.createElement('img');
-            this.windowImage.classList.add('red-zoom__window-image');
-            this.windowImage.addEventListener('load', this.onWindowImageLoad);
-            this.windowImage.addEventListener('error', this.onWindowImageError);
-
-            this.lensImage = document.createElement('img');
-            this.lensImage.classList.add('red-zoom__lens-image');
-            this.lensImage.addEventListener('load', this.onLensImageLoad);
-            this.lensImage.addEventListener('error', this.onLensImageError);
+            this.frameImage = new RedZoomImage2(null, this.onImageChangeStatus);
+            this.frameImage.element.classList.add('red-zoom__lens-image');
 
             if (!this.lazy) {
                 this.loadWindowImage();
-                this.loadLensImage();
+                this.loadFrameImage();
             }
         });
     }
@@ -157,27 +173,14 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             return;
         }
 
+        if ('src' in changes && !changes.src.firstChange) {
+            this.onChangeThumbSrc();
+        }
         if ('thumbnailSrc' in changes && !changes.thumbnailSrc.firstChange) {
-            this.thumbnailImageLoaded = false;
-            this.thumbnailImageError = false;
-            this.lensImageLoaded = false;
-            this.lensImageError = false;
-
-            if (!this.lazy) {
-                this.loadLensImage();
-            }
-
-            this.updateState();
+            this.onChangeThumbSrc();
         }
         if ('fullSrc' in changes && !changes.fullSrc.firstChange) {
-            this.windowImageLoaded = false;
-            this.windowImageError = false;
-
-            if (!this.lazy) {
-                this.loadWindowImage();
-            }
-
-            this.updateState();
+            this.onChangeLensSrc();
         }
         if ('trigger' in changes && !changes.trigger.firstChange) {
             this.listen();
@@ -190,9 +193,6 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         if ('errorMessage' in changes && !changes.errorMessage.firstChange) {
             this.template2.errorMessage.innerHTML = this.errorMessage;
         }
-
-
-        // TODO: reload preview if changed
     }
 
     ngOnDestroy(): void {
@@ -203,83 +203,48 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         // TODO: stop session
     }
 
+    onChangeThumbSrc(): void {
+        if (!this.isImage) {
+            this.thumbImage.element.setAttribute('src', this.getThumbSrc());
+        }
+
+        this.frameImage.reset();
+
+        if (!this.lazy || this.session) {
+            this.loadFrameImage();
+        }
+
+        this.updateState();
+    }
+
+    onChangeLensSrc(): void {
+        this.lensImage.reset();
+
+        if (!this.lazy || this.session) {
+            this.loadWindowImage();
+        }
+
+        this.updateState();
+    }
+
+    getThumbSrc(): string {
+        if (!this.isImage || !this.src) {
+            return this.thumbnailSrc;
+        }
+
+        return this.src;
+    }
+
     loadWindowImage() {
-        if (!this.windowImageLoaded) {
-            this.windowImage.setAttribute('src', this.fullSrc);
+        if (this.lensImage.status !== 'loaded') {
+            this.lensImage.src = this.fullSrc;
         }
     }
 
-    loadLensImage() {
-        if (!this.lensImageLoaded) {
-            this.lensImage.setAttribute('src', this.thumbnailSrc);
+    loadFrameImage() {
+        if (this.frameImage.status !== 'loaded') {
+            this.frameImage.src = this.getThumbSrc();
         }
-    }
-
-    onWindowImageLoad = () => {
-        // console.log('onWindowImageLoad');
-        this.windowImageLoaded = true;
-
-        const originalWidth = this.windowImage.style.width;
-        const originalHeight = this.windowImage.style.height;
-
-        // TODO this.windowImage.naturalWidth
-
-        this.windowImage.style.width = 'auto';
-        this.windowImage.style.height = 'auto';
-
-        this.windowImageMeta = {
-            w: this.windowImage.width,
-            h: this.windowImage.height,
-            z: 1,
-        };
-
-        this.windowImage.style.width = originalWidth;
-        this.windowImage.style.height = originalHeight;
-
-        this.template2.setProperties({
-            '--red-zoom-preview-w': `${this.windowImageMeta.w}px`,
-            '--red-zoom-preview-h': `${this.windowImageMeta.h}px`,
-        });
-
-        this.afterLoadImages();
-    };
-
-    onWindowImageError = () => {
-        this.windowImageError = true;
-        this.afterErrorImages();
-    };
-
-    onLensImageLoad = () => {
-        // console.log('onLensImageLoad');
-        this.lensImageLoaded = true;
-        this.afterLoadImages();
-    };
-
-    onLensImageError = () => {
-        this.lensImageError = true;
-        this.afterErrorImages();
-    };
-
-    afterLoadImages(): void {
-        if (this.thumbnailImageLoaded && this.windowImageLoaded && this.lensImageLoaded) {
-            this.template2.state = 'loaded';
-
-            if (this.session) {
-                this.calcLensSize();
-                this.move(this.session.prevMouseX, this.session.prevMouseY);
-
-                this.windowImageMeta.z = this.windowImage.width / this.windowImageMeta.w;
-                this.windowImageMeta.z = Math.max(
-                    this.windowImageMeta.z,
-                    this.session.previewContainerRect.width / this.windowImageMeta.w,
-                    this.session.previewContainerRect.height / this.windowImageMeta.h,
-                );
-            }
-        }
-    }
-
-    afterErrorImages(): void {
-        this.template2.state = 'error';
     }
 
     mouseEnter = (event: MouseEvent, endEventName) => {
@@ -302,7 +267,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         };
 
         const onWheel = (wheelEvent: WheelEvent) => {
-            if (!wheelEvent.cancelable || !this.imagesLoaded || !this.wheel) {
+            if (!wheelEvent.cancelable || this.status === 'loaded' || !this.wheel) {
                 return;
             }
 
@@ -310,26 +275,26 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
 
             const delta = Math.sign(wheelEvent.deltaY);
 
-            this.windowImageMeta.z += .01 * -delta;
+            this.z += .01 * -delta;
 
-            this.windowImageMeta.z = Math.max(
-                this.windowImageMeta.z,
-                this.session.previewContainerRect.width / this.windowImageMeta.w,
-                this.session.previewContainerRect.height / this.windowImageMeta.h,
+            this.z = Math.max(
+                this.z,
+                this.session.previewContainerRect.width / this.lensImage.naturalWidth,
+                this.session.previewContainerRect.height / this.lensImage.naturalHeight,
             );
 
-            this.windowImage.style.width = `${this.windowImageMeta.w * this.windowImageMeta.z}px`;
-            this.windowImage.style.height = `${this.windowImageMeta.h * this.windowImageMeta.z}px`;
+            this.lensImage.style.width = `${this.lensImage.naturalWidth * this.z}px`;
+            this.lensImage.style.height = `${this.lensImage.naturalHeight * this.z}px`;
 
-            if (this.windowImage.width != Math.round(this.windowImageMeta.w * this.windowImageMeta.z)) {
-                this.windowImageMeta.z = this.windowImage.width / this.windowImageMeta.w;
-                this.windowImage.style.width = `${this.windowImageMeta.w * this.windowImageMeta.z}px`;
-                this.windowImage.style.height = `${this.windowImageMeta.h * this.windowImageMeta.z}px`;
+            if (this.lensImage.width != Math.round(this.lensImage.naturalWidth * this.z)) {
+                this.z = this.lensImage.width / this.lensImage.naturalWidth;
+                this.lensImage.style.width = `${this.lensImage.naturalWidth * this.z}px`;
+                this.lensImage.style.height = `${this.lensImage.naturalHeight * this.z}px`;
             }
-            if (this.windowImage.height != Math.round(this.windowImageMeta.h * this.windowImageMeta.z)) {
-                this.windowImageMeta.z = this.windowImage.height / this.windowImageMeta.h;
-                this.windowImage.style.width = `${this.windowImageMeta.w * this.windowImageMeta.z}px`;
-                this.windowImage.style.height = `${this.windowImageMeta.h * this.windowImageMeta.z}px`;
+            if (this.lensImage.height != Math.round(this.lensImage.naturalHeight * this.z)) {
+                this.z = this.lensImage.height / this.lensImage.naturalHeight;
+                this.lensImage.style.width = `${this.lensImage.naturalWidth * this.z}px`;
+                this.lensImage.style.height = `${this.lensImage.naturalHeight * this.z}px`;
             }
 
             this.calcLensSize();
@@ -357,19 +322,17 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         this.forceReflow();
         this.template2.activate();
 
-        if (!this.windowImageError && !this.lensImageError) {
-            if (!this.windowImageLoaded || !this.lensImageLoaded) {
-                this.template2.state = 'loading';
-                this.loadWindowImage();
-                this.loadLensImage();
-            }
-        } else {
+        if (this.status === 'error') {
             this.template2.state = 'error';
+        } else if (this.status !== 'loaded') {
+            this.template2.state = 'loading';
+            this.loadWindowImage();
+            this.loadFrameImage();
         }
     };
 
     onMouseMove = (event: MouseEvent) => {
-        if (!this.thumbnailImageLoaded || this.thumbnailImageError) {
+        if (this.isImage && this.thumbImage.status !== 'loaded') {
             return;
         }
 
@@ -381,7 +344,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         this.session.prevMouseX = event.clientX;
         this.session.prevMouseY = event.clientY;
 
-        if (this.windowImageLoaded && this.lensImageLoaded) {
+        if (this.lensImage.status === 'loaded' && this.frameImage.status === 'loaded') {
             cancelAnimationFrame(this.requestAnimationFrameId);
 
             this.requestAnimationFrameId = requestAnimationFrame(() => {
@@ -405,8 +368,8 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         const h = thumbnailRect.height;
 
         this.template2.attach();
-        this.windowBody.appendChild(this.windowImage);
-        this.lensBody.appendChild(this.lensImage);
+        this.template2.windowBody.appendChild(this.lensImage.element);
+        this.template2.lensBody.appendChild(this.frameImage.element);
 
         this.template2.setProperties({
             '--red-zoom-thumbnail-x': `${x}px`,
@@ -419,23 +382,23 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
 
         this.calcLensSize();
 
-        this.lensImage.style.width = `${w}px`;
-        this.lensImage.style.height = `${h}px`;
+        this.frameImage.element.style.width = `${w}px`;
+        this.frameImage.element.style.height = `${h}px`;
 
-        if (this.windowImageLoaded && this.lensImageLoaded) {
+        if (this.lensImage.status === 'loaded' && this.frameImage.status === 'loaded') {
             this.template2.state = 'loaded';
-            this.windowImageMeta.z = this.windowImage.width / this.windowImageMeta.w;
-            this.windowImageMeta.z = Math.max(
-                this.windowImageMeta.z,
-                this.session.previewContainerRect.width / this.windowImageMeta.w,
-                this.session.previewContainerRect.height / this.windowImageMeta.h,
+            this.z = this.lensImage.width / this.lensImage.naturalWidth;
+            this.z = Math.max(
+                this.z,
+                this.session.previewContainerRect.width / this.lensImage.naturalWidth,
+                this.session.previewContainerRect.height / this.lensImage.naturalHeight,
             );
         }
     }
 
     calcLensSize(): void {
-        this.session.previewContainerRect = this.windowBody.getBoundingClientRect();
-        this.session.previewImageRect = this.windowImage.getBoundingClientRect();
+        this.session.previewContainerRect = this.template2.windowBody.getBoundingClientRect();
+        this.session.previewImageRect = this.lensImage.element.getBoundingClientRect();
 
         const thumbnailRect = this.session.thumbnailRect;
         const previewContainerRect = this.session.previewContainerRect;
@@ -548,9 +511,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             return;
         }
 
-        if (this.windowImageLoaded && this.lensImageLoaded && this.thumbnailImageLoaded) {
-            this.template2.state = 'loaded';
-        }
+        this.template2.state = this.status;
     }
 
     forceReflow(): void {

@@ -16,6 +16,8 @@ export class ExampleN07Component {
         {thumbnail: './assets/image-3.jpg', full: './assets/image-3-full.jpg'},
     ];
 
+    currentImage = this.images[0];
+
     options = {
         items: 1,
     };
@@ -34,6 +36,7 @@ export class ExampleN07Component {
     }
 
     translated(data): void {
+        this.currentImage = this.images[data.startPosition];
         // this.items.forEach(a => a.invalidate());
     }
 
