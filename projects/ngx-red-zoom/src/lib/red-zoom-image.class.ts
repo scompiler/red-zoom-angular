@@ -1,4 +1,5 @@
 import { RedZoomStatus } from './red-zoom-status.type';
+import * as vector from './vector';
 
 
 export class RedZoomImage {
@@ -12,6 +13,10 @@ export class RedZoomImage {
         return this.element.height;
     }
 
+    get size(): vector.VectorNumber {
+        return {x: this.width, y: this.height};
+    }
+
     get naturalWidth(): number {
         return this.element.naturalWidth;
     }
@@ -20,8 +25,17 @@ export class RedZoomImage {
         return this.element.naturalHeight;
     }
 
+    get naturalSize(): vector.VectorNumber {
+        return {x: this.naturalWidth, y: this.naturalHeight};
+    }
+
     get style(): CSSStyleDeclaration {
         return this.element.style;
+    }
+
+    set styleSize(value: vector.VectorString) {
+        this.element.style.width = value.x;
+        this.element.style.height = value.y;
     }
 
     get status(): RedZoomStatus {
@@ -50,6 +64,7 @@ export class RedZoomImage {
     constructor(
         public element: HTMLImageElement = null,
         public listener: () => void = () => {},
+        className: string = null,
     ) {
         if (element === null) {
             this.element = document.createElement('img');
@@ -64,6 +79,10 @@ export class RedZoomImage {
             this.element.removeEventListener('load', _listener);
             this.element.removeEventListener('error', _listener);
         };
+
+        if (className !== null) {
+            this.element.classList.add(className);
+        }
     }
 
     reset(): void {

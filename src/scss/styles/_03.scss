@@ -47,26 +47,26 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .4) ;
         padding: 32px;
         visibility: hidden;
     }
-    .red-zoom__lens {
+    .red-zoom__frame {
         display: none;
     }
-    .red-zoom__window {
+    .red-zoom__lens {
         border: $red-zoom-window-border;
         position: absolute;
-        left: var(--red-zoom-thumbnail-x);
-        top: var(--red-zoom-thumbnail-y);
-        width: var(--red-zoom-thumbnail-w);
-        height: var(--red-zoom-thumbnail-h);
+        left: var(--red-zoom-thumb-x);
+        top: var(--red-zoom-thumb-y);
+        width: var(--red-zoom-thumb-w);
+        height: var(--red-zoom-thumb-h);
         overflow: hidden;
         z-index: 1;
 
         opacity: 0;
         transition: opacity $red-zoom-transition-duration;
     }
-    .red-zoom__window-image {
+    .red-zoom__lens-image {
         transform:
-            translateX(var(--red-zoom-preview-image-x, 0px))
-            translateY(var(--red-zoom-preview-image-y, 0px))
+            translateX(var(--red-zoom-lens-image-base-x, 0px))
+            translateY(var(--red-zoom-lens-image-base-y, 0px))
             translateZ(0);
     }
 
@@ -79,23 +79,23 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .4) ;
         }
     }
 
-    &.red-zoom--state--loading {
+    &.red-zoom--status--loading {
         .red-zoom__overlay:before {
             opacity: 1;
             animation-play-state: running;
         }
     }
 
-    &.red-zoom--state--loaded {
-        .red-zoom__window,
-        .red-zoom__lens {
+    &.red-zoom--status--loaded {
+        .red-zoom__lens,
+        .red-zoom__frame {
             opacity: 1;
         }
     }
 
-    &.red-zoom--state--error {
-        .red-zoom__lens,
-        .red-zoom__window {
+    &.red-zoom--status--error {
+        .red-zoom__frame,
+        .red-zoom__lens {
             position: absolute;
             left: 0;
             top: 0;

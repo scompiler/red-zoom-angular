@@ -9,11 +9,11 @@ const makeTemplate = (() => {
             template = document.createElement('template');
             template.innerHTML = `<div class="red-zoom">
                 <div class="red-zoom__overlay"></div>
+                <div class="red-zoom__frame">
+                    <div class="red-zoom__frame-body"></div>
+                </div>
                 <div class="red-zoom__lens">
                     <div class="red-zoom__lens-body"></div>
-                </div>
-                <div class="red-zoom__window">
-                    <div class="red-zoom__window-body"></div>
                 </div>
                 <div class="red-zoom__error">
                     <div class="red-zoom__error-message"></div>
@@ -27,15 +27,13 @@ const makeTemplate = (() => {
 
 
 export class RedZoomTemplate {
-    _state: RedZoomStatus = null;
+    _status: RedZoomStatus = null;
 
     template: HTMLDivElement;
-    window: HTMLDivElement;
-    windowBody: HTMLDivElement;
-    windowImage: HTMLImageElement;
     lens: HTMLDivElement;
     lensBody: HTMLDivElement;
-    lensImage: HTMLImageElement;
+    frame: HTMLDivElement;
+    frameBody: HTMLDivElement;
     error: HTMLDivElement;
     errorMessage: HTMLDivElement;
 
@@ -43,28 +41,28 @@ export class RedZoomTemplate {
 
     constructor() {
         this.template = makeTemplate();
-        this.window = this.template.querySelector('.red-zoom__window');
-        this.windowBody = this.template.querySelector('.red-zoom__window-body');
         this.lens = this.template.querySelector('.red-zoom__lens');
         this.lensBody = this.template.querySelector('.red-zoom__lens-body');
+        this.frame = this.template.querySelector('.red-zoom__frame');
+        this.frameBody = this.template.querySelector('.red-zoom__frame-body');
         this.error = this.template.querySelector('.red-zoom__error');
         this.errorMessage = this.template.querySelector('.red-zoom__error-message');
 
         this.template.addEventListener('transitionend', this.onTransitionEnd);
-        this.state = 'pending';
+        this.status = 'pending';
     }
 
-    set state(state: RedZoomStatus) {
-        if (this._state !== null) {
-            this.template.classList.remove(`red-zoom--state--${this._state}`);
+    set status(state: RedZoomStatus) {
+        if (this._status !== null) {
+            this.template.classList.remove(`red-zoom--status--${this._status}`);
         }
 
-        this._state = state;
-        this.template.classList.add(`red-zoom--state--${state}`);
+        this._status = state;
+        this.template.classList.add(`red-zoom--status--${state}`);
     }
 
-    get state(): RedZoomStatus {
-        return this._state;
+    get status(): RedZoomStatus {
+        return this._status;
     }
 
     set classes(classes: string) {

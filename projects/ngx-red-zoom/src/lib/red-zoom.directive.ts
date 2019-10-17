@@ -14,19 +14,18 @@ import { isPlatformBrowser } from '@angular/common';
 import { RedZoomTemplate } from './red-zoom-template.class';
 import { RedZoomStatus } from './red-zoom-status.type';
 import { RedZoomImage } from './red-zoom-image.class';
+import * as vector from './vector';
+import { fromMouseEvent } from './vector';
 
 
 interface Session {
     active: boolean;
-    thumbnailRect: DOMRect | ClientRect;
-    previewImageRect: DOMRect | ClientRect;
-    previewContainerRect: DOMRect | ClientRect;
-    lensW: number;
-    lensH: number;
-    scrollX: number;
-    scrollY: number;
-    prevMouseX: number;
-    prevMouseY: number;
+    thumbSize: vector.VectorNumber;
+    thumbPos: vector.VectorNumber;
+    lensContainerSize: vector.VectorNumber;
+    lensImageSize: vector.VectorNumber;
+    frameSize: vector.VectorNumber;
+    mousePos: vector.VectorNumber;
     destroy: () => void;
 }
 
@@ -40,7 +39,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
 
     @Input('redZoom') lensSrc: string;
 
-    @Input('redZoomThumbnail') thumbSrc: string;
+    @Input('redZoomThumb') thumbSrc: string;
 
     @Input('redZoomLazy') lazy: boolean = false;
 
@@ -56,10 +55,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
     thumbImage: RedZoomImage;
     frameImage: RedZoomImage;
     lensImage: RedZoomImage;
-    z = 1;
-
-    unlisten: () => void  = () => {};
-
+    scaleFactor = 1;
     session: Session;
     requestAnimationFrameId = null;
 
@@ -109,6 +105,8 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         this.unlisten = this.renderer.listen(this.element.nativeElement, startEventName, e => this.mouseEnter(e, endEventName));
     }
 
+    unlisten: () => void  = () => {};
+
     onImageChangeStatus = (() => {
         let previousStatus;
 
@@ -124,25 +122,20 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
     })();
 
     onImageChangeStatusDistinct = () => {
-        this.template.state = this.status;
+        this.template.status = this.status;
 
         if (this.status === 'loaded') {
             this.template.setProperties({
-                '--red-zoom-preview-w': `${this.lensImage.naturalWidth}px`,
-                '--red-zoom-preview-h': `${this.lensImage.naturalHeight}px`,
+                '--red-zoom-lens-image-natural-w': `${this.lensImage.naturalWidth}px`,
+                '--red-zoom-lens-image-natural-h': `${this.lensImage.naturalHeight}px`,
             });
 
             if (this.session) {
-                this.calcZoomRatio();
+                this.calcScaleFactor();
                 this.calcFrameSize();
-                this.move(this.session.prevMouseX, this.session.prevMouseY);
+                this.move();
 
-                this.z = this.lensImage.width / this.lensImage.naturalWidth;
-                this.z = Math.max(
-                    this.z,
-                    this.session.previewContainerRect.width / this.lensImage.naturalWidth,
-                    this.session.previewContainerRect.height / this.lensImage.naturalHeight,
-                );
+                this.scaleFactor = this.lensImage.width / this.lensImage.naturalWidth;
             }
         }
     };
@@ -153,23 +146,20 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         }
 
         this.zone.runOutsideAngular(() => {
-            if (this.isImage) {
-                this.thumbImage = new RedZoomImage(this.element.nativeElement, this.onImageChangeStatus);
-            }
-
             this.template = new RedZoomTemplate();
             this.template.classes = this.classes;
             this.template.errorMessage.innerHTML = this.errorMessage;
 
-            this.frameImage = new RedZoomImage(null, this.onImageChangeStatus);
-            this.frameImage.element.classList.add('red-zoom__lens-image');
+            if (this.isImage) {
+                this.thumbImage = new RedZoomImage(this.element.nativeElement, this.onImageChangeStatus);
+            }
 
-            this.lensImage = new RedZoomImage(null, this.onImageChangeStatus);
-            this.lensImage.element.classList.add('red-zoom__window-image');
+            this.frameImage = new RedZoomImage(null, this.onImageChangeStatus, 'red-zoom__frame-image');
+            this.lensImage = new RedZoomImage(null, this.onImageChangeStatus, 'red-zoom__lens-image');
 
             if (!this.lazy) {
-                this.loadWindowImage();
                 this.loadFrameImage();
+                this.loadLensImage();
             }
 
             this.listen();
@@ -225,7 +215,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         this.lensImage.reset();
 
         if (!this.lazy || this.session) {
-            this.loadWindowImage();
+            this.loadLensImage();
         }
     }
 
@@ -237,7 +227,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         return this.src;
     }
 
-    loadWindowImage() {
+    loadLensImage() {
         if (this.lensImage.status !== 'loaded') {
             this.lensImage.src = this.lensSrc;
         }
@@ -256,15 +246,12 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
 
         this.session = {
             active: false,
-            thumbnailRect: null,
-            previewContainerRect: null,
-            previewImageRect: null,
-            lensW: 0,
-            lensH: 0,
-            scrollX: null,
-            scrollY: null,
-            prevMouseX: event.clientX,
-            prevMouseY: event.clientY,
+            thumbSize: null,
+            thumbPos: null,
+            lensContainerSize: null,
+            lensImageSize: null,
+            frameSize: null,
+            mousePos: fromMouseEvent(event),
             destroy: () => {},
         };
 
@@ -277,9 +264,9 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
 
             const delta = Math.sign(wheelEvent.deltaY);
 
-            this.z += .01 * -delta;
+            this.scaleFactor += .01 * -delta;
 
-            this.calcZoomRatio();
+            this.calcScaleFactor();
             this.calcFrameSize();
             this.onMouseMove(wheelEvent);
         };
@@ -305,11 +292,8 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         this.forceReflow();
         this.template.activate();
 
-        if (this.status === 'error') {
-            this.template.state = 'error';
-        } else if (this.status !== 'loaded') {
-            this.template.state = 'loading';
-            this.loadWindowImage();
+        if (this.status !== 'loaded') {
+            this.loadLensImage();
             this.loadFrameImage();
         }
 
@@ -326,179 +310,130 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             this.initSession();
         }
 
-        this.session.prevMouseX = event.clientX;
-        this.session.prevMouseY = event.clientY;
+        this.session.mousePos = vector.fromMouseEvent(event);
 
         if (this.status === 'loaded') {
             cancelAnimationFrame(this.requestAnimationFrameId);
 
-            this.requestAnimationFrameId = requestAnimationFrame(() => {
-                this.move(event.clientX, event.clientY);
-            });
+            this.requestAnimationFrameId = requestAnimationFrame(() => this.move());
         }
     };
 
     initSession(): void {
-        this.session.thumbnailRect = this.element.nativeElement.getBoundingClientRect();
-        this.session.scrollX = scrollX;
-        this.session.scrollY = scrollY;
+        const thumbRect = this.element.nativeElement.getBoundingClientRect();
 
-        const thumbnailRect = this.session.thumbnailRect;
-
-        const x = thumbnailRect.left + scrollX;
-        const y = thumbnailRect.top + scrollY;
-        const w = thumbnailRect.width;
-        const h = thumbnailRect.height;
+        this.session.thumbSize = vector.fromRectSize(thumbRect);
+        this.session.thumbPos = vector.add(vector.fromRectPos(thumbRect), vector.fromScroll());
 
         this.template.attach();
-        this.template.windowBody.appendChild(this.lensImage.element);
-        this.template.lensBody.appendChild(this.frameImage.element);
+        this.template.lensBody.appendChild(this.lensImage.element);
+        this.template.frameBody.appendChild(this.frameImage.element);
 
         this.template.setProperties({
-            '--red-zoom-thumbnail-x': `${x}px`,
-            '--red-zoom-thumbnail-y': `${y}px`,
-            '--red-zoom-thumbnail-w': `${w}px`,
-            '--red-zoom-thumbnail-h': `${h}px`,
-            '--red-zoom-thumbnail-size-max': `${Math.max(w, h)}px`,
-            '--red-zoom-thumbnail-size-min': `${Math.min(w, h)}px`,
+            '--red-zoom-thumb-x': `${this.session.thumbPos.x}px`,
+            '--red-zoom-thumb-y': `${this.session.thumbPos.y}px`,
+            '--red-zoom-thumb-w': `${this.session.thumbSize.x}px`,
+            '--red-zoom-thumb-h': `${this.session.thumbSize.y}px`,
+            '--red-zoom-thumb-size-max': `${vector.flatMax(this.session.thumbSize)}px`,
+            '--red-zoom-thumb-size-min': `${vector.flatMin(this.session.thumbSize)}px`,
         });
 
-        this.frameImage.element.style.width = `${w}px`;
-        this.frameImage.element.style.height = `${h}px`;
-
         if (this.status === 'loaded') {
-            this.calcZoomRatio();
+            this.calcScaleFactor();
             this.calcFrameSize();
 
-            this.z = this.lensImage.width / this.lensImage.naturalWidth;
-            this.z = Math.max(
-                this.z,
-                this.session.previewContainerRect.width / this.lensImage.naturalWidth,
-                this.session.previewContainerRect.height / this.lensImage.naturalHeight,
-            );
+            this.scaleFactor = this.lensImage.width / this.lensImage.naturalWidth;
         }
     }
 
-    calcZoomRatio(): void {
-        this.lensImage.style.width = `${this.lensImage.naturalWidth * this.z}px`;
-        this.lensImage.style.height = `${this.lensImage.naturalHeight * this.z}px`;
+    calcScaleFactor(): void {
+        const scaledSize = vector.mul(this.lensImage.naturalSize, this.scaleFactor);
 
-        if (this.lensImage.width != Math.round(this.lensImage.naturalWidth * this.z)) {
-            this.z = this.lensImage.width / this.lensImage.naturalWidth;
+        this.lensImage.styleSize = vector.map(scaledSize, c => `${c}px`);
 
-            this.lensImage.style.width = `${this.lensImage.naturalWidth * this.z}px`;
-            this.lensImage.style.height = `${this.lensImage.naturalHeight * this.z}px`;
-        }
-        if (this.lensImage.height != Math.round(this.lensImage.naturalHeight * this.z)) {
-            this.z = this.lensImage.height / this.lensImage.naturalHeight;
+        const scaleFactorIsLimited = vector.flatOr(
+            vector.notEqual(this.lensImage.size, vector.round(scaledSize))
+        );
 
-            this.lensImage.style.width = `${this.lensImage.naturalWidth * this.z}px`;
-            this.lensImage.style.height = `${this.lensImage.naturalHeight * this.z}px`;
+        if (scaleFactorIsLimited) {
+            this.scaleFactor = vector.flatMax(vector.div(this.lensImage.size, this.lensImage.naturalSize));
+
+            this.lensImage.styleSize = vector.map(vector.mul(this.lensImage.naturalSize, this.scaleFactor), c => `${c}px`);
         }
     }
 
     calcFrameSize(): void {
-        this.session.previewContainerRect = this.template.windowBody.getBoundingClientRect();
-        this.session.previewImageRect = this.lensImage.element.getBoundingClientRect();
+        this.session.lensContainerSize = vector.fromRectSize(this.template.lensBody.getBoundingClientRect());
+        this.session.lensImageSize = vector.fromRectSize(this.lensImage.element.getBoundingClientRect());
 
-        const thumbnailRect = this.session.thumbnailRect;
-        const previewContainerRect = this.session.previewContainerRect;
-        const previewImageRect = this.session.previewImageRect;
-
-        this.session.lensW = Math.min(thumbnailRect.width, Math.round(thumbnailRect.width * (previewContainerRect.width / previewImageRect.width)));
-        this.session.lensH = Math.min(thumbnailRect.height, Math.round(thumbnailRect.height * (previewContainerRect.height / previewImageRect.height)));
+        this.session.frameSize = vector.min(
+            this.session.thumbSize,
+            vector.round(
+                vector.mul(
+                    this.session.thumbSize, vector.div(this.session.lensContainerSize, this.session.lensImageSize)
+                )
+            )
+        );
 
         this.template.setProperties({
-            '--red-zoom-lens-w': `${this.session.lensW}px`,
-            '--red-zoom-lens-h': `${this.session.lensH}px`,
+            '--red-zoom-frame-w': `${this.session.frameSize.x}px`,
+            '--red-zoom-frame-h': `${this.session.frameSize.y}px`,
         });
     }
 
-    move(x: number, y: number): void {
+    move(): void {
         if (!this.session) {
             return;
         }
 
-        const thumbnailRect = this.session.thumbnailRect;
-        const previewContainerRect = this.session.previewContainerRect;
-        const previewImageRect = this.session.previewImageRect;
-        const lensW = this.session.lensW;
-        const lensH = this.session.lensH;
-        const scrollDeltaX = this.session.scrollX - scrollX;
-        const scrollDeltaY = this.session.scrollY - scrollY;
-        const thumbnailLeft = thumbnailRect.left + scrollDeltaX;
-        const thumbnailTop = thumbnailRect.top + scrollDeltaY;
+        const { mousePos, thumbSize, thumbPos, frameSize, lensContainerSize, lensImageSize } = this.session;
 
         this.template.setProperties({
-            '--red-zoom-mouse-x': `${x + scrollX}px`,
-            '--red-zoom-mouse-y': `${y + scrollY}px`,
+            '--red-zoom-mouse-x': `${mousePos.x}px`,
+            '--red-zoom-mouse-y': `${mousePos.y}px`,
         });
 
-        const lensXr = x - lensW / 2;
-        const lensX = Math.round(Math.min(
-            thumbnailLeft + thumbnailRect.width - lensW,
-            Math.max(
-                thumbnailLeft,
-                lensXr
-            )
-        ));
-        const lensYr = y - lensH / 2;
-        const lensY = Math.min(
-            thumbnailTop + thumbnailRect.height - lensH,
-            Math.max(
-                thumbnailTop,
-                lensYr
-            )
+        const framePos = vector.sub(mousePos, vector.div(frameSize, 2));
+        const frameLimitedPos = vector.min(
+            vector.max(framePos, thumbPos),
+            vector.sub(vector.add(thumbPos, thumbSize), frameSize),
         );
+        const frameImagePos = vector.sub(thumbPos, vector.round(frameLimitedPos));
 
         this.template.setProperties({
-            '--red-zoom-lens-x': `${Math.round(lensX) + scrollX}px`,
-            '--red-zoom-lens-y': `${Math.round(lensY) + scrollY}px`,
-            '--red-zoom-lens-image-x': `${Math.round(-lensX + thumbnailLeft)}px`,
-            '--red-zoom-lens-image-y': `${Math.floor(-lensY + thumbnailTop)}px`,
+            '--red-zoom-frame-x': `${Math.round(frameLimitedPos.x)}px`,
+            '--red-zoom-frame-y': `${Math.round(frameLimitedPos.y)}px`,
+            '--red-zoom-frame-image-x': `${Math.round(frameImagePos.x)}px`,
+            '--red-zoom-frame-image-y': `${Math.round(frameImagePos.y)}px`,
         });
 
-        const posX = (thumbnailRect.width - lensW === 0 ? 0 : Math.max(
-            0,
-            Math.min(
-                previewImageRect.width - previewContainerRect.width,
-                ((lensX - thumbnailLeft) / (thumbnailRect.width - lensW)) * (previewImageRect.width - previewContainerRect.width)
-            )
-        )) - Math.max(
-            0,
-            (previewContainerRect.width - previewImageRect.width) / 2,
+        const frameRelativePos = vector.map(vector.sub(thumbSize, frameSize), (value, axis) => {
+            return value === 0 ? 0 : (frameLimitedPos[axis] - thumbPos[axis]) / value;
+        });
+        const lensImagePos = vector.mul(
+            frameRelativePos,
+            vector.sub(lensImageSize, lensContainerSize)
         );
-        const posX2 = (thumbnailRect.width - lensW === 0 ? 0 : ((lensXr - thumbnailLeft) / (thumbnailRect.width - lensW)) * (previewImageRect.width - previewContainerRect.width)) - Math.max(
-            0,
-            (previewContainerRect.width - previewImageRect.width) / 2,
-        );
-        const posY = (thumbnailRect.height - lensH === 0 ? 0 : Math.max(
-            0,
-            Math.min(
-                previewImageRect.height - previewContainerRect.height,
-                ((lensY - thumbnailTop) / (thumbnailRect.height - lensH)) * (previewImageRect.height - previewContainerRect.height)
-            )
-        )) - Math.max(
-            0,
-            (previewContainerRect.height - previewImageRect.height) / 2,
-        );
-        const posY2 = (thumbnailRect.height - lensH === 0 ? 0 : ((lensYr - thumbnailTop) / (thumbnailRect.height - lensH)) * (previewImageRect.height - previewContainerRect.height)) - Math.max(
-            0,
-            (previewContainerRect.height - previewImageRect.height) / 2,
+        const lensImageCenterOffset = vector.max(vector.div(vector.sub(lensContainerSize, lensImageSize), 2), 0);
+        const lensImageFrameOffset = vector.mul(
+            vector.div(vector.sub(framePos, frameLimitedPos), vector.div(frameSize, 2)),
+            vector.div(lensContainerSize, 2)
         );
 
         this.template.setProperties({
-            '--red-zoom-preview-image-x': `${-posX}px`,
-            '--red-zoom-preview-image-y': `${-posY}px`,
-            '--red-zoom-preview-image-offset-x': `${posX === posX2 ? 0 : posX - posX2}px`,
-            '--red-zoom-preview-image-offset-y': `${posY === posY2 ? 0 : posY - posY2}px`,
+            '--red-zoom-lens-image-base-x': `${-lensImagePos.x}px`,
+            '--red-zoom-lens-image-base-y': `${-lensImagePos.y}px`,
+            '--red-zoom-lens-image-center-offset-x': `${lensImageCenterOffset.x}px`,
+            '--red-zoom-lens-image-center-offset-y': `${lensImageCenterOffset.y}px`,
+            '--red-zoom-lens-image-frame-offset-x': `${-lensImageFrameOffset.x}px`,
+            '--red-zoom-lens-image-frame-offset-y': `${-lensImageFrameOffset.y}px`,
         });
     }
 
     invalidate() {
         if (this.session && this.session.active) {
             this.initSession();
-            this.move(this.session.prevMouseX, this.session.prevMouseY);
+            this.move();
         }
     }
 
@@ -509,7 +444,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
     enable(): void {
         if (this.session && this.session.active) {
             this.initSession();
-            this.move(this.session.prevMouseX, this.session.prevMouseY);
+            this.move();
         }
 
         this.template.template.classList.remove('red-zoom--disabled');

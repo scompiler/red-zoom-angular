@@ -51,7 +51,7 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .2)  !default;
 
         z-index: 1;
     }
-    .red-zoom__lens {
+    .red-zoom__frame {
         opacity: 0;
         transition: opacity $red-zoom-transition-duration;
 
@@ -69,28 +69,28 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .2)  !default;
 
         z-index: 1;
     }
-    .red-zoom__window {
+    .red-zoom__lens {
         box-shadow: $red-zoom-window-shadow;
         border: $red-zoom-window-border;
         position: absolute;
-        transform: translateX(calc(var(--red-zoom-thumbnail-w, 0px) + 32px));
-        left: var(--red-zoom-thumbnail-x, 0px);
-        top: var(--red-zoom-thumbnail-y, 0px);
-        width: calc(var(--red-zoom-thumbnail-w, 0px) * 2);
-        height: var(--red-zoom-thumbnail-h, 0px);
+        transform: translateX(calc(var(--red-zoom-thumb-w, 0px) + 32px));
+        left: var(--red-zoom-thumb-x, 0px);
+        top: var(--red-zoom-thumb-y, 0px);
+        width: calc(var(--red-zoom-thumb-w, 0px) * 2);
+        height: var(--red-zoom-thumb-h, 0px);
         z-index: 2;
 
         opacity: 0;
         transition: opacity $red-zoom-transition-duration;
     }
-    .red-zoom__window-image {
-        min-width: 100%;
+    .red-zoom__lens-image {
+        //min-width: 100%;
         min-height: 100%;
     }
 
-    &.red-zoom--state--error {
-        .red-zoom__lens,
-        .red-zoom__window {
+    &.red-zoom--status--error {
+        .red-zoom__frame,
+        .red-zoom__lens {
             position: absolute;
             left: 0;
             top: 0;
@@ -108,21 +108,21 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .2)  !default;
             opacity: 1;
         }
 
-        &.red-zoom--state--loading {
+        &.red-zoom--status--loading {
             .red-zoom__overlay:before {
                 opacity: 1;
                 animation-play-state: running;
             }
         }
 
-        &.red-zoom--state--loaded {
-            .red-zoom__window,
-            .red-zoom__lens {
+        &.red-zoom--status--loaded {
+            .red-zoom__lens,
+            .red-zoom__frame {
                 opacity: 1;
             }
         }
 
-        &.red-zoom--state--error {
+        &.red-zoom--status--error {
             .red-zoom__overlay {
                 background: rgba(#e50032, .8);
             }
@@ -137,8 +137,8 @@ $red-zoom-window-shadow:       0 1px 9px rgba(#000, .2)  !default;
         visibility: hidden;
 
         .red-zoom__overlay,
-        .red-zoom__lens,
-        .red-zoom__window {
+        .red-zoom__frame,
+        .red-zoom__lens {
             transition-duration: 0s !important;
             opacity: 0 !important;
         }

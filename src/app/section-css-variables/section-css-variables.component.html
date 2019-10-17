@@ -31,6 +31,18 @@
             <td><i>TODO: Describe.</i></td>
         </tr>
         <tr>
+            <th>— div.red-zoom__frame</th>
+            <td><i>TODO: Describe.</i></td>
+        </tr>
+        <tr>
+            <th>—— div.red-zoom__frame-body</th>
+            <td><i>TODO: Describe.</i></td>
+        </tr>
+        <tr>
+            <th>——— img.red-zoom__frame-image</th>
+            <td><i>TODO: Describe.</i></td>
+        </tr>
+        <tr>
             <th>— div.red-zoom__lens</th>
             <td><i>TODO: Describe.</i></td>
         </tr>
@@ -40,18 +52,6 @@
         </tr>
         <tr>
             <th>——— img.red-zoom__lens-image</th>
-            <td><i>TODO: Describe.</i></td>
-        </tr>
-        <tr>
-            <th>— div.red-zoom__window</th>
-            <td><i>TODO: Describe.</i></td>
-        </tr>
-        <tr>
-            <th>—— div.red-zoom__window-body</th>
-            <td><i>TODO: Describe.</i></td>
-        </tr>
-        <tr>
-            <th>——— img.red-zoom__window-image</th>
             <td><i>TODO: Describe.</i></td>
         </tr>
         </tbody>
@@ -99,6 +99,11 @@
                 The path to the full version of the image. Required. Can be empty.<br>
                 <i>If left blank, the path to the full version of the image will be the same as in the <code>src</code> attribute TODO: not implemented.</i>
             </td>
+        </tr>
+        <tr>
+            <th>redZoomThumb</th>
+            <td>string</td>
+            <td>TODO: Describe.</td>
         </tr>
         <tr>
             <th>redZoomLazy</th>
@@ -174,44 +179,52 @@
     <table>
         <tbody>
         <tr>
-            <th>--red-zoom-thumbnail-[x/y]</th>
+            <th>--red-zoom-thumb-[x/y]</th>
             <td>Thumbnail position relative to the page in pixels.</td>
         </tr>
         <tr>
-            <th>--red-zoom-thumbnail-[w/h]</th>
+            <th>--red-zoom-thumb-[w/h]</th>
             <td>Thumbnail size in pixels.</td>
         </tr>
         <tr>
-            <th>--red-zoom-thumbnail-size-[max/min]</th>
+            <th>--red-zoom-thumb-size-[max/min]</th>
             <td>Max/min size of thumbnail in pixels.</td>
         </tr>
         <tr>
-            <th>--red-zoom-preview-[w/h]</th>
-            <td>Original size of preview image in pixels.</td>
+            <th>--red-zoom-frame-[x/y]</th>
+            <td>Position of the frame relative to the page in pixels.</td>
         </tr>
         <tr>
-            <th>--red-zoom-lens-[x/y]</th>
-            <td>Position of the lens relative to the page in pixels.</td>
+            <th>--red-zoom-frame-[w/h]</th>
+            <td>Size of the frame in pixels.</td>
         </tr>
         <tr>
-            <th>--red-zoom-lens-[w/h]</th>
-            <td>Size of the lens in pixels.</td>
+            <th>--red-zoom-frame-image-[x/y]</th>
+            <td>Position of the frame image relative to the frame in pixels.</td>
+        </tr>
+        <tr>
+            <th>--red-zoom-lens-image-natural-[w/h]</th>
+            <td>Original size of lens image in pixels.</td>
         </tr>
         <tr>
             <th>--red-zoom-lens-image-[x/y]</th>
-            <td>Position of the lens image relative to the lens in pixels.</td>
+            <td>Lens image position relative to the lens in pixels.</td>
+        </tr>
+        <tr>
+            <th>--red-zoom-lens-image-center-offset-[x/y]</th>
+            <td>TODO: describe.</td>
+        </tr>
+        <tr>
+            <th>--red-zoom-lens-image-frame-offset-[x/y]</th>
+            <td>TODO: describe.</td>
+        </tr>
+        <tr>
+            <th>--red-zoom-scale-factor</th>
+            <td>TODO: Not implemented.</td>
         </tr>
         <tr>
             <th>--red-zoom-mouse-[x/y]</th>
             <td>Mouse position relative to the page in pixels.</td>
-        </tr>
-        <tr>
-            <th>--red-zoom-preview-image-[x/y]</th>
-            <td>Preview image position relative to the preview in pixels.</td>
-        </tr>
-        <tr>
-            <th>--red-zoom-preview-image-offset-[x/y]</th>
-            <td>TODO: describe.</td>
         </tr>
         </tbody>
     </table>
