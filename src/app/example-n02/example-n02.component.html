@@ -1,26 +1,60 @@
 <div class="example__body">
     <div class="example__image">
-        <img src="./assets/image-2.jpg" alt="" width="320" redZoom="./assets/image-2-full.jpg" redZoomClass="red-zoom--style--01" [redZoomLazy]="false" class="zoom">
+        <img src="./assets/image-2.jpg" alt="" width="320" redZoom="./assets/image-2-full.jpg" redZoomClass="red-zoom--style--01 red-zoom--mode--{{ mode.value }}" [redZoomLazy]="false" class="zoom">
     </div>
     <div class="example__content">
         <div class="typography">
-            <h2>Size And Position Of The Preview</h2>
+            <h2>Size And Position Of The Lens</h2>
 
-            You can set any size of preview image via CSS/SCSS, red-zoom automatically detect it, and you do not need to edit ts/html files for this purpose.
-            This also means that you can set different sizes of preview depend on screen size using CSS media queries.
+            <p>
+                You can set any size of the lens image via CSS/SCSS, red-zoom automatically detect it,
+                and you do not need to edit ts/html files for this purpose.
+                This also means that you can set different sizes of the lens depend on screen size using CSS media queries.
+            </p>
 
-            <p>Use the following CSS variables to position the preview relative to the thumbnail:</p>
+            <div class="button-group">
+                <label>
+                    <input type="radio" [formControl]="mode" value="square">
+                    <span>Square</span>
+                </label>
+                <label>
+                    <input type="radio" [formControl]="mode" value="landscape">
+                    <span>Landscape</span>
+                </label>
+                <label>
+                    <input type="radio" [formControl]="mode" value="portrait">
+                    <span>Portrait</span>
+                </label>
+                <label>
+                    <input type="radio" [formControl]="mode" value="fixed">
+                    <span>Fixed</span>
+                </label>
+                <label>
+                    <input type="radio" [formControl]="mode" value="overlay">
+                    <span>Overlay</span>
+                </label>
+            </div>
 
-            <ul>
-                <li>--red-zoom-thumb-[x/y] – Thumbnail position relative to the page.</li>
-                <li>--red-zoom-thumb-[w/h] – Thumbnail size in pixels.</li>
-                <li>--red-zoom-thumb-size-[max/min] – Thumbnail size in pixels. TODO: not implemented</li>
-            </ul>
+            <p>
+                Use the following CSS variables to position the lens relative to the thumbnail:
+            </p>
 
-            <button>Square</button>
-            <button>Landscape</button>
-            <button>Portrait</button>
-            <button>Fixed (200x200)</button>
+            <table>
+                <tbody>
+                <tr>
+                    <th>--red-zoom-thumb-[x/y]</th>
+                    <td>Thumbnail position relative to the page in pixels.</td>
+                </tr>
+                <tr>
+                    <th>--red-zoom-thumb-[w/h]</th>
+                    <td>Thumbnail size in pixels.</td>
+                </tr>
+                <tr>
+                    <th>--red-zoom-thumb-size-[max/min]</th>
+                    <td>Max/min size of thumbnail in pixels.</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

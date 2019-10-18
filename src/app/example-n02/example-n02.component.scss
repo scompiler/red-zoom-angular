@@ -1,0 +1,47 @@
+.red-zoom--mode--square {
+    .red-zoom__lens {
+        left: var(--red-zoom-thumb-x, 0px);
+        top: var(--red-zoom-thumb-y, 0px);
+        width: var(--red-zoom-thumb-w, 0px);
+        height: var(--red-zoom-thumb-w, 0px);
+    }
+}
+.red-zoom--mode--landscape {
+    .red-zoom__lens {
+        left: var(--red-zoom-thumb-x, 0px);
+        top: var(--red-zoom-thumb-y, 0px);
+        width: var(--red-zoom-thumb-h, 0px);
+        height: var(--red-zoom-thumb-w, 0px);
+    }
+}
+.red-zoom--mode--portrait {
+    .red-zoom__lens {
+        left: var(--red-zoom-thumb-x, 0px);
+        top: var(--red-zoom-thumb-y, 0px);
+        width: var(--red-zoom-thumb-w, 0px);
+        height: var(--red-zoom-thumb-h, 0px);
+    }
+}
+.red-zoom--mode--fixed {
+    .red-zoom__lens {
+        transform: none;
+        position: fixed;
+        left: 0;
+        top: auto;
+        bottom: 0;
+        width: 320px;
+        height: 320px;
+    }
+}
+.red-zoom--mode--overlay {
+    .red-zoom__lens {
+        transform: none;
+        left: calc(var(--red-zoom-thumb-x, 0px) - 12px);
+        top: calc(var(--red-zoom-thumb-y, 0px) - 12px);
+        width: calc(var(--red-zoom-thumb-w, 0px) + 24px);
+        height: calc(var(--red-zoom-thumb-h, 0px) + 24px);
+    }
+    .red-zoom__frame {
+        display: none;
+    }
+}

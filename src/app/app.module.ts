@@ -15,6 +15,7 @@ import { ExampleN04Component } from './example-n04/example-n04.component';
 import { ExampleN05Component } from './example-n05/example-n05.component';
 import { ExampleN06Component } from './example-n06/example-n06.component';
 import { ExampleN07Component } from './example-n07/example-n07.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
     declarations: [
@@ -35,6 +36,7 @@ import { ExampleN07Component } from './example-n07/example-n07.component';
         Angulartics2Module.forRoot(),
         CarouselModule,
         NoopAnimationsModule,
+        ReactiveFormsModule,
     ],
     providers: [],
     bootstrap: [AppComponent]
