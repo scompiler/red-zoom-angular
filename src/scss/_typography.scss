@@ -26,11 +26,18 @@
     }
     code {
         background: #ebebeb;
-        color: #666;
+        color: #4d4d4d;
         font-family: 'Courier New', sans-serif;
         font-size: 14px;
-        padding: 3px 9px;
+        padding: 0 4px;
         border-radius: 2px;
+    }
+    pre {
+        margin: 12px 0 20px;
+    }
+    pre code {
+        display: block;
+        padding: 4px 9px;
     }
     table {
         margin: 1.25rem 0;
