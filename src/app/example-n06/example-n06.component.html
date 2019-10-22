@@ -2,7 +2,7 @@
     <div class="example__image">
         <div class="gallery">
             <div class="gallery__image">
-                <img [src]="currentImage.thumbnail" alt="" width="320" [redZoom]="currentImage.full" redZoomClass="red-zoom--style--01" [redZoomLazy]="true" class="zoom">
+                <img [src]="currentImage.thumbnail" alt="" width="320" [redZoom]="currentImage.full" redZoomClass="red-zoom--style--window" [redZoomLazy]="true" class="zoom">
             </div>
             <ul class="gallery__thumbnails-list">
                 <li class="gallery__thumbnail" [ngClass]="{'gallery__thumbnail--current': image === currentImage}" *ngFor="let image of images">

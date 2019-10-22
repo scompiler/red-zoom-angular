@@ -1,0 +1,101 @@
+@mixin red-zoom-loader(
+    $loader-color: #fff,
+    $loader-size:  40px
+) {
+    position: relative;
+    display: block;
+    content: '';
+    border-width: 2px;
+    border-style: solid;
+    border-color: rgba($loader-color, .2);
+    border-top-color: rgba($loader-color, 1);
+    left: calc(50% - #{$loader-size / 2});
+    top: calc(50% - #{$loader-size / 2});
+    width: $loader-size;
+    height: $loader-size;
+    border-radius: 100%;
+    animation-name: red-zoom-loader-animation;
+    animation-duration: .5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-play-state: paused;
+    opacity: 0;
+}
+
+@mixin red-zoom-states(
+    $transition-duration,
+    $error-overlay-color,
+    $error-font-color
+) {
+    .red-zoom__error {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: $error-font-color;
+        padding: 32px;
+        visibility: hidden;
+        z-index: 1;
+        opacity: 0;
+        transition:
+            visibility 0s $transition-duration,
+            opacity $transition-duration;
+    }
+
+    &.red-zoom--status--error {
+        .red-zoom__frame,
+        .red-zoom__lens {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0;
+            height: 0;
+            display: none;
+        }
+        .red-zoom__overlay {
+            background: $error-overlay-color;
+        }
+    }
+
+    &.red-zoom--active {
+        transition-delay: 0s;
+        visibility: visible;
+
+        .red-zoom__overlay {
+            opacity: 1;
+        }
+
+        &.red-zoom--status--loading {
+            .red-zoom__overlay:before {
+                opacity: 1;
+                animation-play-state: running;
+            }
+        }
+
+        &.red-zoom--status--loaded {
+            .red-zoom__lens,
+            .red-zoom__frame {
+                opacity: 1;
+            }
+        }
+
+        &.red-zoom--status--error {
+            .red-zoom__error {
+                visibility: visible;
+                transition-delay: 0s;
+                opacity: 1;
+            }
+        }
+    }
+
+    &.red-zoom--disabled {
+        transition-delay: 0s;
+        visibility: hidden;
+
+        .red-zoom__overlay,
+        .red-zoom__frame,
+        .red-zoom__lens {
+            transition-duration: 0s !important;
+            opacity: 0 !important;
+        }
+    }
+}

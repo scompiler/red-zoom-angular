@@ -1,0 +1,17 @@
+@import './mixins/style-window';
+
+
+.red-zoom--style--window {
+    @include red-zoom-style-window(
+        $overlay-color: rgba(#e50032, .5)
+    );
+
+    .red-zoom__lens {
+        --window-x: calc(var(--red-zoom-thumb-x, 0px) + var(--red-zoom-thumb-w, 0px) + 32px);
+
+        left: var(--window-x, 0px);
+        top: var(--red-zoom-thumb-y, 0px);
+        width: var(--red-zoom-thumb-w, 0px);
+        height: var(--red-zoom-thumb-h, 0px);
+    }
+}

@@ -1,3 +1,13 @@
+@keyframes red-zoom-loader-animation {
+    from {
+        transform: rotateZ(0deg);
+    }
+    to {
+        transform: rotateZ(360deg);
+    }
+}
+
+
 .red-zoom {
     pointer-events: none;
 }

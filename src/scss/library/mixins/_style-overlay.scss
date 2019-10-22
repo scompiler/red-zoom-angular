@@ -1,0 +1,45 @@
+@import 'common';
+
+
+@mixin red-zoom-style-overlay(
+    $transition-duration:   .5s,
+    $overlay-color:         rgba(#fff, .3),
+    $loader-color:          #fff,
+    $loader-size:           40px,
+    // error
+    $error-overlay-color:   rgba(#f00, .7),
+    $error-font-color:      #fff
+) {
+    visibility: hidden;
+    transition: visibility 0s $transition-duration;
+
+    .red-zoom__overlay {
+        opacity: 0;
+        transition: opacity $transition-duration;
+        z-index: 1;
+        background: $overlay-color;
+
+        &:before {
+            @include red-zoom-loader(
+                $loader-color: $loader-color,
+                $loader-size: $loader-size
+            );
+        }
+    }
+    .red-zoom__frame {
+        display: none;
+    }
+    .red-zoom__lens {
+        position: absolute;
+        left: var(--red-zoom-thumb-x);
+        top: var(--red-zoom-thumb-y);
+        width: var(--red-zoom-thumb-w);
+        height: var(--red-zoom-thumb-h);
+        overflow: hidden;
+        z-index: 1;
+        opacity: 0;
+        transition: opacity $transition-duration;
+    }
+
+    @include red-zoom-states($transition-duration, $error-overlay-color, $error-font-color);
+}

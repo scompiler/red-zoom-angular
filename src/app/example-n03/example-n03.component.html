@@ -13,7 +13,7 @@
         <div class="typography">
             <h2>Customization And Styles</h2>
 
-            {{ 'red-zoom--style--'+style }}
+            {{ '.red-zoom--style--'+style }}
 
             <p>
                 RedZoom comes with several pre-made styles:
@@ -24,9 +24,9 @@
             </p>
 
             <div>
-                <button type="button" (click)="style = '01';">01</button>
-                <button type="button" (click)="style = '02';">02</button>
-                <button type="button" (click)="style = '03';">03</button>
+                <button type="button" (click)="style = 'window';">Window</button>
+                <button type="button" (click)="style = 'magnifier';">Magnifier</button>
+                <button type="button" (click)="style = 'overlay';">Overlay</button>
             </div>
         </div>
     </div>

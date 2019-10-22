@@ -15,21 +15,10 @@
 @import 'scss/gallery';
 @import 'scss/button-group';
 // red-zoom
-@import 'scss/base';
-@import 'scss/styles/01';
-@import 'scss/styles/02';
-@import 'scss/styles/03';
-
-
-@keyframes red-zoom-loader-animation {
-    from {
-        transform: rotateZ(0deg);
-    }
-    to {
-        transform: rotateZ(360deg);
-    }
-}
-
+@import 'scss/library/base';
+@import 'scss/library/style-window';
+@import 'scss/library/style-magnifier';
+@import 'scss/library/style-overlay';
 
 
 .zoom {

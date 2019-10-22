@@ -9,7 +9,7 @@ import { Component } from '@angular/core';
     }
 })
 export class ExampleN03Component {
-    style = '02';
+    style = 'magnifier';
 
     constructor() { }
 }

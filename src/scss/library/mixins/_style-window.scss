@@ -1,0 +1,134 @@
+@import 'common';
+
+
+@mixin red-zoom-style-window(
+    $transition-duration:   .5s,
+    $overlay-color:         rgba(#fff, .8),
+    $loader-color:          #fff,
+    $loader-size:           40px,
+    // frame
+    $frame-visible:         true,
+    $frame-bg-color:        transparent,
+    $frame-shadow:          0 1px 7px rgba(#000, .25),
+    $frame-border-width:    6px,
+    $frame-border-color:    #fff,
+    $frame-border-position: outside,
+    $frame-image-visible:   true,
+    // lens
+    $lens-bg-color:         #fff,
+    $lens-shadow:           0 1px 9px rgba(#000, .2),
+    $lens-border-width:     6px,
+    $lens-border-color:     #fff,
+    $lens-border-position:  outside,
+    // error
+    $error-overlay-color:   rgba(#f00, .7),
+    $error-font-color:      #fff
+) {
+    visibility: hidden;
+    transition: visibility 0s $transition-duration;
+
+    .red-zoom__overlay {
+        background: $overlay-color;
+        opacity: 0;
+        transition: opacity $transition-duration;
+        z-index: 1;
+
+        &:before {
+            @include red-zoom-loader(
+                $loader-color: $loader-color,
+                $loader-size: $loader-size
+            );
+        }
+    }
+
+    @if ($frame-visible) {
+        .red-zoom__frame {
+            opacity: 0;
+            transition: opacity $transition-duration;
+            z-index: 1;
+            background: $frame-bg-color;
+
+            &:after {
+                position: absolute;
+                content: '';
+                border: $frame-border-width solid $frame-border-color;
+                box-sizing: border-box;
+                box-shadow: $frame-shadow;
+
+                @if ($frame-border-position == outside) {
+                    left: -$frame-border-width;
+                    top: -$frame-border-width;
+                    width: calc(100% + #{$frame-border-width * 2});
+                    height: calc(100% + #{$frame-border-width * 2});
+                } @else if ($frame-border-position == inside) {
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                } @else if ($frame-border-position == center) {
+                    left: -#{$frame-border-width / 2};
+                    top: -#{$frame-border-width / 2};
+                    width: calc(100% + #{$frame-border-width});
+                    height: calc(100% + #{$frame-border-width});
+                }
+            }
+        }
+        .red-zoom__frame-image {
+            @if (not $frame-image-visible) {
+                display: none;
+            }
+        }
+    } @else {
+        .red-zoom__frame {
+            display: none;
+        }
+    }
+
+    .red-zoom__lens {
+        position: absolute;
+        z-index: 2;
+        opacity: 0;
+        transition: opacity $transition-duration;
+        background: $lens-bg-color;
+
+        &:after {
+            position: absolute;
+            content: '';
+            border: $lens-border-width solid $lens-border-color;
+            box-shadow: $lens-shadow;
+        }
+
+        @if ($lens-border-position == outside) {
+            &:after {
+                left: -$lens-border-width;
+                top: -$lens-border-width;
+                width: calc(100% + #{$lens-border-width * 2});
+                height: calc(100% + #{$lens-border-width * 2});
+            }
+        } @else if ($lens-border-position == inside) {
+            padding: $lens-border-width;
+
+            &:after {
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+            }
+        } @else if ($lens-border-position == center) {
+            padding: $lens-border-width / 2;
+
+            &:after {
+                left: -($lens-border-width / 2);
+                top: -($lens-border-width / 2);
+                width: calc(100% + #{$lens-border-width});
+                height: calc(100% + #{$lens-border-width});
+            }
+        }
+    }
+
+    @include red-zoom-states($transition-duration, $error-overlay-color, $error-font-color);
+}
+
+@mixin red-zoom-style-window-lens-position() {
+
+}

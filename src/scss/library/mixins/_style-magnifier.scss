@@ -1,0 +1,98 @@
+@import 'common';
+
+
+@mixin red-zoom-style-magnifier(
+    $transition-duration:   .5s,
+    $overlay-color:         rgba(#fff, .3),
+    $loader-color:          #fff,
+    $loader-size:           40px,
+    // lens
+    $lens-clip:             true,
+    $lens-size:             200px,
+    $lens-border-radius:    20px,
+    $lens-shadow:           0 1px 9px 2px rgba(#000, .8),
+    $lens-border-width:     0,
+    $lens-border-color:     #fff,
+    $lens-border-position:  inside,
+    // error
+    $error-overlay-color:   rgba(#f00, .7),
+    $error-font-color:      #fff
+) {
+    visibility: hidden;
+    transition: visibility 0s $transition-duration;
+
+    .red-zoom__overlay {
+        opacity: 0;
+        transition: opacity $transition-duration;
+        z-index: 1;
+        background: $overlay-color;
+
+        &:before {
+            @include red-zoom-loader(
+                $loader-color: $loader-color,
+                $loader-size: $loader-size
+            );
+        }
+    }
+    .red-zoom__frame {
+        display: none;
+    }
+    .red-zoom__lens {
+        position: absolute;
+        display: block;
+        left: var(--red-zoom-thumb-x);
+        top: var(--red-zoom-thumb-y);
+        width: var(--red-zoom-thumb-w);
+        height: var(--red-zoom-thumb-h);
+        z-index: 1;
+        opacity: 0;
+        transition: opacity $transition-duration;
+
+        @if ($lens-clip) {
+            overflow: hidden;
+        }
+
+        &:after {
+            position: absolute;
+            content: '';
+            box-shadow: $lens-shadow;
+            border: $lens-border-width solid $lens-border-color;
+            opacity: .5;
+
+            $local-border-width: 0px;
+
+            @if ($lens-border-position == outside) {
+                $local-border-width: $lens-border-width;
+            } @else if ($lens-border-position == center) {
+                $local-border-width: $lens-border-width / 2;
+            }
+
+            border-radius: $lens-border-radius + $local-border-width;
+            left: calc(var(--red-zoom-mouse-x, 0px) - #{$lens-size / 2 + $local-border-width} - var(--red-zoom-thumb-x));
+            top: calc(var(--red-zoom-mouse-y, 0px) - #{$lens-size / 2 + $local-border-width} - var(--red-zoom-thumb-y));
+            width: $lens-size + $local-border-width * 2;
+            height: $lens-size + $local-border-width * 2;
+        }
+    }
+    .red-zoom__lens-body {
+        border-radius: $lens-border-radius;
+        left: calc(var(--red-zoom-mouse-x, 0px) - #{$lens-size / 2} - var(--red-zoom-thumb-x));
+        top: calc(var(--red-zoom-mouse-y, 0px) - #{$lens-size / 2} - var(--red-zoom-thumb-y));
+        width: $lens-size;
+        height: $lens-size;
+    }
+    .red-zoom__lens-image {
+        --red-zoom-lens-image-x: calc(
+            var(--red-zoom-lens-image-base-x, 0px) +
+            var(--red-zoom-lens-image-center-offset-x, 0px) +
+            var(--red-zoom-lens-image-frame-offset-x, 0px)
+        );
+        --red-zoom-lens-image-y: calc(
+            var(--red-zoom-lens-image-base-y, 0px) +
+            var(--red-zoom-lens-image-center-offset-y, 0px) +
+            var(--red-zoom-lens-image-frame-offset-y, 0px)
+        );
+    }
+
+    @include red-zoom-states($transition-duration, $error-overlay-color, $error-font-color);
+}
