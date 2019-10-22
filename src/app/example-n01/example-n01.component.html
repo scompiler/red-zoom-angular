@@ -24,11 +24,16 @@ export class AppModule {{ '{' }} }</code></pre>
                 </li>
                 <li>
                     Import styles:
-                    <pre><code>@import '~/red-zoom/styles/base.scss';</code></pre>
+                    <pre><code>@import '~ngx-red-zoom/styles/base.scss';
+@import '~ngx-red-zoom/styles/style-window.scss';</code></pre>
                 </li>
                 <li>
                     Add directive to your image tag:
-                    <pre><code>&lt;img src="example.jpg" redZoom="example.full.jpg"&gt;</code></pre>
+                    <pre><code>&lt;img
+    src="example.jpg"
+    redZoom="example.full.jpg"
+    redZoomClass="red-zoom--style--window"
+&gt;</code></pre>
                 </li>
             </ol>
         </div>

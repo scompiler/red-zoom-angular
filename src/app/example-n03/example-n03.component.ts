@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
     selector: 'app-example-n03',
@@ -9,7 +10,7 @@ import { Component } from '@angular/core';
     }
 })
 export class ExampleN03Component {
-    style = 'magnifier';
+    style: FormControl = new FormControl('magnifier');
 
     constructor() { }
 }

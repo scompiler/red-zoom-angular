@@ -8,7 +8,7 @@ function copyLibrary() {
 
 
 function copyStyles() {
-    return gulp.src('src/scss/styles/**/*')
+    return gulp.src('src/scss/library/**/*')
         .pipe(gulp.dest('package/scss/styles'));
 }
 

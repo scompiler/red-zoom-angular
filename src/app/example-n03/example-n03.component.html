@@ -6,28 +6,56 @@
             width="320"
             redZoom="./assets/image-4-full.jpg"
             [redZoomLazy]="false"
-            [redZoomClass]="'red-zoom--style--'+style"
+            [redZoomClass]="'red-zoom--style--'+style.value"
             class="zoom">
     </div>
     <div class="example__content">
         <div class="typography">
             <h2>Customization And Styles</h2>
 
-            {{ '.red-zoom--style--'+style }}
-
-            <p>
-                RedZoom comes with several pre-made styles:
-            </p>
-
-            <p>
-                You can also create your own amazing style. RedZoom provides extensive style customization options.
-            </p>
-
-            <div>
-                <button type="button" (click)="style = 'window';">Window</button>
-                <button type="button" (click)="style = 'magnifier';">Magnifier</button>
-                <button type="button" (click)="style = 'overlay';">Overlay</button>
+            <div class="button-group">
+                <label>
+                    <input type="radio" [formControl]="style" name="style" value="magnifier">
+                    <span>Magnifier</span>
+                </label>
+                <label>
+                    <input type="radio" [formControl]="style" name="style" value="window">
+                    <span>Window</span>
+                </label>
+                <label>
+                    <input type="radio" [formControl]="style" name="style" value="overlay">
+                    <span>Overlay</span>
+                </label>
             </div>
+
+            <p>
+                RedZoom comes with three predefined styles, you can use one of them as shown below:
+            </p>
+
+            <pre><code class="code"><span class="code__comment">// sass</span>
+@import '~ngx-red-zoom/styles/base.scss';
+@import '~ngx-red-zoom/styles/style-<span class="code__mark">{{ style.value }}</span>.scss';
+
+<span class="code__comment">// html</span>
+&lt;img
+    src="./assets/image.jpg"
+    redZoom="./assets/image-full.jpg"
+    redZoomClass="red-zoom--style--<span>{{ style.value }}</span>"
+&gt;</code></pre>
+
+            <p>
+                You can also create your own amazing style or customize an existing style using mixins:
+            </p>
+
+            <pre><code class="code"><span class="code__comment">// sass</span>
+@import '~ngx-red-zoom/styles/base.scss';
+@import '~ngx-red-zoom/styles/mixins/style-<span class="code__mark">{{ style.value }}</span>.scss';
+
+.red-zoom--style--custom {{ '{' }}
+    @include red-zoom-style-<span class="code__mark">{{ style.value }}</span>(
+        // you settings here
+    );
+}</code></pre>
         </div>
     </div>
 </div>
