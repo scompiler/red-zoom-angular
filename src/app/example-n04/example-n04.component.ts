@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
     selector: 'app-example-n04',
@@ -9,7 +10,7 @@ import { Component } from '@angular/core';
     }
 })
 export class ExampleN04Component {
-    trigger: 'hover'|'click' = 'hover';
+    behavior: FormControl = new FormControl('hover');
 
     constructor() { }
 }

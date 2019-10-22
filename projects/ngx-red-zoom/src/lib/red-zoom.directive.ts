@@ -45,7 +45,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
 
     @Input('redZoomClass') classes: string = '';
 
-    @Input('redZoomTrigger') trigger: 'hover' | 'click' = 'hover';
+    @Input('redZoomBehavior') behavior: 'hover' | 'grab' = 'hover';
 
     @Input('redZoomMouseWheel') wheel: boolean = true;
 
@@ -94,15 +94,11 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
     listen(): void {
         const startEventName = {
             'hover': 'mouseenter',
-            'click': 'mousedown',
-        }[this.trigger];
-        const endEventName = {
-            'hover': 'mouseleave',
-            'click': 'mouseup',
-        }[this.trigger];
+            'grab': 'mousedown',
+        }[this.behavior];
 
         this.unlisten();
-        this.unlisten = this.renderer.listen(this.element.nativeElement, startEventName, e => this.mouseEnter(e, endEventName));
+        this.unlisten = this.renderer.listen(this.element.nativeElement, startEventName, this.mouseEnter);
     }
 
     unlisten: () => void  = () => {};
@@ -180,7 +176,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         if ('lensSrc' in changes && !changes.lensSrc.firstChange) {
             this.onChangeLensSrc();
         }
-        if ('trigger' in changes && !changes.trigger.firstChange) {
+        if ('behavior' in changes && !changes.behavior.firstChange) {
             this.listen();
         }
         if ('classes' in changes && !changes.classes.firstChange) {
@@ -239,7 +235,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         }
     }
 
-    mouseEnter = (event: MouseEvent, endEventName) => {
+    mouseEnter = (event: MouseEvent) => {
         if (event.cancelable) {
             event.preventDefault();
         }
@@ -283,9 +279,19 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             unListenWheel();
         };
 
-        const unListenMove = this.renderer.listen(this.element.nativeElement, 'mousemove', onMove);
-        const unListenLeave = this.renderer.listen(this.element.nativeElement, endEventName, onLeave);
-        const unListenWheel = this.renderer.listen(this.element.nativeElement, 'wheel', onWheel);
+        let unListenMove;
+        let unListenLeave;
+        let unListenWheel;
+
+        if (this.behavior === 'hover') {
+            unListenMove = this.renderer.listen(this.element.nativeElement, 'mousemove', onMove);
+            unListenLeave = this.renderer.listen(this.element.nativeElement, 'mouseleave', onLeave);
+        } else {
+            unListenMove = this.renderer.listen(document, 'mousemove', onMove);
+            unListenLeave = this.renderer.listen(document, 'mouseup', onLeave);
+        }
+
+        unListenWheel = this.renderer.listen(this.element.nativeElement, 'wheel', onWheel);
 
         this.onMouseMove(event);
 

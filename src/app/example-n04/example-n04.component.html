@@ -7,24 +7,34 @@
             redZoom="./assets/image-3-full.jpg"
             [redZoomLazy]="false"
             redZoomClass="red-zoom--style--window"
-            [redZoomTrigger]="trigger"
-            [style.cursor]="trigger == 'hover' ? 'crosshair' : 'zoom-in'"
+            [redZoomBehavior]="behavior.value"
+            [style.cursor]="behavior.value == 'hover' ? 'crosshair' : 'zoom-in'"
             class="zoom">
     </div>
     <div class="example__content">
         <div class="typography">
-            <h2>Activation Event</h2>
+            <h2>Behavior And Activation Event</h2>
 
-            <p><code>&lt;img redZoomTrigger="<span style="background: #fdd;">{{ trigger }}</span>" /&gt;</code></p>
+            <div class="button-group">
+                <label>
+                    <input type="radio" [formControl]="behavior" name="behavior" value="hover">
+                    <span>Hover</span>
+                </label>
+                <label>
+                    <input type="radio" [formControl]="behavior" name="behavior" value="grab">
+                    <span>Grab</span>
+                </label>
+            </div>
 
             <p>
-                RedZoom comes with several pre-made styles:
+                Choose your desired behavior:
             </p>
 
-            <div>
-                <button type="button" (click)="trigger = 'hover';">hover</button>
-                <button type="button" (click)="trigger = 'click';">click</button>
-            </div>
+            <pre><code>&lt;img
+    src="image.jpg"
+    redZoom="image-full.jpg"
+    redZoomBehavior="{{ behavior.value }}"
+&gt;</code></pre>
         </div>
     </div>
 </div>
