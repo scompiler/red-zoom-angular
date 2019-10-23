@@ -1,22 +1,40 @@
 <div class="example__body">
     <div class="example__image">
-        <img src="./assets/image-1.jpg" alt="" width="320" [redZoom]="url" redZoomClass="red-zoom--style--window" [redZoomLazy]="true" class="zoom">
+        <img
+            src="./assets/image-5.jpg"
+            alt=""
+            width="320"
+            [redZoom]="url.value === 'correct' ? './assets/image-5-full.jpg' : './assets/404.jpg'"
+            redZoomClass="red-zoom--style--window"
+            [redZoomLazy]="true"
+            class="zoom"
+        >
     </div>
     <div class="example__content">
         <div class="typography">
             <h2>Error Handling</h2>
 
-            <p>RedZoom correctly handle errors and displays the corresponding message. Provider custom error message:</p>
+            <div class="button-group">
+                <label>
+                    <input type="radio" [formControl]="url" name="error" value="incorrect">
+                    <span>Incorrect URL</span>
+                </label>
+                <label>
+                    <input type="radio" [formControl]="url" name="error" value="correct">
+                    <span>Correct URL</span>
+                </label>
+            </div>
+
+            <p>
+                If an error occurs while loading the image, RedZoom will display a corresponding error message.
+                You can also provide your own error message:
+            </p>
 
             <pre><code>&lt;img
-    redZoom="{{ url }}"
+    src="image.jpg"
+    redZoom="{{ url.value === 'correct' ? 'image-full.jpg' : '404.jpg' }}"
     redZoomErrorMessage="Custom error message"
 &gt;</code></pre>
-
-            <div>
-                <button type="button" (click)="url = './assets/image-1-full.jpg'">Set correct URL</button>
-                <button type="button" (click)="url = './assets/404.jpg'">Set incorrect URL</button>
-            </div>
         </div>
     </div>
 </div>

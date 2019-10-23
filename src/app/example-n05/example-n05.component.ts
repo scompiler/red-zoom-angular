@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
     selector: 'app-example-n05',
@@ -9,7 +10,7 @@ import { Component } from '@angular/core';
     }
 })
 export class ExampleN05Component {
-    url = './assets/404.jpg';
+    url: FormControl = new FormControl('incorrect');
 
     constructor() { }
 }
