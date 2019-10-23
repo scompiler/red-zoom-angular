@@ -1,0 +1,40 @@
+.radio-image {
+    display: flex;
+
+    label {
+        display: block;
+    }
+
+    label + label {
+        margin-left: 10px;
+    }
+
+    input {
+        position: absolute;
+        pointer-events: none;
+        opacity: 0;
+    }
+
+    span,
+    img {
+        display: block;
+    }
+
+    span {
+        border: 2px solid #ebebeb;
+        border-radius: 2px;
+        padding: 6px;
+        cursor: pointer;
+    }
+
+    img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 1.5px;
+    }
+
+    input:checked + span {
+        border-color: #e50032;
+    }
+}

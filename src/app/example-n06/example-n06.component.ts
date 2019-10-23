@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
     selector: 'app-example-n06',
@@ -10,11 +11,11 @@ import { Component } from '@angular/core';
 })
 export class ExampleN06Component {
     images = [
-        {thumbnail: './assets/image-1.jpg', full: './assets/image-1-full.jpg'},
-        {thumbnail: './assets/image-2.jpg', full: './assets/image-2-full.jpg'},
-        {thumbnail: './assets/image-3.jpg', full: './assets/image-3-full.jpg'},
+        {thumbnail: './assets/image-6.jpg', full: './assets/image-6-full.jpg'},
+        {thumbnail: './assets/image-7.jpg', full: './assets/image-7-full.jpg'},
+        {thumbnail: './assets/image-8.jpg', full: './assets/image-8-full.jpg'},
     ];
-    currentImage = this.images[0];
+    currentImage: FormControl = new FormControl(this.images[0]);
 
     constructor() { }
 }
