@@ -93,7 +93,8 @@
 
         .red-zoom__overlay,
         .red-zoom__frame,
-        .red-zoom__lens {
+        .red-zoom__lens,
+        .red-zoom__error {
             transition-duration: 0s !important;
             opacity: 0 !important;
         }

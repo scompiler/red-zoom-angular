@@ -95,7 +95,9 @@ export class RedZoomTemplate {
     }
 
     attach(): void {
-        document.body.appendChild(this.template);
+        if (this.template.parentNode !== document.body) {
+            document.body.appendChild(this.template);
+        }
     }
 
     activate(): void {
