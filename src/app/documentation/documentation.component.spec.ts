@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SectionCssVariablesComponent } from './section-css-variables.component';
+import { DocumentationComponent } from './documentation.component';
 
-describe('SectionCssVariablesComponent', () => {
-    let component: SectionCssVariablesComponent;
-    let fixture: ComponentFixture<SectionCssVariablesComponent>;
+describe('DocumentationComponent', () => {
+    let component: DocumentationComponent;
+    let fixture: ComponentFixture<DocumentationComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [ SectionCssVariablesComponent ]
+            declarations: [ DocumentationComponent ]
         })
             .compileComponents();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(SectionCssVariablesComponent);
+        fixture = TestBed.createComponent(DocumentationComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
