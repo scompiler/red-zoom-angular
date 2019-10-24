@@ -75,8 +75,6 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
                 status = 'error';
             } else if (status === 'loading' || image.status === 'loading') {
                 status = 'loading';
-            } else if (status === 'pending' || image.status === 'pending') {
-                status = 'pending';
             }
         }
 
@@ -125,7 +123,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
                 '--red-zoom-lens-image-natural-h': `${this.lensImage.naturalHeight}px`,
             });
 
-            if (this.session) {
+            if (this.session && this.session.active) {
                 this.calcScaleFactor();
                 this.calcFrameSize();
                 this.move();
@@ -305,7 +303,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
     };
 
     onMouseMove = (event: MouseEvent) => {
-        if (this.isImage && this.thumbImage.status !== 'loaded') {
+        if (this.isImage && this.thumbImage.status !== 'loaded' && this.thumbImage.isFirst) {
             return;
         }
 
@@ -386,7 +384,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
     }
 
     move(): void {
-        if (!this.session) {
+        if (!this.session || !this.session.active) {
             return;
         }
 

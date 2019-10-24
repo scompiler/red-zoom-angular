@@ -1,1 +1,1 @@
-export type RedZoomStatus = 'pending' | 'loading' | 'loaded' | 'error';
+export type RedZoomStatus = 'loading' | 'loaded' | 'error';

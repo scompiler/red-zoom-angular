@@ -49,7 +49,7 @@ export class RedZoomTemplate {
         this.errorMessage = this.template.querySelector('.red-zoom__error-message');
 
         this.template.addEventListener('transitionend', this.onTransitionEnd);
-        this.status = 'pending';
+        this.status = 'loading';
     }
 
     set status(state: RedZoomStatus) {

@@ -3,7 +3,9 @@ import * as vector from './vector';
 
 
 export class RedZoomImage {
-    private pending = false;
+    private loading = false;
+
+    isFirst = true;
 
     get width(): number {
         return this.element.width;
@@ -39,13 +41,13 @@ export class RedZoomImage {
     }
 
     get status(): RedZoomStatus {
-        if (this.pending) {
-            return 'pending';
+        if (this.loading) {
+            return 'loading';
         }
 
         if (this.element.complete) {
             if (!this.element.src) {
-                return 'pending';
+                return 'loading';
             } else if (this.naturalWidth === 0) {
                 return 'error';
             }
@@ -57,7 +59,7 @@ export class RedZoomImage {
     }
 
     set src(value: string) {
-        this.pending = false;
+        this.loading = false;
         this.element.setAttribute('src', value);
     }
 
@@ -70,7 +72,13 @@ export class RedZoomImage {
             this.element = document.createElement('img');
         }
 
-        const _listener = () => this.listener();
+        const _listener = () => {
+            if (this.status !== 'loading') {
+                this.isFirst = false;
+            }
+
+            this.listener();
+        };
 
         this.element.addEventListener('load', _listener);
         this.element.addEventListener('error', _listener);
@@ -86,7 +94,7 @@ export class RedZoomImage {
     }
 
     reset(): void {
-        this.pending = true;
+        this.loading = true;
         this.listener();
     }
 
