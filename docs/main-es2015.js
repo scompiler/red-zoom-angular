@@ -57,11 +57,11 @@ const ɵ0 = /**
             template = document.createElement('template');
             template.innerHTML = `<div class="red-zoom">
                 <div class="red-zoom__overlay"></div>
+                <div class="red-zoom__frame">
+                    <div class="red-zoom__frame-body"></div>
+                </div>
                 <div class="red-zoom__lens">
                     <div class="red-zoom__lens-body"></div>
-                </div>
-                <div class="red-zoom__window">
-                    <div class="red-zoom__window-body"></div>
                 </div>
                 <div class="red-zoom__error">
                     <div class="red-zoom__error-message"></div>
@@ -75,7 +75,7 @@ const ɵ0 = /**
 const makeTemplate = ((ɵ0))();
 class RedZoomTemplate {
     constructor() {
-        this._state = null;
+        this._status = null;
         this.appliedClasses = [];
         this.onTransitionEnd = (/**
          * @param {?} event
@@ -87,30 +87,31 @@ class RedZoomTemplate {
             }
         });
         this.template = makeTemplate();
-        this.window = this.template.querySelector('.red-zoom__window');
-        this.windowBody = this.template.querySelector('.red-zoom__window-body');
         this.lens = this.template.querySelector('.red-zoom__lens');
         this.lensBody = this.template.querySelector('.red-zoom__lens-body');
+        this.frame = this.template.querySelector('.red-zoom__frame');
+        this.frameBody = this.template.querySelector('.red-zoom__frame-body');
         this.error = this.template.querySelector('.red-zoom__error');
         this.errorMessage = this.template.querySelector('.red-zoom__error-message');
         this.template.addEventListener('transitionend', this.onTransitionEnd);
+        this.status = 'pending';
     }
     /**
      * @param {?} state
      * @return {?}
      */
-    set state(state) {
-        if (this._state !== null) {
-            this.template.classList.remove(`red-zoom--state--${this._state}`);
+    set status(state) {
+        if (this._status !== null) {
+            this.template.classList.remove(`red-zoom--status--${this._status}`);
         }
-        this._state = state;
-        this.template.classList.add(`red-zoom--state--${state}`);
+        this._status = state;
+        this.template.classList.add(`red-zoom--status--${state}`);
     }
     /**
      * @return {?}
      */
-    get state() {
-        return this._state;
+    get status() {
+        return this._status;
     }
     /**
      * @param {?} classes
@@ -171,11 +172,12 @@ class RedZoomImage {
     /**
      * @param {?=} element
      * @param {?=} listener
+     * @param {?=} className
      */
     constructor(element = null, listener = (/**
      * @return {?}
      */
-    () => { })) {
+    () => { }), className = null) {
         this.element = element;
         this.listener = listener;
         this.pending = false;
@@ -196,6 +198,9 @@ class RedZoomImage {
             this.element.removeEventListener('load', _listener);
             this.element.removeEventListener('error', _listener);
         });
+        if (className !== null) {
+            this.element.classList.add(className);
+        }
     }
     /**
      * @return {?}
@@ -212,6 +217,12 @@ class RedZoomImage {
     /**
      * @return {?}
      */
+    get size() {
+        return { x: this.width, y: this.height };
+    }
+    /**
+     * @return {?}
+     */
     get naturalWidth() {
         return this.element.naturalWidth;
     }
@@ -224,8 +235,22 @@ class RedZoomImage {
     /**
      * @return {?}
      */
+    get naturalSize() {
+        return { x: this.naturalWidth, y: this.naturalHeight };
+    }
+    /**
+     * @return {?}
+     */
     get style() {
         return this.element.style;
+    }
+    /**
+     * @param {?} value
+     * @return {?}
+     */
+    set styleSize(value) {
+        this.element.style.width = value.x;
+        this.element.style.height = value.y;
     }
     /**
      * @return {?}
@@ -258,6 +283,7 @@ class RedZoomImage {
      */
     reset() {
         this.pending = true;
+        this.listener();
     }
 }
 if (false) {}
@@ -267,14 +293,185 @@ if (false) {}
  * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 /**
- * @record
+ * @param {?} a
+ * @param {?} op
+ * @param {?} b
+ * @return {?}
  */
-function Session() { }
+function calc(a, op, b) {
+    switch (op) {
+        case '+': return a + b;
+        case '-': return a - b;
+        case '*': return a * b;
+        case '/': return a / b;
+        case 'min': return Math.min(a, b);
+        case 'max': return Math.max(a, b);
+    }
+}
+/**
+ * @record
+ * @template T
+ */
+function Vector() { }
 if (false) {}
+/**
+ * @param {?} rect
+ * @return {?}
+ */
+function fromRectPos(rect) {
+    return { x: rect.left, y: rect.top };
+}
+/**
+ * @param {?} rect
+ * @return {?}
+ */
+function fromRectSize(rect) {
+    return { x: rect.width, y: rect.height };
+}
+/**
+ * @return {?}
+ */
+function fromScroll() {
+    return { x: scrollX, y: scrollY };
+}
+/**
+ * @param {?} event
+ * @return {?}
+ */
+function fromMouseEvent(event) {
+    return add({ x: event.clientX, y: event.clientY }, fromScroll());
+}
+/**
+ * @param {?} a
+ * @param {?} op
+ * @param {?} b
+ * @return {?}
+ */
+function op(a, op, b) {
+    if (typeof b === 'number') {
+        b = { x: b, y: b };
+    }
+    return {
+        x: calc(a.x, op, b.x),
+        y: calc(a.y, op, b.y)
+    };
+}
+/**
+ * @param {?} a
+ * @param {?} b
+ * @return {?}
+ */
+function add(a, b) {
+    return op(a, '+', b);
+}
+/**
+ * @param {?} a
+ * @param {?} b
+ * @return {?}
+ */
+function sub(a, b) {
+    return op(a, '-', b);
+}
+/**
+ * @param {?} a
+ * @param {?} b
+ * @return {?}
+ */
+function mul(a, b) {
+    return op(a, '*', b);
+}
+/**
+ * @param {?} a
+ * @param {?} b
+ * @return {?}
+ */
+function div(a, b) {
+    return op(a, '/', b);
+}
+/**
+ * @param {?} a
+ * @param {?} b
+ * @return {?}
+ */
+function min(a, b) {
+    return op(a, 'min', b);
+}
+/**
+ * @param {?} a
+ * @param {?} b
+ * @return {?}
+ */
+function max(a, b) {
+    return op(a, 'max', b);
+}
+/**
+ * @param {?} a
+ * @return {?}
+ */
+function round(a) {
+    return map(a, Math.round);
+}
+/**
+ * @template T, B
+ * @param {?} a
+ * @param {?} fn
+ * @return {?}
+ */
+function map(a, fn) {
+    return { x: fn(a.x, 'x'), y: fn(a.y, 'y') };
+}
+/**
+ * @param {?} a
+ * @param {?} b
+ * @return {?}
+ */
+function equal(a, b) {
+    if (typeof b === 'number') {
+        b = { x: b, y: b };
+    }
+    return {
+        x: a.x === b.x,
+        y: a.y === b.y,
+    };
+}
+/**
+ * @param {?} a
+ * @param {?} b
+ * @return {?}
+ */
+function notEqual(a, b) {
+    return { x: a.x !== b.x, y: a.y !== b.y };
+}
+/**
+ * @param {?} a
+ * @return {?}
+ */
+function flatMax(a) {
+    return Math.max(a.x, a.y);
+}
+/**
+ * @param {?} a
+ * @return {?}
+ */
+function flatMin(a) {
+    return Math.min(a.x, a.y);
+}
+/**
+ * @param {?} a
+ * @return {?}
+ */
+function flatOr(a) {
+    return a.x || a.y;
+}
+
+/**
+ * @fileoverview added by tsickle
+ * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
 /**
  * @record
  */
-function RedZoomImage$1() { }
+function Session() { }
 if (false) {}
 class RedZoomDirective {
     /**
@@ -290,56 +487,70 @@ class RedZoomDirective {
         this.platformId = platformId;
         this.lazy = false;
         this.classes = '';
-        this.trigger = 'hover';
+        this.behavior = 'hover';
         this.wheel = true;
         this.errorMessage = 'An error occurred while loading the image.';
-        this.z = 1;
-        this.triggerListener = (/**
+        this.scaleFactor = 1;
+        this.requestAnimationFrameId = null;
+        this.unlisten = (/**
          * @return {?}
          */
         () => { });
-        this.requestAnimationFrameId = null;
-        this.onImageChangeStatus = (/**
+        this.onImageChangeStatus = ((/**
          * @return {?}
          */
         () => {
+            /** @type {?} */
+            let previousStatus;
+            return (/**
+             * @return {?}
+             */
+            () => {
+                if (previousStatus === this.status) {
+                    return;
+                }
+                previousStatus = this.status;
+                this.onImageChangeStatusDistinct();
+            });
+        }))();
+        this.onImageChangeStatusDistinct = (/**
+         * @return {?}
+         */
+        () => {
+            this.template.status = this.status;
             if (this.status === 'loaded') {
-                this.template2.state = 'loaded';
-                this.template2.setProperties({
-                    '--red-zoom-preview-w': `${this.lensImage.naturalWidth}px`,
-                    '--red-zoom-preview-h': `${this.lensImage.naturalHeight}px`,
+                this.template.setProperties({
+                    '--red-zoom-lens-image-natural-w': `${this.lensImage.naturalWidth}px`,
+                    '--red-zoom-lens-image-natural-h': `${this.lensImage.naturalHeight}px`,
                 });
                 if (this.session) {
-                    this.calcLensSize();
-                    this.move(this.session.prevMouseX, this.session.prevMouseY);
-                    this.z = this.lensImage.width / this.lensImage.naturalWidth;
-                    this.z = Math.max(this.z, this.session.previewContainerRect.width / this.lensImage.naturalWidth, this.session.previewContainerRect.height / this.lensImage.naturalHeight);
+                    this.calcScaleFactor();
+                    this.calcFrameSize();
+                    this.move();
+                    this.scaleFactor = this.lensImage.width / this.lensImage.naturalWidth;
                 }
-            }
-            else if (this.status === 'error') {
-                this.template2.state = 'error';
             }
         });
         this.mouseEnter = (/**
          * @param {?} event
-         * @param {?} endEventName
          * @return {?}
          */
-        (event, endEventName) => {
+        (event) => {
             if (event.cancelable) {
                 event.preventDefault();
             }
             this.session = {
                 active: false,
-                thumbnailRect: null,
-                previewContainerRect: null,
-                previewImageRect: null,
-                lensW: 0,
-                lensH: 0,
-                scrollX: null,
-                scrollY: null,
-                prevMouseX: event.clientX,
-                prevMouseY: event.clientY,
+                thumbSize: null,
+                thumbPos: null,
+                lensContainerSize: null,
+                lensImageSize: null,
+                frameSize: null,
+                mousePos: fromMouseEvent(event),
+                destroy: (/**
+                 * @return {?}
+                 */
+                () => { }),
             };
             /** @type {?} */
             const onWheel = (/**
@@ -347,27 +558,15 @@ class RedZoomDirective {
              * @return {?}
              */
             (wheelEvent) => {
-                if (!wheelEvent.cancelable || this.status === 'loaded' || !this.wheel) {
+                if (!wheelEvent.cancelable || this.status !== 'loaded' || !this.wheel) {
                     return;
                 }
                 wheelEvent.preventDefault();
                 /** @type {?} */
                 const delta = Math.sign(wheelEvent.deltaY);
-                this.z += .01 * -delta;
-                this.z = Math.max(this.z, this.session.previewContainerRect.width / this.lensImage.naturalWidth, this.session.previewContainerRect.height / this.lensImage.naturalHeight);
-                this.lensImage.style.width = `${this.lensImage.naturalWidth * this.z}px`;
-                this.lensImage.style.height = `${this.lensImage.naturalHeight * this.z}px`;
-                if (this.lensImage.width != Math.round(this.lensImage.naturalWidth * this.z)) {
-                    this.z = this.lensImage.width / this.lensImage.naturalWidth;
-                    this.lensImage.style.width = `${this.lensImage.naturalWidth * this.z}px`;
-                    this.lensImage.style.height = `${this.lensImage.naturalHeight * this.z}px`;
-                }
-                if (this.lensImage.height != Math.round(this.lensImage.naturalHeight * this.z)) {
-                    this.z = this.lensImage.height / this.lensImage.naturalHeight;
-                    this.lensImage.style.width = `${this.lensImage.naturalWidth * this.z}px`;
-                    this.lensImage.style.height = `${this.lensImage.naturalHeight * this.z}px`;
-                }
-                this.calcLensSize();
+                this.scaleFactor += .01 * -delta;
+                this.calcScaleFactor();
+                this.calcFrameSize();
                 this.onMouseMove(wheelEvent);
             });
             /** @type {?} */
@@ -384,28 +583,34 @@ class RedZoomDirective {
              */
             () => {
                 this.session = null;
-                this.template2.detach();
+                this.template.detach();
                 unListenMove();
                 unListenLeave();
                 unListenWheel();
             });
             /** @type {?} */
-            const unListenMove = this.renderer.listen(this.element.nativeElement, 'mousemove', onMove);
+            let unListenMove;
             /** @type {?} */
-            const unListenLeave = this.renderer.listen(this.element.nativeElement, endEventName, onLeave);
+            let unListenLeave;
             /** @type {?} */
-            const unListenWheel = this.renderer.listen(this.element.nativeElement, 'wheel', onWheel);
+            let unListenWheel;
+            if (this.behavior === 'hover') {
+                unListenMove = this.renderer.listen(this.element.nativeElement, 'mousemove', onMove);
+                unListenLeave = this.renderer.listen(this.element.nativeElement, 'mouseleave', onLeave);
+            }
+            else {
+                unListenMove = this.renderer.listen(document, 'mousemove', onMove);
+                unListenLeave = this.renderer.listen(document, 'mouseup', onLeave);
+            }
+            unListenWheel = this.renderer.listen(this.element.nativeElement, 'wheel', onWheel);
             this.onMouseMove(event);
             this.forceReflow();
-            this.template2.activate();
-            if (this.status === 'error') {
-                this.template2.state = 'error';
-            }
-            else if (this.status !== 'loaded') {
-                this.template2.state = 'loading';
-                this.loadWindowImage();
+            this.template.activate();
+            if (this.status !== 'loaded') {
+                this.loadLensImage();
                 this.loadFrameImage();
             }
+            this.session.destroy = onLeave;
         });
         this.onMouseMove = (/**
          * @param {?} event
@@ -419,16 +624,13 @@ class RedZoomDirective {
                 this.session.active = true;
                 this.initSession();
             }
-            this.session.prevMouseX = event.clientX;
-            this.session.prevMouseY = event.clientY;
-            if (this.lensImage.status === 'loaded' && this.frameImage.status === 'loaded') {
+            this.session.mousePos = fromMouseEvent(event);
+            if (this.status === 'loaded') {
                 cancelAnimationFrame(this.requestAnimationFrameId);
                 this.requestAnimationFrameId = requestAnimationFrame((/**
                  * @return {?}
                  */
-                () => {
-                    this.move(event.clientX, event.clientY);
-                }));
+                () => this.move()));
             }
         });
     }
@@ -444,7 +646,12 @@ class RedZoomDirective {
     get status() {
         /** @type {?} */
         let status = 'loaded';
-        for (let image of [this.thumbImage, this.frameImage, this.lensImage]) {
+        /** @type {?} */
+        const images = [this.frameImage, this.lensImage];
+        if (this.isImage) {
+            images.push(this.thumbImage);
+        }
+        for (let image of images) {
             if (status === 'error' || image.status === 'error') {
                 status = 'error';
             }
@@ -464,19 +671,10 @@ class RedZoomDirective {
         /** @type {?} */
         const startEventName = {
             'hover': 'mouseenter',
-            'click': 'mousedown',
-        }[this.trigger];
-        /** @type {?} */
-        const endEventName = {
-            'hover': 'mouseleave',
-            'click': 'mouseup',
-        }[this.trigger];
-        this.triggerListener();
-        this.triggerListener = this.renderer.listen(this.element.nativeElement, startEventName, (/**
-         * @param {?} e
-         * @return {?}
-         */
-        e => this.mouseEnter(e, endEventName)));
+            'grab': 'mousedown',
+        }[this.behavior];
+        this.unlisten();
+        this.unlisten = this.renderer.listen(this.element.nativeElement, startEventName, this.mouseEnter);
     }
     /**
      * @return {?}
@@ -489,26 +687,19 @@ class RedZoomDirective {
          * @return {?}
          */
         () => {
+            this.template = new RedZoomTemplate();
+            this.template.classes = this.classes;
+            this.template.errorMessage.innerHTML = this.errorMessage;
             if (this.isImage) {
                 this.thumbImage = new RedZoomImage(this.element.nativeElement, this.onImageChangeStatus);
             }
-            else {
-                this.thumbImage = new RedZoomImage(null, this.onImageChangeStatus);
-                this.thumbImage.element.setAttribute('src', this.getThumbSrc());
+            this.frameImage = new RedZoomImage(null, this.onImageChangeStatus, 'red-zoom__frame-image');
+            this.lensImage = new RedZoomImage(null, this.onImageChangeStatus, 'red-zoom__lens-image');
+            if (!this.lazy) {
+                this.loadFrameImage();
+                this.loadLensImage();
             }
             this.listen();
-            this.template2 = new RedZoomTemplate();
-            this.template2.state = 'pending';
-            this.template2.classes = this.classes;
-            this.template2.errorMessage.innerHTML = this.errorMessage;
-            this.lensImage = new RedZoomImage(null, this.onImageChangeStatus);
-            this.lensImage.element.classList.add('red-zoom__window-image');
-            this.frameImage = new RedZoomImage(null, this.onImageChangeStatus);
-            this.frameImage.element.classList.add('red-zoom__lens-image');
-            if (!this.lazy) {
-                this.loadWindowImage();
-                this.loadFrameImage();
-            }
         }));
     }
     /**
@@ -522,21 +713,21 @@ class RedZoomDirective {
         if ('src' in changes && !changes.src.firstChange) {
             this.onChangeThumbSrc();
         }
-        if ('thumbnailSrc' in changes && !changes.thumbnailSrc.firstChange) {
+        if ('thumbSrc' in changes && !changes.thumbSrc.firstChange) {
             this.onChangeThumbSrc();
         }
-        if ('fullSrc' in changes && !changes.fullSrc.firstChange) {
+        if ('lensSrc' in changes && !changes.lensSrc.firstChange) {
             this.onChangeLensSrc();
         }
-        if ('trigger' in changes && !changes.trigger.firstChange) {
+        if ('behavior' in changes && !changes.behavior.firstChange) {
             this.listen();
         }
         if ('classes' in changes && !changes.classes.firstChange) {
-            this.template2.classes = this.classes;
-            // TODO: invalidate if session active
+            this.template.classes = this.classes;
+            this.invalidate();
         }
         if ('errorMessage' in changes && !changes.errorMessage.firstChange) {
-            this.template2.errorMessage.innerHTML = this.errorMessage;
+            this.template.errorMessage.innerHTML = this.errorMessage;
         }
     }
     /**
@@ -546,20 +737,18 @@ class RedZoomDirective {
         if (!Object(_angular_common__WEBPACK_IMPORTED_MODULE_1__["isPlatformBrowser"])(this.platformId)) {
             return;
         }
-        // TODO: stop session
+        if (this.session) {
+            this.session.destroy();
+        }
     }
     /**
      * @return {?}
      */
     onChangeThumbSrc() {
-        if (!this.isImage) {
-            this.thumbImage.element.setAttribute('src', this.getThumbSrc());
-        }
         this.frameImage.reset();
         if (!this.lazy || this.session) {
             this.loadFrameImage();
         }
-        this.updateState();
     }
     /**
      * @return {?}
@@ -567,25 +756,24 @@ class RedZoomDirective {
     onChangeLensSrc() {
         this.lensImage.reset();
         if (!this.lazy || this.session) {
-            this.loadWindowImage();
+            this.loadLensImage();
         }
-        this.updateState();
     }
     /**
      * @return {?}
      */
     getThumbSrc() {
         if (!this.isImage || !this.src) {
-            return this.thumbnailSrc;
+            return this.thumbSrc;
         }
         return this.src;
     }
     /**
      * @return {?}
      */
-    loadWindowImage() {
+    loadLensImage() {
         if (this.lensImage.status !== 'loaded') {
-            this.lensImage.src = this.fullSrc;
+            this.lensImage.src = this.lensSrc;
         }
     }
     /**
@@ -600,117 +788,107 @@ class RedZoomDirective {
      * @return {?}
      */
     initSession() {
-        this.session.thumbnailRect = this.element.nativeElement.getBoundingClientRect();
-        this.session.scrollX = scrollX;
-        this.session.scrollY = scrollY;
-        // TODO: show preloader if preview doesn't loaded
         /** @type {?} */
-        const thumbnailRect = this.session.thumbnailRect;
-        /** @type {?} */
-        const x = thumbnailRect.left + scrollX;
-        /** @type {?} */
-        const y = thumbnailRect.top + scrollY;
-        /** @type {?} */
-        const w = thumbnailRect.width;
-        /** @type {?} */
-        const h = thumbnailRect.height;
-        this.template2.attach();
-        this.template2.windowBody.appendChild(this.lensImage.element);
-        this.template2.lensBody.appendChild(this.frameImage.element);
-        this.template2.setProperties({
-            '--red-zoom-thumbnail-x': `${x}px`,
-            '--red-zoom-thumbnail-y': `${y}px`,
-            '--red-zoom-thumbnail-w': `${w}px`,
-            '--red-zoom-thumbnail-h': `${h}px`,
-            '--red-zoom-thumbnail-size-max': `${Math.max(w, h)}px`,
-            '--red-zoom-thumbnail-size-min': `${Math.min(w, h)}px`,
+        const thumbRect = this.element.nativeElement.getBoundingClientRect();
+        this.session.thumbSize = fromRectSize(thumbRect);
+        this.session.thumbPos = add(fromRectPos(thumbRect), fromScroll());
+        this.template.attach();
+        this.template.lensBody.appendChild(this.lensImage.element);
+        this.template.frameBody.appendChild(this.frameImage.element);
+        this.template.setProperties({
+            '--red-zoom-thumb-x': `${this.session.thumbPos.x}px`,
+            '--red-zoom-thumb-y': `${this.session.thumbPos.y}px`,
+            '--red-zoom-thumb-w': `${this.session.thumbSize.x}px`,
+            '--red-zoom-thumb-h': `${this.session.thumbSize.y}px`,
+            '--red-zoom-thumb-size-max': `${flatMax(this.session.thumbSize)}px`,
+            '--red-zoom-thumb-size-min': `${flatMin(this.session.thumbSize)}px`,
         });
-        this.calcLensSize();
-        this.frameImage.element.style.width = `${w}px`;
-        this.frameImage.element.style.height = `${h}px`;
-        if (this.lensImage.status === 'loaded' && this.frameImage.status === 'loaded') {
-            this.template2.state = 'loaded';
-            this.z = this.lensImage.width / this.lensImage.naturalWidth;
-            this.z = Math.max(this.z, this.session.previewContainerRect.width / this.lensImage.naturalWidth, this.session.previewContainerRect.height / this.lensImage.naturalHeight);
+        if (this.status === 'loaded') {
+            this.calcScaleFactor();
+            this.calcFrameSize();
+            this.scaleFactor = this.lensImage.width / this.lensImage.naturalWidth;
         }
     }
     /**
      * @return {?}
      */
-    calcLensSize() {
-        this.session.previewContainerRect = this.template2.windowBody.getBoundingClientRect();
-        this.session.previewImageRect = this.lensImage.element.getBoundingClientRect();
+    calcScaleFactor() {
         /** @type {?} */
-        const thumbnailRect = this.session.thumbnailRect;
+        const scaledSize = mul(this.lensImage.naturalSize, this.scaleFactor);
+        this.lensImage.styleSize = map(scaledSize, (/**
+         * @param {?} c
+         * @return {?}
+         */
+        c => `${c}px`));
         /** @type {?} */
-        const previewContainerRect = this.session.previewContainerRect;
-        /** @type {?} */
-        const previewImageRect = this.session.previewImageRect;
-        this.session.lensW = Math.round(thumbnailRect.width * (previewContainerRect.width / previewImageRect.width));
-        this.session.lensH = Math.round(thumbnailRect.height * (previewContainerRect.height / previewImageRect.height));
-        this.template2.setProperties({
-            '--red-zoom-lens-w': `${this.session.lensW}px`,
-            '--red-zoom-lens-h': `${this.session.lensH}px`,
+        const scaleFactorIsLimited = flatOr(notEqual(this.lensImage.size, round(scaledSize)));
+        if (scaleFactorIsLimited) {
+            this.scaleFactor = flatMax(div(this.lensImage.size, this.lensImage.naturalSize));
+            this.lensImage.styleSize = map(mul(this.lensImage.naturalSize, this.scaleFactor), (/**
+             * @param {?} c
+             * @return {?}
+             */
+            c => `${c}px`));
+        }
+    }
+    /**
+     * @return {?}
+     */
+    calcFrameSize() {
+        this.session.lensContainerSize = fromRectSize(this.template.lensBody.getBoundingClientRect());
+        this.session.lensImageSize = fromRectSize(this.lensImage.element.getBoundingClientRect());
+        this.session.frameSize = min(this.session.thumbSize, round(mul(this.session.thumbSize, div(this.session.lensContainerSize, this.session.lensImageSize))));
+        this.template.setProperties({
+            '--red-zoom-frame-w': `${this.session.frameSize.x}px`,
+            '--red-zoom-frame-h': `${this.session.frameSize.y}px`,
         });
     }
     /**
-     * @param {?} x
-     * @param {?} y
      * @return {?}
      */
-    move(x, y) {
+    move() {
         if (!this.session) {
             return;
         }
-        /** @type {?} */
-        const thumbnailRect = this.session.thumbnailRect;
-        /** @type {?} */
-        const previewContainerRect = this.session.previewContainerRect;
-        /** @type {?} */
-        const previewImageRect = this.session.previewImageRect;
-        /** @type {?} */
-        const lensW = this.session.lensW;
-        /** @type {?} */
-        const lensH = this.session.lensH;
-        /** @type {?} */
-        const scrollDeltaX = this.session.scrollX - scrollX;
-        /** @type {?} */
-        const scrollDeltaY = this.session.scrollY - scrollY;
-        /** @type {?} */
-        const thumbnailLeft = thumbnailRect.left + scrollDeltaX;
-        /** @type {?} */
-        const thumbnailTop = thumbnailRect.top + scrollDeltaY;
-        this.template2.setProperties({
-            '--red-zoom-mouse-x': `${x + scrollX}px`,
-            '--red-zoom-mouse-y': `${y + scrollY}px`,
+        const { mousePos, thumbSize, thumbPos, frameSize, lensContainerSize, lensImageSize } = this.session;
+        this.template.setProperties({
+            '--red-zoom-mouse-x': `${mousePos.x}px`,
+            '--red-zoom-mouse-y': `${mousePos.y}px`,
         });
         /** @type {?} */
-        const lensXr = x - lensW / 2;
+        const framePos = sub(mousePos, div(frameSize, 2));
         /** @type {?} */
-        const lensX = Math.round(Math.min(thumbnailLeft + thumbnailRect.width - lensW, Math.max(thumbnailLeft, lensXr)));
+        const frameLimitedPos = min(max(framePos, thumbPos), sub(add(thumbPos, thumbSize), frameSize));
         /** @type {?} */
-        const lensYr = y - lensH / 2;
-        /** @type {?} */
-        const lensY = Math.min(thumbnailTop + thumbnailRect.height - lensH, Math.max(thumbnailTop, lensYr));
-        this.template2.setProperties({
-            '--red-zoom-lens-x': `${Math.round(lensX) + scrollX}px`,
-            '--red-zoom-lens-y': `${Math.round(lensY) + scrollY}px`,
-            '--red-zoom-lens-image-x': `${Math.round(-lensX + thumbnailLeft)}px`,
-            '--red-zoom-lens-image-y': `${Math.floor(-lensY + thumbnailTop)}px`,
+        const frameImagePos = sub(thumbPos, round(frameLimitedPos));
+        this.template.setProperties({
+            '--red-zoom-frame-x': `${Math.round(frameLimitedPos.x)}px`,
+            '--red-zoom-frame-y': `${Math.round(frameLimitedPos.y)}px`,
+            '--red-zoom-frame-image-x': `${Math.round(frameImagePos.x)}px`,
+            '--red-zoom-frame-image-y': `${Math.round(frameImagePos.y)}px`,
         });
         /** @type {?} */
-        const posX = thumbnailRect.width - lensW === 0 ? 0 : Math.max(0, Math.min(previewImageRect.width - previewContainerRect.width, ((lensX - thumbnailLeft) / (thumbnailRect.width - lensW)) * (previewImageRect.width - previewContainerRect.width)));
+        const frameRelativePos = map(sub(thumbSize, frameSize), (/**
+         * @param {?} value
+         * @param {?} axis
+         * @return {?}
+         */
+        (value, axis) => {
+            return value === 0 ? 0 : (frameLimitedPos[axis] - thumbPos[axis]) / value;
+        }));
         /** @type {?} */
-        const posX2 = thumbnailRect.width - lensW === 0 ? 0 : ((lensXr - thumbnailLeft) / (thumbnailRect.width - lensW)) * (previewImageRect.width - previewContainerRect.width);
+        const lensImagePos = mul(frameRelativePos, sub(lensImageSize, lensContainerSize));
         /** @type {?} */
-        const posY = thumbnailRect.height - lensH === 0 ? 0 : Math.max(0, Math.min(previewImageRect.height - previewContainerRect.height, ((lensY - thumbnailTop) / (thumbnailRect.height - lensH)) * (previewImageRect.height - previewContainerRect.height)));
+        const lensImageCenterOffset = max(div(sub(lensContainerSize, lensImageSize), 2), 0);
         /** @type {?} */
-        const posY2 = thumbnailRect.height - lensH === 0 ? 0 : ((lensYr - thumbnailTop) / (thumbnailRect.height - lensH)) * (previewImageRect.height - previewContainerRect.height);
-        this.template2.setProperties({
-            '--red-zoom-preview-image-x': `${-posX}px`,
-            '--red-zoom-preview-image-y': `${-posY}px`,
-            '--red-zoom-preview-image-offset-x': `${posX === posX2 ? 0 : posX - posX2}px`,
-            '--red-zoom-preview-image-offset-y': `${posY === posY2 ? 0 : posY - posY2}px`,
+        const lensImageFrameOffset = mul(div(sub(framePos, frameLimitedPos), div(frameSize, 2)), div(lensContainerSize, 2));
+        this.template.setProperties({
+            '--red-zoom-lens-image-base-x': `${-lensImagePos.x}px`,
+            '--red-zoom-lens-image-base-y': `${-lensImagePos.y}px`,
+            '--red-zoom-lens-image-center-offset-x': `${lensImageCenterOffset.x}px`,
+            '--red-zoom-lens-image-center-offset-y': `${lensImageCenterOffset.y}px`,
+            '--red-zoom-lens-image-frame-offset-x': `${-lensImageFrameOffset.x}px`,
+            '--red-zoom-lens-image-frame-offset-y': `${-lensImageFrameOffset.y}px`,
         });
     }
     /**
@@ -719,38 +897,8 @@ class RedZoomDirective {
     invalidate() {
         if (this.session && this.session.active) {
             this.initSession();
-            this.move(this.session.prevMouseX, this.session.prevMouseY);
+            this.move();
         }
-    }
-    /**
-     * @return {?}
-     */
-    disable() {
-        this.template2.template.classList.add('red-zoom--disabled');
-    }
-    /**
-     * @return {?}
-     */
-    enable() {
-        if (this.session && this.session.active) {
-            this.initSession();
-            this.move(this.session.prevMouseX, this.session.prevMouseY);
-        }
-        this.template2.template.classList.remove('red-zoom--disabled');
-    }
-    /**
-     * @return {?}
-     */
-    destroy() {
-    }
-    /**
-     * @return {?}
-     */
-    updateState() {
-        if (!this.session) {
-            return;
-        }
-        this.template2.state = this.status;
     }
     /**
      * @return {?}
@@ -774,11 +922,11 @@ RedZoomDirective.ctorParameters = () => [
 ];
 RedZoomDirective.propDecorators = {
     src: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"], args: ['src',] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["HostBinding"], args: ['attr.src',] }],
-    fullSrc: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"], args: ['redZoom',] }],
-    thumbnailSrc: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"], args: ['redZoomThumbnail',] }],
+    lensSrc: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"], args: ['redZoom',] }],
+    thumbSrc: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"], args: ['redZoomThumb',] }],
     lazy: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"], args: ['redZoomLazy',] }],
     classes: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"], args: ['redZoomClass',] }],
-    trigger: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"], args: ['redZoomTrigger',] }],
+    behavior: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"], args: ['redZoomBehavior',] }],
     wheel: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"], args: ['redZoomMouseWheel',] }],
     errorMessage: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"], args: ['redZoomErrorMessage',] }]
 };
@@ -835,7 +983,7 @@ module.exports = "<div class=\"angular-logo\">\n    <svg class=\"angular-logo__i
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"example__body\">\n    <div class=\"example__image\">\n        <img src=\"./assets/image-1.jpg\" alt=\"\" width=\"320\" redZoom=\"./assets/image-1-full.jpg\" redZoomClass=\"red-zoom--style--01\" [redZoomLazy]=\"true\" class=\"zoom\">\n    </div>\n    <div class=\"example__content\">\n        <div class=\"typography\">\n            <h2>Getting Started</h2>\n\n            <ol>\n                <li>\n                    To install RedZoom, run the command below:<br>\n                    <code>npm install ngx-red-zoom</code>\n                </li>\n                <li>import library:\n                    <pre><code>import {{ '{' }} RedZoomModule } from 'ngx-red-zoom';\n\n@NgModule({{ '{' }}\n    imports: [\n        RedZoomModule\n    ]\n})\nexport class AppModule {{ '{' }} }</code></pre>\n                </li>\n                <li>\n                    Import styles\n                    <pre><code>@import '~/red-zoom/styles/base.scss';</code></pre>\n                </li>\n                <li>\n                    Add directive to your image tag:\n                    <pre><code>&lt;img src=\"example.jpg\" <strong>redZoom=\"example.full.jpg\"</strong>&gt;</code></pre>\n                </li>\n            </ol>\n        </div>\n    </div>\n</div>\n"
+module.exports = "<div class=\"example__body\">\n    <div class=\"example__image\">\n        <img src=\"./assets/image-1.jpg\" alt=\"\" width=\"320\" redZoom=\"./assets/image-1-full.jpg\" redZoomClass=\"red-zoom--style--window\" [redZoomLazy]=\"true\" class=\"zoom\">\n    </div>\n    <div class=\"example__content\">\n        <div class=\"typography\">\n            <h2>Getting Started</h2>\n\n            <ol>\n                <li>\n                    To install RedZoom, run the command below:\n                    <pre><code>npm install ngx-red-zoom</code></pre>\n                </li>\n                <li>\n                    Import module:\n                    <pre><code>import {{ '{' }} RedZoomModule } from 'ngx-red-zoom';\n\n@NgModule({{ '{' }}\n    imports: [\n        RedZoomModule\n    ]\n})\nexport class AppModule {{ '{' }} }</code></pre>\n                </li>\n                <li>\n                    Import styles:\n                    <pre><code>@import '~ngx-red-zoom/styles/base.scss';\n@import '~ngx-red-zoom/styles/style-window.scss';</code></pre>\n                </li>\n                <li>\n                    Add directive to your image tag:\n                    <pre><code>&lt;img\n    src=\"example.jpg\"\n    redZoom=\"example.full.jpg\"\n    redZoomClass=\"red-zoom--style--window\"\n&gt;</code></pre>\n                </li>\n            </ol>\n        </div>\n    </div>\n</div>\n"
 
 /***/ }),
 
@@ -846,7 +994,7 @@ module.exports = "<div class=\"example__body\">\n    <div class=\"example__image
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"example__body\">\n    <div class=\"example__image\">\n        <img src=\"./assets/image-2.jpg\" alt=\"\" width=\"320\" redZoom=\"./assets/image-2-full.jpg\" redZoomClass=\"red-zoom--style--01\" [redZoomLazy]=\"false\" class=\"zoom\">\n    </div>\n    <div class=\"example__content\">\n        <div class=\"typography\">\n            <h2>Size And Position Of The Preview</h2>\n\n            You can set any size of preview image via CSS/SCSS, red-zoom automatically detect it, and you do not need to edit ts/html files for this purpose.\n            This also means that you can set different sizes of preview depend on screen size using CSS media queries.\n\n            <p>Use the following CSS variables to position the preview relative to the thumbnail:</p>\n\n            <ul>\n                <li>--red-zoom-thumbnail-[x/y] – Thumbnail position relative to the page.</li>\n                <li>--red-zoom-thumbnail-[w/h] – Thumbnail size in pixels.</li>\n                <li>--red-zoom-thumbnail-size-[max/min] – Thumbnail size in pixels. TODO: not implemented</li>\n            </ul>\n\n            <button>Square</button>\n            <button>Landscape</button>\n            <button>Portrait</button>\n            <button>Fixed (200x200)</button>\n        </div>\n    </div>\n</div>\n"
+module.exports = "<div class=\"example__body\">\n    <div class=\"example__image\">\n        <img src=\"./assets/image-2.jpg\" alt=\"\" width=\"320\" redZoom=\"./assets/image-2-full.jpg\" redZoomClass=\"red-zoom--style--window red-zoom--mode--{{ mode.value }}\" [redZoomLazy]=\"false\" class=\"zoom\">\n    </div>\n    <div class=\"example__content\">\n        <div class=\"typography\">\n            <h2>Size And Position Of The Lens</h2>\n\n            <p>\n                You can set any size of the lens image via CSS/SCSS, red-zoom automatically detect it,\n                and you do not need to edit ts/html files for this purpose.\n                This also means that you can set different sizes of the lens depend on screen size using CSS media queries.\n            </p>\n\n            <div class=\"button-group\">\n                <label>\n                    <input type=\"radio\" [formControl]=\"mode\" name=\"mode\" value=\"square\">\n                    <span>Square</span>\n                </label>\n                <label>\n                    <input type=\"radio\" [formControl]=\"mode\" name=\"mode\" value=\"landscape\">\n                    <span>Landscape</span>\n                </label>\n                <label>\n                    <input type=\"radio\" [formControl]=\"mode\" name=\"mode\" value=\"portrait\">\n                    <span>Portrait</span>\n                </label>\n                <label>\n                    <input type=\"radio\" [formControl]=\"mode\" name=\"mode\" value=\"fixed\">\n                    <span>Fixed</span>\n                </label>\n                <label>\n                    <input type=\"radio\" [formControl]=\"mode\" name=\"mode\" value=\"overlay\">\n                    <span>Overlay</span>\n                </label>\n            </div>\n\n            <p>\n                Use the following CSS variables to position the lens relative to the thumbnail:\n            </p>\n\n            <table>\n                <tbody>\n                <tr>\n                    <th>--red-zoom-thumb-[x/y]</th>\n                    <td>Thumbnail position relative to the page in pixels.</td>\n                </tr>\n                <tr>\n                    <th>--red-zoom-thumb-[w/h]</th>\n                    <td>Thumbnail size in pixels.</td>\n                </tr>\n                <tr>\n                    <th>--red-zoom-thumb-size-[max/min]</th>\n                    <td>Max/min size of thumbnail in pixels.</td>\n                </tr>\n                </tbody>\n            </table>\n        </div>\n    </div>\n</div>\n"
 
 /***/ }),
 
@@ -857,7 +1005,7 @@ module.exports = "<div class=\"example__body\">\n    <div class=\"example__image
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"example__body\">\n    <div class=\"example__image\">\n        <img\n            src=\"./assets/image-4.jpg\"\n            alt=\"\"\n            width=\"320\"\n            redZoom=\"./assets/image-4-full.jpg\"\n            [redZoomLazy]=\"false\"\n            [redZoomClass]=\"'red-zoom--style--'+style\"\n            class=\"zoom\">\n    </div>\n    <div class=\"example__content\">\n        <div class=\"typography\">\n            <h2>Customization And Styles</h2>\n\n            {{ 'red-zoom--style--'+style }}\n\n            <p>\n                RedZoom comes with several pre-made styles:\n            </p>\n\n            <p>\n                You can also create your own amazing style. RedZoom provides extensive style customization options.\n            </p>\n\n            <div>\n                <button type=\"button\" (click)=\"style = '01';\">01</button>\n                <button type=\"button\" (click)=\"style = '02';\">02</button>\n                <button type=\"button\" (click)=\"style = '03';\">03</button>\n            </div>\n        </div>\n    </div>\n</div>\n"
+module.exports = "<div class=\"example__body\">\n    <div class=\"example__image\">\n        <img\n            src=\"./assets/image-4.jpg\"\n            alt=\"\"\n            width=\"320\"\n            redZoom=\"./assets/image-4-full.jpg\"\n            [redZoomLazy]=\"false\"\n            [redZoomClass]=\"'red-zoom--style--'+style.value\"\n            class=\"zoom\">\n    </div>\n    <div class=\"example__content\">\n        <div class=\"typography\">\n            <h2>Customization And Styles</h2>\n\n            <div class=\"button-group\">\n                <label>\n                    <input type=\"radio\" [formControl]=\"style\" name=\"style\" value=\"magnifier\">\n                    <span>Magnifier</span>\n                </label>\n                <label>\n                    <input type=\"radio\" [formControl]=\"style\" name=\"style\" value=\"window\">\n                    <span>Window</span>\n                </label>\n                <label>\n                    <input type=\"radio\" [formControl]=\"style\" name=\"style\" value=\"overlay\">\n                    <span>Overlay</span>\n                </label>\n            </div>\n\n            <p>\n                RedZoom comes with three predefined styles, you can use one of them as shown below:\n            </p>\n\n            <pre><code class=\"code\"><span class=\"code__comment\">// sass</span>\n@import '~ngx-red-zoom/styles/base.scss';\n@import '~ngx-red-zoom/styles/style-<span class=\"code__mark\">{{ style.value }}</span>.scss';\n\n<span class=\"code__comment\">// html</span>\n&lt;img\n    src=\"./assets/image.jpg\"\n    redZoom=\"./assets/image-full.jpg\"\n    redZoomClass=\"red-zoom--style--<span>{{ style.value }}</span>\"\n&gt;</code></pre>\n\n            <p>\n                You can also create your own amazing style or customize an existing style using mixins:\n            </p>\n\n            <pre><code class=\"code\"><span class=\"code__comment\">// sass</span>\n@import '~ngx-red-zoom/styles/base.scss';\n@import '~ngx-red-zoom/styles/mixins/style-<span class=\"code__mark\">{{ style.value }}</span>.scss';\n\n.red-zoom--style--custom {{ '{' }}\n    @include red-zoom-style-<span class=\"code__mark\">{{ style.value }}</span>(\n        // you settings here\n    );\n}</code></pre>\n        </div>\n    </div>\n</div>\n"
 
 /***/ }),
 
@@ -868,7 +1016,7 @@ module.exports = "<div class=\"example__body\">\n    <div class=\"example__image
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"example__body\">\n    <div class=\"example__image\">\n        <img\n            src=\"./assets/image-3.jpg\"\n            alt=\"\"\n            width=\"320\"\n            redZoom=\"./assets/image-3-full.jpg\"\n            [redZoomLazy]=\"false\"\n            redZoomClass=\"red-zoom--style--01\"\n            [redZoomTrigger]=\"trigger\"\n            [style.cursor]=\"trigger == 'hover' ? 'crosshair' : 'zoom-in'\"\n            class=\"zoom\">\n    </div>\n    <div class=\"example__content\">\n        <div class=\"typography\">\n            <h2>Activation Event</h2>\n\n            <p><code>&lt;img redZoomTrigger=\"<span style=\"background: #fdd;\">{{ trigger }}</span>\" /&gt;</code></p>\n\n            <p>\n                RedZoom comes with several pre-made styles:\n            </p>\n\n            <div>\n                <button type=\"button\" (click)=\"trigger = 'hover';\">hover</button>\n                <button type=\"button\" (click)=\"trigger = 'click';\">click</button>\n            </div>\n        </div>\n    </div>\n</div>\n"
+module.exports = "<div class=\"example__body\">\n    <div class=\"example__image\">\n        <img\n            src=\"./assets/image-3.jpg\"\n            alt=\"\"\n            width=\"320\"\n            redZoom=\"./assets/image-3-full.jpg\"\n            [redZoomLazy]=\"false\"\n            redZoomClass=\"red-zoom--style--window\"\n            [redZoomBehavior]=\"behavior.value\"\n            [style.cursor]=\"behavior.value == 'hover' ? 'crosshair' : 'zoom-in'\"\n            class=\"zoom\">\n    </div>\n    <div class=\"example__content\">\n        <div class=\"typography\">\n            <h2>Behavior And Activation Event</h2>\n\n            <div class=\"button-group\">\n                <label>\n                    <input type=\"radio\" [formControl]=\"behavior\" name=\"behavior\" value=\"hover\">\n                    <span>Hover</span>\n                </label>\n                <label>\n                    <input type=\"radio\" [formControl]=\"behavior\" name=\"behavior\" value=\"grab\">\n                    <span>Grab</span>\n                </label>\n            </div>\n\n            <p>\n                Choose your desired behavior:\n            </p>\n\n            <pre><code>&lt;img\n    src=\"image.jpg\"\n    redZoom=\"image-full.jpg\"\n    redZoomBehavior=\"{{ behavior.value }}\"\n&gt;</code></pre>\n        </div>\n    </div>\n</div>\n"
 
 /***/ }),
 
@@ -879,7 +1027,7 @@ module.exports = "<div class=\"example__body\">\n    <div class=\"example__image
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"example__body\">\n    <div class=\"example__image\">\n        <img src=\"./assets/image-1.jpg\" alt=\"\" width=\"320\" [redZoom]=\"url\" redZoomClass=\"red-zoom--style--01\" [redZoomLazy]=\"true\" class=\"zoom\">\n    </div>\n    <div class=\"example__content\">\n        <div class=\"typography\">\n            <h2>Error Handling</h2>\n\n            <p>RedZoom correctly handle errors and displays the corresponding message. Provider custom error message:</p>\n\n            <pre><code>&lt;img\n    redZoom=\"{{ url }}\"\n    redZoomErrorMessage=\"Custom error message\"\n&gt;</code></pre>\n\n            <div>\n                <button type=\"button\" (click)=\"url = './assets/image-1-full.jpg'\">Set correct URL</button>\n                <button type=\"button\" (click)=\"url = './assets/404.jpg'\">Set incorrect URL</button>\n            </div>\n        </div>\n    </div>\n</div>\n"
+module.exports = "<div class=\"example__body\">\n    <div class=\"example__image\">\n        <img\n            src=\"./assets/image-5.jpg\"\n            alt=\"\"\n            width=\"320\"\n            [redZoom]=\"url.value === 'correct' ? './assets/image-5-full.jpg' : './assets/404.jpg'\"\n            redZoomClass=\"red-zoom--style--window\"\n            [redZoomLazy]=\"true\"\n            class=\"zoom\"\n        >\n    </div>\n    <div class=\"example__content\">\n        <div class=\"typography\">\n            <h2>Error Handling</h2>\n\n            <div class=\"button-group\">\n                <label>\n                    <input type=\"radio\" [formControl]=\"url\" name=\"error\" value=\"incorrect\">\n                    <span>Incorrect URL</span>\n                </label>\n                <label>\n                    <input type=\"radio\" [formControl]=\"url\" name=\"error\" value=\"correct\">\n                    <span>Correct URL</span>\n                </label>\n            </div>\n\n            <p>\n                If an error occurs while loading the image, RedZoom will display a corresponding error message.\n                You can also provide your own error message:\n            </p>\n\n            <pre><code>&lt;img\n    src=\"image.jpg\"\n    redZoom=\"{{ url.value === 'correct' ? 'image-full.jpg' : '404.jpg' }}\"\n    redZoomErrorMessage=\"Custom error message\"\n&gt;</code></pre>\n        </div>\n    </div>\n</div>\n"
 
 /***/ }),
 
@@ -890,7 +1038,7 @@ module.exports = "<div class=\"example__body\">\n    <div class=\"example__image
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"example__body\">\n    <div class=\"example__image\">\n        <div class=\"gallery\">\n            <div class=\"gallery__image\">\n                <img [src]=\"currentImage.thumbnail\" alt=\"\" width=\"320\" [redZoom]=\"currentImage.full\" redZoomClass=\"red-zoom--style--01\" [redZoomLazy]=\"true\" class=\"zoom\">\n            </div>\n            <ul class=\"gallery__thumbnails-list\">\n                <li class=\"gallery__thumbnail\" [ngClass]=\"{'gallery__thumbnail--current': image === currentImage}\" *ngFor=\"let image of images\">\n                    <img [src]=\"image.thumbnail\" alt=\"\" (mouseenter)=\"currentImage = image\">\n                </li>\n            </ul>\n        </div>\n    </div>\n    <div class=\"example__content\">\n        <div class=\"typography\">\n            <h2>Gallery</h2>\n\n            <p>RedZoom supports hot swap images. So you can use it in image gallery.</p>\n\n            <pre><code>&lt;img\n    [src]=\"{{ '{{' }} currentImage.thumbnail }}\"\n    [redZoom]=\"{{ '{{' }} currentImage.full }}\"\n&gt;</code></pre>\n            <pre><code>&lt;img src=\"{{ currentImage.thumbnail }}\" redZoom=\"{{ currentImage.full }}\"&gt;</code></pre>\n        </div>\n    </div>\n</div>\n"
+module.exports = "<div class=\"example__body\">\n    <div class=\"example__image\">\n        <img [src]=\"currentImage.value.thumbnail\" alt=\"\" width=\"320\" [redZoom]=\"currentImage.value.full\" redZoomClass=\"red-zoom--style--window\" [redZoomLazy]=\"true\" class=\"zoom\">\n    </div>\n    <div class=\"example__content\">\n        <div class=\"typography\">\n            <h2>Gallery</h2>\n\n            <div class=\"radio-image\">\n                <label *ngFor=\"let image of images\">\n                    <input type=\"radio\" [formControl]=\"currentImage\" name=\"gallery\" [value]=\"image\">\n                    <span>\n                        <img [src]=\"image.thumbnail\" alt=\"\">\n                    </span>\n                </label>\n            </div>\n\n            <p>RedZoom supports hot swap images. So you can use it in image gallery.</p>\n\n            <pre><code>// code\nconst currentImage = {{ '{' }}\n    thumbnail: '{{ currentImage.value.thumbnail }}',\n    full: '{{ currentImage.value.full }}',\n};\n\n// template\n&lt;img\n    [src]=\"currentImage.thumbnail\"\n    [redZoom]=\"currentImage.full\"\n&gt;</code></pre>\n        </div>\n    </div>\n</div>\n"
 
 /***/ }),
 
@@ -901,7 +1049,7 @@ module.exports = "<div class=\"example__body\">\n    <div class=\"example__image
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"example__body\">\n    <div class=\"example__image\" [src]=\"currentImage.thumbnail\" [redZoom]=\"currentImage.full\" [redZoomThumbnail]=\"currentImage.thumbnail\" redZoomClass=\"red-zoom--style--01\" [redZoomLazy]=\"true\" #redZoom=\"redZoom\">\n        <owl-carousel-o [options]=\"options\" (dragging)=\"dragged($event)\" (translated)=\"translated($event)\" (transitionend)=\"transitionEnd($event)\">\n            <ng-container *ngFor=\"let image of images\">\n                <ng-template carouselSlide>\n                    <img [src]=\"image.thumbnail\" alt=\"\" width=\"320\" class=\"zoom\">\n<!--                    <img [src]=\"image.thumbnail\" alt=\"\" width=\"320\" [redZoom]=\"image.full\" redZoomClass=\"red-zoom&#45;&#45;style&#45;&#45;01\" [redZoomLazy]=\"true\" class=\"zoom\" #redZoom=\"redZoom\">-->\n                </ng-template>\n            </ng-container>\n        </owl-carousel-o>\n    </div>\n    <div class=\"example__content\">\n        <div class=\"typography\">\n            <h2>Carousel</h2>\n        </div>\n    </div>\n</div>\n"
+module.exports = "<div class=\"example__body\">\n    <div class=\"example__image\" [redZoom]=\"currentImage.full\" [redZoomThumb]=\"currentImage.thumbnail\" [redZoomClass]=\"classes\" [redZoomLazy]=\"true\" #redZoom=\"redZoom\">\n        <owl-carousel-o [options]=\"options\" (dragging)=\"dragged($event)\" (translated)=\"translated($event)\">\n            <ng-container *ngFor=\"let image of images\">\n                <ng-template carouselSlide>\n                    <img [src]=\"image.thumbnail\" alt=\"\" width=\"320\" class=\"zoom\">\n                </ng-template>\n            </ng-container>\n        </owl-carousel-o>\n    </div>\n    <div class=\"example__content\">\n        <div class=\"typography\">\n            <h2>Carousel</h2>\n            <p>\n                You can also use the redZoom directive, for example with a DIV tag.\n                This ability is useful when your images are in a carousel, and they can change their position when swiping.\n            </p>\n            <pre><code>&lt;div\n    [redZoom]=\"currentImage.full\"\n    [redZoomThumb]=\"currentImage.thumbnail\"\n&gt;\n    &lt;owl-carousel-o&gt;\n        &lt;ng-container *ngFor=\"let image of images\"&gt;\n            &lt;ng-template carouselSlide&gt;\n                &lt;img [src]=\"image.thumbnail\"&gt;\n            &lt;/ng-template&gt;\n        &lt;/ng-container&gt;\n    &lt;/owl-carousel-o&gt;\n&lt;/div&gt;</code></pre>\n        </div>\n    </div>\n</div>\n"
 
 /***/ }),
 
@@ -912,7 +1060,7 @@ module.exports = "<div class=\"example__body\">\n    <div class=\"example__image
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"typography\">\r\n    <h2>Features</h2>\r\n    <ul>\r\n        <li>Responsive;</li>\r\n        <li>Support server side rendering (SSR);</li>\r\n        <li>Chrome (and others based on chrome), Safari, Firefox, Edge;</li>\r\n        <li>Customizing via CSS/SCSS;</li>\r\n        <li>Lazy loading;</li>\r\n        <li>Error Handling;</li>\r\n        <li>Support hot swap images;</li>\r\n    </ul>\r\n\r\n    <h2>Anatomy And Terms</h2>\r\n\r\n    <table>\r\n        <tbody>\r\n        <tr>\r\n            <th>div.red-zoom</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>— div.red-zoom__overlay</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>— div.red-zoom__error</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>—— div.red-zoom__error-message</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>— div.red-zoom__lens</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>—— div.red-zoom__lens-body</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>——— img.red-zoom__lens-image</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>— div.red-zoom__window</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>—— div.red-zoom__window-body</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>——— img.red-zoom__window-image</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        </tbody>\r\n    </table>\r\n\r\n    <p><strong>Terms</strong></p>\r\n\r\n    <table>\r\n        <tbody>\r\n        <tr>\r\n            <th>thumbnail</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>overlay</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>lens</th>\r\n            <td>\r\n                <i>TODO: Describe.</i><br>\r\n                <i>TODO: Rename to 'frame' or 'preview'.</i><br>\r\n            </td>\r\n        </tr>\r\n        <tr>\r\n            <th>window</th>\r\n            <td>\r\n                <i>TODO: Describe.</i><br>\r\n                <i>TODO: Rename to 'lens'.</i><br>\r\n            </td>\r\n        </tr>\r\n        </tbody>\r\n    </table>\r\n\r\n    <h2>API</h2>\r\n\r\n    <h3>Inputs</h3>\r\n\r\n    <table>\r\n        <tbody>\r\n        <tr>\r\n            <th>redZoom</th>\r\n            <td>string</td>\r\n            <td>\r\n                The path to the full version of the image. Required. Can be empty.<br>\r\n                <i>If left blank, the path to the full version of the image will be the same as in the <code>src</code> attribute TODO: not implemented.</i>\r\n            </td>\r\n        </tr>\r\n        <tr>\r\n            <th>redZoomLazy</th>\r\n            <td>boolean</td>\r\n            <td>If true, the full version of the image will only start loading after the activation event (mouseenter/mousedown) is triggered. (default: false)</td>\r\n        </tr>\r\n        <tr>\r\n            <th>redZoomTrigger</th>\r\n            <td>string</td>\r\n            <td>\r\n                Activation event. (default: 'hover')<br>\r\n                Possible values: <code>'hover'</code>, <code>'click'</code>\r\n                <div class=\"alert\">\r\n                    TODO: It might be worth renaming 'click' to 'grab'.<br>\r\n                    TODO: It might be worth renaming 'trigger' to 'behaviour'.\r\n                </div>\r\n            </td>\r\n        </tr>\r\n        <tr>\r\n            <th>redZoomClass</th>\r\n            <td>string</td>\r\n            <td>A list of CSS classes that should be applied to the root (<code>.red-zoom</code>) element.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>redZoomMouseWheel</th>\r\n            <td>boolean</td>\r\n            <td>\r\n                Enables or disables changing the magnification factor using the mouse wheel. (default: true)\r\n            </td>\r\n        </tr>\r\n        <tr>\r\n            <th>redZoomTouch</th>\r\n            <td>boolean</td>\r\n            <td><i>TODO: Not implemented.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>redZoomGestures</th>\r\n            <td>boolean</td>\r\n            <td><i>TODO: Not implemented.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>redZoomErrorMessage</th>\r\n            <td>string</td>\r\n            <td>Use this attribute to provide your own error message.</td>\r\n        </tr>\r\n        </tbody>\r\n    </table>\r\n\r\n    <h3>Outputs</h3>\r\n\r\n    <p>...</p>\r\n\r\n    <h3>Methods</h3>\r\n\r\n    <p>Exported as: <code>redZoom</code></p>\r\n\r\n\r\n    <table>\r\n        <tbody>\r\n        <tr>\r\n            <th>disable(): void</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>enable(): void</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        </tbody>\r\n    </table>\r\n\r\n    <h2>CSS variables</h2>\r\n\r\n    <table>\r\n        <tbody>\r\n        <tr>\r\n            <th>--red-zoom-thumbnail-[x/y]</th>\r\n            <td>Thumbnail position relative to the page in pixels.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-thumbnail-[w/h]</th>\r\n            <td>Thumbnail size in pixels.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-thumbnail-size-[max/min]</th>\r\n            <td>Max/min size of thumbnail in pixels.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-preview-[w/h]</th>\r\n            <td>Original size of preview image in pixels.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-lens-[x/y]</th>\r\n            <td>Position of the lens relative to the page in pixels.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-lens-[w/h]</th>\r\n            <td>Size of the lens in pixels.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-lens-image-[x/y]</th>\r\n            <td>Position of the lens image relative to the lens in pixels.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-mouse-[x/y]</th>\r\n            <td>Mouse position relative to the page in pixels.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-preview-image-[x/y]</th>\r\n            <td>Preview image position relative to the preview in pixels.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-preview-image-offset-[x/y]</th>\r\n            <td>TODO: describe.</td>\r\n        </tr>\r\n        </tbody>\r\n    </table>\r\n\r\n    <h2>FAQ</h2>\r\n    <ul>\r\n        <li>How to limit zoom ratio? TODO: describe</li>\r\n    </ul>\r\n\r\n    <h2>Roadmap</h2>\r\n    <ul>\r\n        <li>Changing zoom ratio with touch gestures (pinch to zoom)</li>\r\n        <li>Support touch events</li>\r\n        <li>Support &lt;source&gt; tag and srcset attribute</li>\r\n        <li>Support keyboard</li>\r\n        <li>Reflect some settings in the CSS classes of the root element</li>\r\n        <li>Provide the ability to globally define settings</li>\r\n        <li>Support for scrollable containers</li>\r\n\r\n        <li>------</li>\r\n\r\n        <li>Describe how to set zoom ratio via CSS/SCSS</li>\r\n    </ul>\r\n\r\n    <h2>Changelog</h2>\r\n    <ul class=\"changelog\">\r\n        <li class=\"changelog__item\">\r\n            <div class=\"changelog__title\">October 14, 2019 — Version 0.1.0</div>\r\n\r\n            <ul class=\"changelog__list\">\r\n                <li>Initial release</li>\r\n            </ul>\r\n        </li>\r\n    </ul>\r\n</div>\r\n"
+module.exports = "<div class=\"typography\">\r\n    <h2>Features</h2>\r\n    <ul>\r\n        <li>Responsive;</li>\r\n        <li>Support server side rendering (SSR);</li>\r\n        <li>Chrome (and others based on chrome), Safari, Firefox, Edge;</li>\r\n        <li>Customizing via CSS/SCSS;</li>\r\n        <li>Lazy loading;</li>\r\n        <li>Error Handling;</li>\r\n        <li>Support hot swap images;</li>\r\n    </ul>\r\n\r\n    <h2>Anatomy And Terms</h2>\r\n\r\n    <table>\r\n        <tbody>\r\n        <tr>\r\n            <th>div.red-zoom</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>— div.red-zoom__overlay</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>— div.red-zoom__error</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>—— div.red-zoom__error-message</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>— div.red-zoom__frame</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>—— div.red-zoom__frame-body</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>——— img.red-zoom__frame-image</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>— div.red-zoom__lens</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>—— div.red-zoom__lens-body</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>——— img.red-zoom__lens-image</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        </tbody>\r\n    </table>\r\n\r\n    <p><strong>Terms</strong></p>\r\n\r\n    <table>\r\n        <tbody>\r\n        <tr>\r\n            <th>thumbnail</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>overlay</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>lens</th>\r\n            <td>\r\n                <i>TODO: Describe.</i><br>\r\n                <i>TODO: Rename to 'frame' or 'preview'.</i><br>\r\n            </td>\r\n        </tr>\r\n        <tr>\r\n            <th>window</th>\r\n            <td>\r\n                <i>TODO: Describe.</i><br>\r\n                <i>TODO: Rename to 'lens'.</i><br>\r\n            </td>\r\n        </tr>\r\n        </tbody>\r\n    </table>\r\n\r\n    <h2>API</h2>\r\n\r\n    <h3>Inputs</h3>\r\n\r\n    <table>\r\n        <tbody>\r\n        <tr>\r\n            <th>redZoom</th>\r\n            <td>string</td>\r\n            <td>\r\n                The path to the full version of the image. Required. Can be empty.<br>\r\n                <i>If left blank, the path to the full version of the image will be the same as in the <code>src</code> attribute TODO: not implemented.</i>\r\n            </td>\r\n        </tr>\r\n        <tr>\r\n            <th>redZoomThumb</th>\r\n            <td>string</td>\r\n            <td>TODO: Describe.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>redZoomLazy</th>\r\n            <td>boolean</td>\r\n            <td>If true, the full version of the image will only start loading after the activation event (mouseenter/mousedown) is triggered. (default: false)</td>\r\n        </tr>\r\n        <tr>\r\n            <th>redZoomBehavior</th>\r\n            <td>string</td>\r\n            <td>\r\n                Activation event. (default: 'hover')<br>\r\n                Possible values: <code>'hover'</code>, <code>'grab'</code>\r\n            </td>\r\n        </tr>\r\n        <tr>\r\n            <th>redZoomClass</th>\r\n            <td>string</td>\r\n            <td>A list of CSS classes that should be applied to the root (<code>.red-zoom</code>) element.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>redZoomMouseWheel</th>\r\n            <td>boolean</td>\r\n            <td>\r\n                Enables or disables changing the magnification factor using the mouse wheel. (default: true)\r\n            </td>\r\n        </tr>\r\n        <tr>\r\n            <th>redZoomTouch</th>\r\n            <td>boolean</td>\r\n            <td><i>TODO: Not implemented.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>redZoomGestures</th>\r\n            <td>boolean</td>\r\n            <td><i>TODO: Not implemented.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>redZoomErrorMessage</th>\r\n            <td>string</td>\r\n            <td>Use this attribute to provide your own error message.</td>\r\n        </tr>\r\n        </tbody>\r\n    </table>\r\n\r\n    <h3>Outputs</h3>\r\n\r\n    <p>...</p>\r\n\r\n    <h3>Methods</h3>\r\n\r\n    <p>Exported as: <code>redZoom</code></p>\r\n\r\n\r\n    <table>\r\n        <tbody>\r\n        <tr>\r\n            <th>disable(): void</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        <tr>\r\n            <th>enable(): void</th>\r\n            <td><i>TODO: Describe.</i></td>\r\n        </tr>\r\n        </tbody>\r\n    </table>\r\n\r\n    <h2>CSS variables</h2>\r\n\r\n    <table>\r\n        <tbody>\r\n        <tr>\r\n            <th>--red-zoom-thumb-[x/y]</th>\r\n            <td>Thumbnail position relative to the page in pixels.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-thumb-[w/h]</th>\r\n            <td>Thumbnail size in pixels.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-thumb-size-[max/min]</th>\r\n            <td>Max/min size of thumbnail in pixels.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-frame-[x/y]</th>\r\n            <td>Position of the frame relative to the page in pixels.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-frame-[w/h]</th>\r\n            <td>Size of the frame in pixels.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-frame-image-[x/y]</th>\r\n            <td>Position of the frame image relative to the frame in pixels.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-lens-image-natural-[w/h]</th>\r\n            <td>Original size of lens image in pixels.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-lens-image-[x/y]</th>\r\n            <td>Lens image position relative to the lens in pixels.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-lens-image-center-offset-[x/y]</th>\r\n            <td>TODO: describe.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-lens-image-frame-offset-[x/y]</th>\r\n            <td>TODO: describe.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-scale-factor</th>\r\n            <td>TODO: Not implemented.</td>\r\n        </tr>\r\n        <tr>\r\n            <th>--red-zoom-mouse-[x/y]</th>\r\n            <td>Mouse position relative to the page in pixels.</td>\r\n        </tr>\r\n        </tbody>\r\n    </table>\r\n\r\n    <h2>FAQ</h2>\r\n    <ul>\r\n        <li>How to limit zoom ratio? TODO: describe</li>\r\n    </ul>\r\n\r\n    <h2>Roadmap</h2>\r\n    <ul>\r\n        <li>Changing zoom ratio with touch gestures (pinch to zoom)</li>\r\n        <li>Support touch events</li>\r\n        <li>Support &lt;source&gt; tag and srcset attribute</li>\r\n        <li>Support keyboard</li>\r\n        <li>Reflect some settings in the CSS classes of the root element</li>\r\n        <li>Provide the ability to globally define settings</li>\r\n        <li>Support for scrollable containers</li>\r\n        <li>Add the ability to follow the scroll position</li>\r\n\r\n        <li>------</li>\r\n\r\n        <li>Describe how to set zoom ratio via CSS/SCSS</li>\r\n    </ul>\r\n\r\n    <h2>Changelog</h2>\r\n    <ul class=\"changelog\">\r\n        <li class=\"changelog__item\">\r\n            <div class=\"changelog__title\">October 14, 2019 — Version 0.1.0</div>\r\n\r\n            <ul class=\"changelog__list\">\r\n                <li>Initial release</li>\r\n            </ul>\r\n        </li>\r\n    </ul>\r\n</div>\r\n"
 
 /***/ }),
 
@@ -1039,6 +1187,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _example_n05_example_n05_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./example-n05/example-n05.component */ "./src/app/example-n05/example-n05.component.ts");
 /* harmony import */ var _example_n06_example_n06_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./example-n06/example-n06.component */ "./src/app/example-n06/example-n06.component.ts");
 /* harmony import */ var _example_n07_example_n07_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./example-n07/example-n07.component */ "./src/app/example-n07/example-n07.component.ts");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm2015/forms.js");
+
 
 
 
@@ -1078,6 +1228,7 @@ AppModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
             angulartics2__WEBPACK_IMPORTED_MODULE_4__["Angulartics2Module"].forRoot(),
             ngx_owl_carousel_o__WEBPACK_IMPORTED_MODULE_5__["CarouselModule"],
             _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_6__["NoopAnimationsModule"],
+            _angular_forms__WEBPACK_IMPORTED_MODULE_17__["ReactiveFormsModule"],
         ],
         providers: [],
         bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_8__["AppComponent"]]
@@ -1138,7 +1289,7 @@ ExampleN01Component = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL2V4YW1wbGUtbjAyL2V4YW1wbGUtbjAyLmNvbXBvbmVudC5zY3NzIn0= */"
+module.exports = ".red-zoom--mode--square .red-zoom__lens {\n  --window-x: calc(var(--red-zoom-thumb-x, 0px) + var(--red-zoom-thumb-w, 0px) + 32px);\n  left: var(--window-x, 0px);\n  top: var(--red-zoom-thumb-y, 0px);\n  width: var(--red-zoom-thumb-w, 0px);\n  height: var(--red-zoom-thumb-w, 0px);\n}\n\n.red-zoom--mode--landscape .red-zoom__lens {\n  --window-x: calc(var(--red-zoom-thumb-x, 0px) + var(--red-zoom-thumb-w, 0px) + 32px);\n  left: var(--window-x, 0px);\n  top: var(--red-zoom-thumb-y, 0px);\n  width: var(--red-zoom-thumb-h, 0px);\n  height: var(--red-zoom-thumb-w, 0px);\n}\n\n.red-zoom--mode--portrait .red-zoom__lens {\n  --window-x: calc(var(--red-zoom-thumb-x, 0px) + var(--red-zoom-thumb-w, 0px) + 32px);\n  left: var(--window-x, 0px);\n  top: var(--red-zoom-thumb-y, 0px);\n  width: var(--red-zoom-thumb-w, 0px);\n  height: var(--red-zoom-thumb-h, 0px);\n}\n\n.red-zoom--mode--fixed .red-zoom__lens {\n  -webkit-transform: none;\n          transform: none;\n  position: fixed;\n  left: 40px;\n  top: auto;\n  bottom: 40px;\n  width: 320px;\n  height: 320px;\n}\n\n.red-zoom--mode--overlay .red-zoom__lens {\n  left: var(--red-zoom-thumb-x, 0px);\n  top: var(--red-zoom-thumb-y, 0px);\n  width: var(--red-zoom-thumb-w, 0px);\n  height: var(--red-zoom-thumb-h, 0px);\n}\n\n.red-zoom--mode--overlay .red-zoom__frame {\n  display: none;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvZXhhbXBsZS1uMDIvRjpcXHByb2plY3RzXFxyZWQtem9vbS9zcmNcXGFwcFxcZXhhbXBsZS1uMDJcXGV4YW1wbGUtbjAyLmNvbXBvbmVudC5zY3NzIiwic3JjL2FwcC9leGFtcGxlLW4wMi9leGFtcGxlLW4wMi5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFDSTtFQUNJLG9GQUFBO0VBRUEsMEJBQUE7RUFDQSxpQ0FBQTtFQUNBLG1DQUFBO0VBQ0Esb0NBQUE7QUNEUjs7QURLSTtFQUNJLG9GQUFBO0VBRUEsMEJBQUE7RUFDQSxpQ0FBQTtFQUNBLG1DQUFBO0VBQ0Esb0NBQUE7QUNIUjs7QURPSTtFQUNJLG9GQUFBO0VBRUEsMEJBQUE7RUFDQSxpQ0FBQTtFQUNBLG1DQUFBO0VBQ0Esb0NBQUE7QUNMUjs7QURTSTtFQUNJLHVCQUFBO1VBQUEsZUFBQTtFQUNBLGVBQUE7RUFDQSxVQUFBO0VBQ0EsU0FBQTtFQUNBLFlBQUE7RUFDQSxZQUFBO0VBQ0EsYUFBQTtBQ05SOztBRFVJO0VBQ0ksa0NBQUE7RUFDQSxpQ0FBQTtFQUNBLG1DQUFBO0VBQ0Esb0NBQUE7QUNQUjs7QURTSTtFQUNJLGFBQUE7QUNQUiIsImZpbGUiOiJzcmMvYXBwL2V4YW1wbGUtbjAyL2V4YW1wbGUtbjAyLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLnJlZC16b29tLS1tb2RlLS1zcXVhcmUge1xyXG4gICAgLnJlZC16b29tX19sZW5zIHtcclxuICAgICAgICAtLXdpbmRvdy14OiBjYWxjKHZhcigtLXJlZC16b29tLXRodW1iLXgsIDBweCkgKyB2YXIoLS1yZWQtem9vbS10aHVtYi13LCAwcHgpICsgMzJweCk7XHJcblxyXG4gICAgICAgIGxlZnQ6IHZhcigtLXdpbmRvdy14LCAwcHgpO1xyXG4gICAgICAgIHRvcDogdmFyKC0tcmVkLXpvb20tdGh1bWIteSwgMHB4KTtcclxuICAgICAgICB3aWR0aDogdmFyKC0tcmVkLXpvb20tdGh1bWItdywgMHB4KTtcclxuICAgICAgICBoZWlnaHQ6IHZhcigtLXJlZC16b29tLXRodW1iLXcsIDBweCk7XHJcbiAgICB9XHJcbn1cclxuLnJlZC16b29tLS1tb2RlLS1sYW5kc2NhcGUge1xyXG4gICAgLnJlZC16b29tX19sZW5zIHtcclxuICAgICAgICAtLXdpbmRvdy14OiBjYWxjKHZhcigtLXJlZC16b29tLXRodW1iLXgsIDBweCkgKyB2YXIoLS1yZWQtem9vbS10aHVtYi13LCAwcHgpICsgMzJweCk7XHJcblxyXG4gICAgICAgIGxlZnQ6IHZhcigtLXdpbmRvdy14LCAwcHgpO1xyXG4gICAgICAgIHRvcDogdmFyKC0tcmVkLXpvb20tdGh1bWIteSwgMHB4KTtcclxuICAgICAgICB3aWR0aDogdmFyKC0tcmVkLXpvb20tdGh1bWItaCwgMHB4KTtcclxuICAgICAgICBoZWlnaHQ6IHZhcigtLXJlZC16b29tLXRodW1iLXcsIDBweCk7XHJcbiAgICB9XHJcbn1cclxuLnJlZC16b29tLS1tb2RlLS1wb3J0cmFpdCB7XHJcbiAgICAucmVkLXpvb21fX2xlbnMge1xyXG4gICAgICAgIC0td2luZG93LXg6IGNhbGModmFyKC0tcmVkLXpvb20tdGh1bWIteCwgMHB4KSArIHZhcigtLXJlZC16b29tLXRodW1iLXcsIDBweCkgKyAzMnB4KTtcclxuXHJcbiAgICAgICAgbGVmdDogdmFyKC0td2luZG93LXgsIDBweCk7XHJcbiAgICAgICAgdG9wOiB2YXIoLS1yZWQtem9vbS10aHVtYi15LCAwcHgpO1xyXG4gICAgICAgIHdpZHRoOiB2YXIoLS1yZWQtem9vbS10aHVtYi13LCAwcHgpO1xyXG4gICAgICAgIGhlaWdodDogdmFyKC0tcmVkLXpvb20tdGh1bWItaCwgMHB4KTtcclxuICAgIH1cclxufVxyXG4ucmVkLXpvb20tLW1vZGUtLWZpeGVkIHtcclxuICAgIC5yZWQtem9vbV9fbGVucyB7XHJcbiAgICAgICAgdHJhbnNmb3JtOiBub25lO1xyXG4gICAgICAgIHBvc2l0aW9uOiBmaXhlZDtcclxuICAgICAgICBsZWZ0OiA0MHB4O1xyXG4gICAgICAgIHRvcDogYXV0bztcclxuICAgICAgICBib3R0b206IDQwcHg7XHJcbiAgICAgICAgd2lkdGg6IDMyMHB4O1xyXG4gICAgICAgIGhlaWdodDogMzIwcHg7XHJcbiAgICB9XHJcbn1cclxuLnJlZC16b29tLS1tb2RlLS1vdmVybGF5IHtcclxuICAgIC5yZWQtem9vbV9fbGVucyB7XHJcbiAgICAgICAgbGVmdDogdmFyKC0tcmVkLXpvb20tdGh1bWIteCwgMHB4KTtcclxuICAgICAgICB0b3A6IHZhcigtLXJlZC16b29tLXRodW1iLXksIDBweCk7XHJcbiAgICAgICAgd2lkdGg6IHZhcigtLXJlZC16b29tLXRodW1iLXcsIDBweCk7XHJcbiAgICAgICAgaGVpZ2h0OiB2YXIoLS1yZWQtem9vbS10aHVtYi1oLCAwcHgpO1xyXG4gICAgfVxyXG4gICAgLnJlZC16b29tX19mcmFtZSB7XHJcbiAgICAgICAgZGlzcGxheTogbm9uZTtcclxuICAgIH1cclxufVxyXG4iLCIucmVkLXpvb20tLW1vZGUtLXNxdWFyZSAucmVkLXpvb21fX2xlbnMge1xuICAtLXdpbmRvdy14OiBjYWxjKHZhcigtLXJlZC16b29tLXRodW1iLXgsIDBweCkgKyB2YXIoLS1yZWQtem9vbS10aHVtYi13LCAwcHgpICsgMzJweCk7XG4gIGxlZnQ6IHZhcigtLXdpbmRvdy14LCAwcHgpO1xuICB0b3A6IHZhcigtLXJlZC16b29tLXRodW1iLXksIDBweCk7XG4gIHdpZHRoOiB2YXIoLS1yZWQtem9vbS10aHVtYi13LCAwcHgpO1xuICBoZWlnaHQ6IHZhcigtLXJlZC16b29tLXRodW1iLXcsIDBweCk7XG59XG5cbi5yZWQtem9vbS0tbW9kZS0tbGFuZHNjYXBlIC5yZWQtem9vbV9fbGVucyB7XG4gIC0td2luZG93LXg6IGNhbGModmFyKC0tcmVkLXpvb20tdGh1bWIteCwgMHB4KSArIHZhcigtLXJlZC16b29tLXRodW1iLXcsIDBweCkgKyAzMnB4KTtcbiAgbGVmdDogdmFyKC0td2luZG93LXgsIDBweCk7XG4gIHRvcDogdmFyKC0tcmVkLXpvb20tdGh1bWIteSwgMHB4KTtcbiAgd2lkdGg6IHZhcigtLXJlZC16b29tLXRodW1iLWgsIDBweCk7XG4gIGhlaWdodDogdmFyKC0tcmVkLXpvb20tdGh1bWItdywgMHB4KTtcbn1cblxuLnJlZC16b29tLS1tb2RlLS1wb3J0cmFpdCAucmVkLXpvb21fX2xlbnMge1xuICAtLXdpbmRvdy14OiBjYWxjKHZhcigtLXJlZC16b29tLXRodW1iLXgsIDBweCkgKyB2YXIoLS1yZWQtem9vbS10aHVtYi13LCAwcHgpICsgMzJweCk7XG4gIGxlZnQ6IHZhcigtLXdpbmRvdy14LCAwcHgpO1xuICB0b3A6IHZhcigtLXJlZC16b29tLXRodW1iLXksIDBweCk7XG4gIHdpZHRoOiB2YXIoLS1yZWQtem9vbS10aHVtYi13LCAwcHgpO1xuICBoZWlnaHQ6IHZhcigtLXJlZC16b29tLXRodW1iLWgsIDBweCk7XG59XG5cbi5yZWQtem9vbS0tbW9kZS0tZml4ZWQgLnJlZC16b29tX19sZW5zIHtcbiAgdHJhbnNmb3JtOiBub25lO1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGxlZnQ6IDQwcHg7XG4gIHRvcDogYXV0bztcbiAgYm90dG9tOiA0MHB4O1xuICB3aWR0aDogMzIwcHg7XG4gIGhlaWdodDogMzIwcHg7XG59XG5cbi5yZWQtem9vbS0tbW9kZS0tb3ZlcmxheSAucmVkLXpvb21fX2xlbnMge1xuICBsZWZ0OiB2YXIoLS1yZWQtem9vbS10aHVtYi14LCAwcHgpO1xuICB0b3A6IHZhcigtLXJlZC16b29tLXRodW1iLXksIDBweCk7XG4gIHdpZHRoOiB2YXIoLS1yZWQtem9vbS10aHVtYi13LCAwcHgpO1xuICBoZWlnaHQ6IHZhcigtLXJlZC16b29tLXRodW1iLWgsIDBweCk7XG59XG4ucmVkLXpvb20tLW1vZGUtLW92ZXJsYXkgLnJlZC16b29tX19mcmFtZSB7XG4gIGRpc3BsYXk6IG5vbmU7XG59Il19 */"
 
 /***/ }),
 
@@ -1154,15 +1305,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExampleN02Component", function() { return ExampleN02Component; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm2015/forms.js");
+
 
 
 let ExampleN02Component = class ExampleN02Component {
-    constructor() { }
+    constructor() {
+        this.mode = new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"]('square');
+    }
 };
 ExampleN02Component = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
         selector: 'app-example-n02',
         template: __webpack_require__(/*! raw-loader!./example-n02.component.html */ "./node_modules/raw-loader/index.js!./src/app/example-n02/example-n02.component.html"),
+        encapsulation: _angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewEncapsulation"].None,
         host: {
             '[class.example]': 'true'
         },
@@ -1197,11 +1353,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExampleN03Component", function() { return ExampleN03Component; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm2015/forms.js");
+
 
 
 let ExampleN03Component = class ExampleN03Component {
     constructor() {
-        this.style = '02';
+        this.style = new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"]('magnifier');
     }
 };
 ExampleN03Component = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
@@ -1242,11 +1400,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExampleN04Component", function() { return ExampleN04Component; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm2015/forms.js");
+
 
 
 let ExampleN04Component = class ExampleN04Component {
     constructor() {
-        this.trigger = 'hover';
+        this.behavior = new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"]('hover');
     }
 };
 ExampleN04Component = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
@@ -1287,11 +1447,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExampleN05Component", function() { return ExampleN05Component; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm2015/forms.js");
+
 
 
 let ExampleN05Component = class ExampleN05Component {
     constructor() {
-        this.url = './assets/404.jpg';
+        this.url = new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"]('incorrect');
     }
 };
 ExampleN05Component = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
@@ -1332,16 +1494,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExampleN06Component", function() { return ExampleN06Component; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm2015/forms.js");
+
 
 
 let ExampleN06Component = class ExampleN06Component {
     constructor() {
         this.images = [
-            { thumbnail: './assets/image-1.jpg', full: './assets/image-1-full.jpg' },
-            { thumbnail: './assets/image-2.jpg', full: './assets/image-2-full.jpg' },
-            { thumbnail: './assets/image-3.jpg', full: './assets/image-3-full.jpg' },
+            { thumbnail: './assets/image-6.jpg', full: './assets/image-6-full.jpg' },
+            { thumbnail: './assets/image-7.jpg', full: './assets/image-7-full.jpg' },
+            { thumbnail: './assets/image-8.jpg', full: './assets/image-8-full.jpg' },
         ];
-        this.currentImage = this.images[0];
+        this.currentImage = new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"](this.images[0]);
     }
 };
 ExampleN06Component = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
@@ -1387,39 +1551,36 @@ __webpack_require__.r(__webpack_exports__);
 
 
 let ExampleN07Component = class ExampleN07Component {
-    constructor() {
+    constructor(cd) {
+        this.cd = cd;
         this.images = [
-            { thumbnail: './assets/image-1.jpg', full: './assets/image-1-full.jpg' },
-            { thumbnail: './assets/image-2.jpg', full: './assets/image-2-full.jpg' },
-            { thumbnail: './assets/image-3.jpg', full: './assets/image-3-full.jpg' },
+            { thumbnail: './assets/image-9.jpg', full: './assets/image-9-full.jpg' },
+            { thumbnail: './assets/image-10.jpg', full: './assets/image-10-full.jpg' },
+            { thumbnail: './assets/image-11.jpg', full: './assets/image-11-full.jpg' },
         ];
         this.currentImage = this.images[0];
         this.options = {
             items: 1,
         };
+        this.dragging = false;
+    }
+    get classes() {
+        return 'red-zoom--style--window' + (this.dragging ? ' red-zoom--disabled' : '');
     }
     dragged(data) {
-        // if (!data.dragging) {
-        //     this.items.forEach(a => a.invalidate());
-        // }
-        if (data.dragging) {
-            this.items.forEach(a => a.disable());
-        }
+        this.dragging = data.dragging;
+        this.cd.detectChanges();
     }
     translated(data) {
         this.currentImage = this.images[data.startPosition];
-        // this.items.forEach(a => a.invalidate());
-    }
-    transitionEnd(event) {
-        if (event.propertyName === 'transform' && !event.target.classList.contains('owl-stage')) {
-            // this.items.forEach(a => a.invalidate());
-            this.items.forEach(a => a.enable());
-        }
     }
 };
+ExampleN07Component.ctorParameters = () => [
+    { type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["ChangeDetectorRef"] }
+];
 tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChildren"])(ngx_red_zoom__WEBPACK_IMPORTED_MODULE_2__["RedZoomDirective"])
-], ExampleN07Component.prototype, "items", void 0);
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])(ngx_red_zoom__WEBPACK_IMPORTED_MODULE_2__["RedZoomDirective"], { static: false })
+], ExampleN07Component.prototype, "redZoom", void 0);
 ExampleN07Component = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
         selector: 'app-example-n07',

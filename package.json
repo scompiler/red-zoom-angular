@@ -9,7 +9,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build-library": "ng build ngx-red-zoom --watch",
-    "build-docs": "ng build --base-href /red-zoom/ --output-path docs",
+    "build-docs": "ng build --base-href /red-zoom-angular/ --output-path docs",
     "library:build": "ng build ngx-red-zoom",
     "pack": "npm run library:build && npm run pack:scss",
     "pack:scss": "./node_modules/.bin/gulp pack"
