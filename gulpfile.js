@@ -19,5 +19,11 @@ function copyScss() {
 }
 
 
-exports.pack = gulp.series(clean, copyLibrary, copyScss);
+function copyReadme() {
+    return gulp.src('README.md')
+        .pipe(gulp.dest('package'));
+}
+
+
+exports.pack = gulp.series(clean, copyLibrary, copyScss, copyReadme);
 
