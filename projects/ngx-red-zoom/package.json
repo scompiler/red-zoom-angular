@@ -1,5 +1,13 @@
 {
   "name": "ngx-red-zoom",
+  "description": "RedZoom is a modern very easy-to-use image zoom library which made as Angular directive and fully stylable via CSS/SCSS",
+  "homepage": "https://github.com/scompiler/red-zoom-angular",
+  "bugs": "https://github.com/scompiler/red-zoom-angular/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scompiler/red-zoom-angular.git"
+  },
+  "license": "MIT",
   "version": "0.1.0",
   "peerDependencies": {
     "@angular/common": "^8.1.3",
