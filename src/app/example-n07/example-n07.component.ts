@@ -1,4 +1,4 @@
-import { Component, QueryList, ViewChildren } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { RedZoomDirective } from 'ngx-red-zoom';
 
 @Component({
@@ -11,9 +11,9 @@ import { RedZoomDirective } from 'ngx-red-zoom';
 })
 export class ExampleN07Component {
     images = [
-        {thumbnail: './assets/image-1.jpg', full: './assets/image-1-full.jpg'},
-        {thumbnail: './assets/image-2.jpg', full: './assets/image-2-full.jpg'},
-        {thumbnail: './assets/image-3.jpg', full: './assets/image-3-full.jpg'},
+        {thumbnail: './assets/image-9.jpg', full: './assets/image-9-full.jpg'},
+        {thumbnail: './assets/image-10.jpg', full: './assets/image-10-full.jpg'},
+        {thumbnail: './assets/image-11.jpg', full: './assets/image-11-full.jpg'},
     ];
 
     currentImage = this.images[0];
@@ -22,28 +22,22 @@ export class ExampleN07Component {
         items: 1,
     };
 
-    @ViewChildren(RedZoomDirective) items: QueryList<RedZoomDirective>;
+    @ViewChild(RedZoomDirective, {static: false}) redZoom: RedZoomDirective;
 
-    constructor() { }
+    get classes(): string {
+        return 'red-zoom--style--window' + (this.dragging ? ' red-zoom--disabled' : '');
+    }
+
+    dragging = false;
+
+    constructor(private cd: ChangeDetectorRef) { }
 
     dragged(data): void {
-        // if (!data.dragging) {
-        //     this.items.forEach(a => a.invalidate());
-        // }
-        if (data.dragging) {
-            this.items.forEach(a => a.disable());
-        }
+        this.dragging = data.dragging;
+        this.cd.detectChanges();
     }
 
     translated(data): void {
         this.currentImage = this.images[data.startPosition];
-        // this.items.forEach(a => a.invalidate());
-    }
-
-    transitionEnd(event: TransitionEvent): void {
-        if (event.propertyName === 'transform' && !(event.target as HTMLDivElement).classList.contains('owl-stage')) {
-            // this.items.forEach(a => a.invalidate());
-            this.items.forEach(a => a.enable());
-        }
     }
 }

@@ -15,7 +15,6 @@ import { RedZoomTemplate } from './red-zoom-template.class';
 import { RedZoomStatus } from './red-zoom-status.type';
 import { RedZoomImage } from './red-zoom-image.class';
 import * as vector from './vector';
-import { fromMouseEvent } from './vector';
 
 
 interface Session {
@@ -181,8 +180,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         }
         if ('classes' in changes && !changes.classes.firstChange) {
             this.template.classes = this.classes;
-
-            // TODO: invalidate if session active
+            this.invalidate();
         }
         if ('errorMessage' in changes && !changes.errorMessage.firstChange) {
             this.template.errorMessage.innerHTML = this.errorMessage;
@@ -247,7 +245,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             lensContainerSize: null,
             lensImageSize: null,
             frameSize: null,
-            mousePos: fromMouseEvent(event),
+            mousePos: vector.fromMouseEvent(event),
             destroy: () => {},
         };
 
@@ -441,19 +439,6 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             this.initSession();
             this.move();
         }
-    }
-
-    disable(): void {
-        this.template.template.classList.add('red-zoom--disabled');
-    }
-
-    enable(): void {
-        if (this.session && this.session.active) {
-            this.initSession();
-            this.move();
-        }
-
-        this.template.template.classList.remove('red-zoom--disabled');
     }
 
     forceReflow(): void {

@@ -1,10 +1,9 @@
 <div class="example__body">
-    <div class="example__image" [redZoom]="currentImage.full" [redZoomThumb]="currentImage.thumbnail" redZoomClass="red-zoom--style--window" [redZoomLazy]="true" #redZoom="redZoom">
-        <owl-carousel-o [options]="options" (dragging)="dragged($event)" (translated)="translated($event)" (transitionend)="transitionEnd($event)">
+    <div class="example__image" [redZoom]="currentImage.full" [redZoomThumb]="currentImage.thumbnail" [redZoomClass]="classes" [redZoomLazy]="true" #redZoom="redZoom">
+        <owl-carousel-o [options]="options" (dragging)="dragged($event)" (translated)="translated($event)">
             <ng-container *ngFor="let image of images">
                 <ng-template carouselSlide>
                     <img [src]="image.thumbnail" alt="" width="320" class="zoom">
-<!--                    <img [src]="image.thumbnail" alt="" width="320" [redZoom]="image.full" redZoomClass="red-zoom&#45;&#45;style&#45;&#45;01" [redZoomLazy]="true" class="zoom" #redZoom="redZoom">-->
                 </ng-template>
             </ng-container>
         </owl-carousel-o>
@@ -12,6 +11,22 @@
     <div class="example__content">
         <div class="typography">
             <h2>Carousel</h2>
+            <p>
+                You can also use the redZoom directive, for example with a DIV tag.
+                This ability is useful when your images are in a carousel, and they can change their position when swiping.
+            </p>
+            <pre><code>&lt;div
+    [redZoom]="currentImage.full"
+    [redZoomThumb]="currentImage.thumbnail"
+&gt;
+    &lt;owl-carousel-o&gt;
+        &lt;ng-container *ngFor="let image of images"&gt;
+            &lt;ng-template carouselSlide&gt;
+                &lt;img [src]="image.thumbnail"&gt;
+            &lt;/ng-template&gt;
+        &lt;/ng-container&gt;
+    &lt;/owl-carousel-o&gt;
+&lt;/div&gt;</code></pre>
         </div>
     </div>
 </div>

@@ -1,9 +1,5 @@
 .section {
     max-width: 920px;
-    margin: 0 auto;
     display: block;
-
-    & + & {
-        margin-top: 48px;
-    }
+    margin: 64px auto 0;
 }
