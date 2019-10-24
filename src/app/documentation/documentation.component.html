@@ -10,85 +10,9 @@
         <li>Support hot swap images;</li>
     </ul>
 
-    <h2>Anatomy And Terms</h2>
-
-    <table>
-        <tbody>
-        <tr>
-            <th>div.red-zoom</th>
-            <td><i>TODO: Describe.</i></td>
-        </tr>
-        <tr>
-            <th>— div.red-zoom__overlay</th>
-            <td><i>TODO: Describe.</i></td>
-        </tr>
-        <tr>
-            <th>— div.red-zoom__error</th>
-            <td><i>TODO: Describe.</i></td>
-        </tr>
-        <tr>
-            <th>—— div.red-zoom__error-message</th>
-            <td><i>TODO: Describe.</i></td>
-        </tr>
-        <tr>
-            <th>— div.red-zoom__frame</th>
-            <td><i>TODO: Describe.</i></td>
-        </tr>
-        <tr>
-            <th>—— div.red-zoom__frame-body</th>
-            <td><i>TODO: Describe.</i></td>
-        </tr>
-        <tr>
-            <th>——— img.red-zoom__frame-image</th>
-            <td><i>TODO: Describe.</i></td>
-        </tr>
-        <tr>
-            <th>— div.red-zoom__lens</th>
-            <td><i>TODO: Describe.</i></td>
-        </tr>
-        <tr>
-            <th>—— div.red-zoom__lens-body</th>
-            <td><i>TODO: Describe.</i></td>
-        </tr>
-        <tr>
-            <th>——— img.red-zoom__lens-image</th>
-            <td><i>TODO: Describe.</i></td>
-        </tr>
-        </tbody>
-    </table>
-
-    <p><strong>Terms</strong></p>
-
-    <table>
-        <tbody>
-        <tr>
-            <th>thumbnail</th>
-            <td><i>TODO: Describe.</i></td>
-        </tr>
-        <tr>
-            <th>overlay</th>
-            <td><i>TODO: Describe.</i></td>
-        </tr>
-        <tr>
-            <th>lens</th>
-            <td>
-                <i>TODO: Describe.</i><br>
-                <i>TODO: Rename to 'frame' or 'preview'.</i><br>
-            </td>
-        </tr>
-        <tr>
-            <th>window</th>
-            <td>
-                <i>TODO: Describe.</i><br>
-                <i>TODO: Rename to 'lens'.</i><br>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-
     <h2>API</h2>
 
-    <p>Exported as: <code>redZoom</code></p>
+    <p>Exported as: <code>redZoom</code>.</p>
 
     <h3>Inputs</h3>
 
@@ -99,13 +23,14 @@
             <td>string</td>
             <td>
                 The path to the full version of the image. Required. Can be empty.<br>
-                <i>If left blank, the path to the full version of the image will be the same as in the <code>src</code> attribute TODO: not implemented.</i>
+                <hr>
+                <i>If left blank, the path to the full version of the image will be the same as in the <code>src</code> or <code>redZoomThumb</code> attribute. TODO: not implemented.</i>
             </td>
         </tr>
         <tr>
             <th>redZoomThumb</th>
             <td>string</td>
-            <td>TODO: Describe.</td>
+            <td>The path to the thumbnail image used in the frame. Required if the <code>src</code> attribute is missing.</td>
         </tr>
         <tr>
             <th>redZoomLazy</th>
@@ -117,7 +42,7 @@
             <td>string</td>
             <td>
                 Activation event. (default: 'hover')<br>
-                Possible values: <code>'hover'</code>, <code>'grab'</code>
+                Possible values: <code>'hover'</code>, <code>'grab'</code>.
             </td>
         </tr>
         <tr>
