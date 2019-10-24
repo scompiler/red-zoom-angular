@@ -1,4 +1,10 @@
 const gulp = require('gulp');
+const del = require('del');
+
+
+function clean() {
+    return del('package');
+}
 
 
 function copyLibrary() {
@@ -7,17 +13,11 @@ function copyLibrary() {
 }
 
 
-function copyStyles() {
-    return gulp.src('src/scss/library/**/*')
-        .pipe(gulp.dest('package/scss/styles'));
-}
-
-
 function copyScss() {
-    return gulp.src('src/scss/base.scss')
-        .pipe(gulp.dest('package/scss'));
+    return gulp.src('src/scss/library/**/*')
+        .pipe(gulp.dest('package/styles'));
 }
 
 
-exports.pack = gulp.series(copyLibrary, copyStyles, copyScss);
+exports.pack = gulp.series(clean, copyLibrary, copyScss);
 
