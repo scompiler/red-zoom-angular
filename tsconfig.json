@@ -21,10 +21,8 @@
     ],
     "paths": {
       "ngx-red-zoom": [
+        "dist/ngx-red-zoom/ngx-red-zoom",
         "dist/ngx-red-zoom"
-      ],
-      "ngx-red-zoom/*": [
-        "dist/ngx-red-zoom/*"
       ]
     }
   },

@@ -22,7 +22,7 @@ export class ExampleN07Component {
         items: 1,
     };
 
-    @ViewChild(RedZoomDirective, {static: false}) redZoom: RedZoomDirective;
+    @ViewChild(RedZoomDirective) redZoom: RedZoomDirective;
 
     get classes(): string {
         return 'red-zoom--style--window' + (this.dragging ? ' red-zoom--disabled' : '');
