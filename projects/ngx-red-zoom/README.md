@@ -1,6 +1,6 @@
 # NgxRedZoom
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.1.3.
+This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.4.
 
 ## Code scaffolding
 
@@ -22,27 +22,3 @@ Run `ng test ngx-red-zoom` to execute the unit tests via [Karma](https://karma-r
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
-
-
-
-
-## API
-
-```angular2html
-<img src="small.jpg" ngxRedZoom="full.jpg" [ngxRedZoomLazy]="true">
-```
-
-Option | Desccription
------|------
-ngxRedZoom | fsdfsd
-ngxRedZoomLazy | fsdfsd
-
-
-## Terminology
-
-- thumbnail
-- lens
-- window
-
-
-
