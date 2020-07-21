@@ -1,6 +1,6 @@
 {
   "name": "red-zoom",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -9,7 +9,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build-library": "ng build ngx-red-zoom --prod --watch",
-    "build-docs": "ng build --base-href /red-zoom-angular/ --output-path docs",
+    "build-docs": "ng build --prod --base-href /red-zoom-angular/ --output-path docs",
     "library:build": "ng build ngx-red-zoom --prod",
     "pack": "npm run library:build && npm run pack:scss",
     "pack:scss": "./node_modules/.bin/gulp pack"
