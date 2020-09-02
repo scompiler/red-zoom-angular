@@ -14,7 +14,7 @@ function copyLibrary() {
 
 
 function copyScss() {
-    return gulp.src('src/scss/library/**/*')
+    return gulp.src('projects/demo/src/scss/library/**/*')
         .pipe(gulp.dest('package/styles'));
 }
 
