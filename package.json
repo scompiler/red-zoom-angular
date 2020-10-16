@@ -26,7 +26,7 @@
     "@angular/router": "~10.1.6",
     "angulartics2": "^10.0.0",
     "highlight.js": "^10.2.1",
-    "ngx-owl-carousel-o": "^3.0.1",
+    "ngx-owl-carousel-o": "^4.0.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
