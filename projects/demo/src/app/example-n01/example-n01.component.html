@@ -9,31 +9,43 @@
             <ol>
                 <li>
                     To install RedZoom, run the command below:
-                    <pre><code>npm install ngx-red-zoom</code></pre>
+
+                    <app-code language="bash" ngPreserveWhitespaces>
+                        npm install ngx-red-zoom
+                    </app-code>
                 </li>
                 <li>
                     Import module:
-                    <pre><code>import {{ '{' }} RedZoomModule } from 'ngx-red-zoom';
 
-@NgModule({{ '{' }}
-    imports: [
-        RedZoomModule
-    ]
-})
-export class AppModule {{ '{' }} }</code></pre>
+                    <app-code language="typescript" ngPreserveWhitespaces>
+                        import {{ '{' }} RedZoomModule } from 'ngx-red-zoom';
+
+                        @NgModule({{ '{' }}
+                            imports: [
+                                RedZoomModule
+                            ]
+                        })
+                        export class AppModule {{ '{' }} }
+                    </app-code>
                 </li>
                 <li>
                     Import styles:
-                    <pre><code>@import '~ngx-red-zoom/styles/base.scss';
-@import '~ngx-red-zoom/styles/style-window.scss';</code></pre>
+
+                    <app-code language="scss" ngPreserveWhitespaces>
+                        @import '~ngx-red-zoom/styles/base.scss';
+                        @import '~ngx-red-zoom/styles/style-window.scss';
+                    </app-code>
                 </li>
                 <li>
                     Add directive to your image tag:
-                    <pre><code>&lt;img
-    src="example.jpg"
-    redZoom="example.full.jpg"
-    redZoomClass="red-zoom--style--window"
-&gt;</code></pre>
+
+                    <app-code language="html" ngPreserveWhitespaces>
+                        &lt;img
+                            src="example.jpg"
+                            redZoom="example.full.jpg"
+                            redZoomClass="red-zoom--style--window"
+                        &gt;
+                    </app-code>
                 </li>
             </ol>
         </div>

@@ -15,18 +15,21 @@
                 You can also use the redZoom directive, for example with a DIV tag.
                 This ability is useful when your images are in a carousel, and they can change their position when swiping.
             </p>
-            <pre><code>&lt;div
-    [redZoom]="currentImage.full"
-    [redZoomThumb]="currentImage.thumbnail"
-&gt;
-    &lt;owl-carousel-o&gt;
-        &lt;ng-container *ngFor="let image of images"&gt;
-            &lt;ng-template carouselSlide&gt;
-                &lt;img [src]="image.thumbnail"&gt;
-            &lt;/ng-template&gt;
-        &lt;/ng-container&gt;
-    &lt;/owl-carousel-o&gt;
-&lt;/div&gt;</code></pre>
+
+            <app-code language="html" ngPreserveWhitespaces>
+                &lt;div
+                    [redZoom]="currentImage.full"
+                    [redZoomThumb]="currentImage.thumbnail"
+                &gt;
+                    &lt;owl-carousel-o&gt;
+                        &lt;ng-container *ngFor="let image of images"&gt;
+                            &lt;ng-template carouselSlide&gt;
+                                &lt;img [src]="image.thumbnail"&gt;
+                            &lt;/ng-template&gt;
+                        &lt;/ng-container&gt;
+                    &lt;/owl-carousel-o&gt;
+                &lt;/div&gt;
+            </app-code>
         </div>
     </div>
 </div>

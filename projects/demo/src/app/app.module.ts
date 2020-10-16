@@ -16,6 +16,7 @@ import { ExampleN05Component } from './example-n05/example-n05.component';
 import { ExampleN06Component } from './example-n06/example-n06.component';
 import { ExampleN07Component } from './example-n07/example-n07.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CodeComponent } from './code/code.component';
 
 @NgModule({
     declarations: [
@@ -28,6 +29,7 @@ import { ReactiveFormsModule } from '@angular/forms';
         ExampleN05Component,
         ExampleN06Component,
         ExampleN07Component,
+        CodeComponent,
     ],
     imports: [
         BrowserModule,

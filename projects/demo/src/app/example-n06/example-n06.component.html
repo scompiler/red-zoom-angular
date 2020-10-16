@@ -17,17 +17,21 @@
 
             <p>RedZoom supports hot swap images. So you can use it in image gallery.</p>
 
-            <pre><code>// code
-const currentImage = {{ '{' }}
-    thumbnail: '{{ currentImage.value.thumbnail }}',
-    full: '{{ currentImage.value.full }}',
-};
+            <app-code language="typescript" ngPreserveWhitespaces>
+                // code
+                const currentImage = {{ '{' }}
+                    thumbnail: '{{ currentImage.value.thumbnail }}',
+                    full: '{{ currentImage.value.full }}',
+                };
+            </app-code>
 
-// template
-&lt;img
-    [src]="currentImage.thumbnail"
-    [redZoom]="currentImage.full"
-&gt;</code></pre>
+            <app-code language="html" ngPreserveWhitespaces>
+                &lt;!-- template --&gt;
+                &lt;img
+                    [src]="currentImage.thumbnail"
+                    [redZoom]="currentImage.full"
+                &gt;
+            </app-code>
         </div>
     </div>
 </div>

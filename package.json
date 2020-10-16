@@ -25,6 +25,7 @@
     "@angular/platform-browser-dynamic": "~10.0.0",
     "@angular/router": "~10.0.0",
     "angulartics2": "^10.0.0",
+    "highlight.js": "^10.2.1",
     "ngx-owl-carousel-o": "^3.0.1",
     "rxjs": "~6.5.5",
     "tslib": "^2.0.0",

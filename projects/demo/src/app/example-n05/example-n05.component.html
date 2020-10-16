@@ -30,11 +30,13 @@
                 You can also provide your own error message:
             </p>
 
-            <pre><code>&lt;img
-    src="image.jpg"
-    redZoom="{{ url.value === 'correct' ? 'image-full.jpg' : '404.jpg' }}"
-    redZoomErrorMessage="Custom error message"
-&gt;</code></pre>
+            <app-code language="html" ngPreserveWhitespaces>
+                &lt;img
+                    src="image.jpg"
+                    redZoom="{{ url.value === 'correct' ? 'image-full.jpg' : '404.jpg' }}"
+                    redZoomErrorMessage="Custom error message"
+                &gt;
+            </app-code>
         </div>
     </div>
 </div>
