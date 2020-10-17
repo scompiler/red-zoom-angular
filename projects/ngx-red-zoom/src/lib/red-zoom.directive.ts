@@ -15,6 +15,7 @@ import { RedZoomTemplate } from './red-zoom-template.class';
 import { RedZoomStatus } from './red-zoom-status.type';
 import { RedZoomImage } from './red-zoom-image.class';
 import * as vector from './vector';
+import { VectorNumber } from './vector';
 
 
 interface Session {
@@ -44,7 +45,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
 
     @Input('redZoomClass') classes: string = '';
 
-    @Input('redZoomBehavior') behavior: 'hover' | 'grab' = 'hover';
+    @Input('redZoomBehavior') behavior: 'hover' | 'grab' | 'click' = 'hover';
 
     @Input('redZoomMouseWheel') wheel: boolean = true;
 
@@ -92,6 +93,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         const startEventName = {
             'hover': 'mouseenter',
             'grab': 'mousedown',
+            'click': 'mousedown',
         }[this.behavior];
 
         this.unlisten();
@@ -236,6 +238,10 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             event.preventDefault();
         }
 
+        if (this.session) {
+            this.session.destroy();
+        }
+
         this.session = {
             active: false,
             thumbSize: null,
@@ -260,11 +266,13 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
 
             this.calcScaleFactor();
             this.calcFrameSize();
-            this.onMouseMove(wheelEvent);
+            this.onMouseMove(
+                this.behavior === 'click' ? this.session.mousePos : vector.fromMouseEvent(wheelEvent),
+            );
         };
 
         const onMove = (mouseEvent: MouseEvent) => {
-            this.onMouseMove(mouseEvent);
+            this.onMouseMove(vector.fromMouseEvent(mouseEvent));
         };
         const onLeave = () => {
             this.session = null;
@@ -282,6 +290,15 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         if (this.behavior === 'hover') {
             unListenMove = this.renderer.listen(this.element.nativeElement, 'mousemove', onMove);
             unListenLeave = this.renderer.listen(this.element.nativeElement, 'mouseleave', onLeave);
+        } else if (this.behavior === 'click') {
+            unListenMove = () => {};
+            unListenLeave = this.renderer.listen(document, 'mousedown', (event) => {
+                const element = this.element.nativeElement as HTMLElement;
+
+                if (!element.contains(event.target)) {
+                    onLeave();
+                }
+            });
         } else {
             unListenMove = this.renderer.listen(document, 'mousemove', onMove);
             unListenLeave = this.renderer.listen(document, 'mouseup', onLeave);
@@ -289,7 +306,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
 
         unListenWheel = this.renderer.listen(this.element.nativeElement, 'wheel', onWheel);
 
-        this.onMouseMove(event);
+        this.onMouseMove(vector.fromMouseEvent(event));
 
         this.forceReflow();
         this.template.activate();
@@ -302,7 +319,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         this.session.destroy = onLeave;
     };
 
-    onMouseMove = (event: MouseEvent) => {
+    onMouseMove = (mousePos: VectorNumber) => {
         if (this.isImage && this.thumbImage.status !== 'loaded' && this.thumbImage.isFirst) {
             return;
         }
@@ -312,7 +329,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             this.initSession();
         }
 
-        this.session.mousePos = vector.fromMouseEvent(event);
+        this.session.mousePos = mousePos;
 
         if (this.status === 'loaded') {
             cancelAnimationFrame(this.requestAnimationFrameId);
