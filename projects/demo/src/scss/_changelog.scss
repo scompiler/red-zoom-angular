@@ -2,3 +2,60 @@
     list-style: none;
     padding: 0;
 }
+
+.changelog__item {
+    background: #f2f2f2;
+    padding: 12px 20px;
+    border-radius: 2px;
+}
+.changelog__item + .changelog__item {
+    margin-top: 16px;
+}
+.changelog__number {
+    font-size: 15px;
+    font-weight: 500;
+}
+.changelog__date {
+    font-size: 13px;
+    color: #757575;
+}
+.changelog__date:before {
+    content: '–';
+    padding: 0 6px;
+    opacity: .75;
+}
+.changelog__list {
+    $local-line-height: 20px;
+
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+    font-size: 15px;
+    line-height: $local-line-height;
+
+    li {
+        position: relative;
+        padding-left: 14px;
+    }
+    li:before {
+        position: absolute;
+        content: '';
+        display: block;
+        width: 4px;
+        height: 4px;
+        border-radius: 2px;
+        top: ($local-line-height / 2) - 2px;
+        left: 0;
+        background: #bfbfbf;
+    }
+    li + li {
+        margin-top: 6px;
+    }
+}
+.changelog__empty {
+    margin-top: 6px;
+    font-size: 14px;
+    font-style: italic;
+    line-height: 20px;
+    color: #757575;
+}
