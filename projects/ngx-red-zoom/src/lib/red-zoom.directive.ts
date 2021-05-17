@@ -49,6 +49,10 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
 
     @Input('redZoomMouseWheel') wheel: boolean = true;
 
+    @Input() minScaleFactor: number;
+
+    @Input() maxScaleFactor: number;
+
     @Input('redZoomErrorMessage') errorMessage: string = 'An error occurred while loading the image.';
 
     template: RedZoomTemplate;
@@ -261,6 +265,14 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             wheelEvent.preventDefault();
 
             const delta = Math.sign(wheelEvent.deltaY);
+            const nextScaleFactor = this.scaleFactor + .01 * -delta;
+
+            if (this.minScaleFactor !== undefined && nextScaleFactor < this.minScaleFactor) {
+                return;
+            }
+            if (this.maxScaleFactor !== undefined && nextScaleFactor > this.maxScaleFactor) {
+                return;
+            }
 
             this.scaleFactor += .01 * -delta;
 
