@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Angulartics2GoogleAnalytics } from 'angulartics2/ga';
-import * as packageJson from '../../../ngx-red-zoom/package.json';
+import packageJson from '../../../ngx-red-zoom/package.json';
 
 @Component({
     selector: 'app-root',
