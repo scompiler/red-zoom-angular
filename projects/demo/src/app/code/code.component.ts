@@ -9,7 +9,7 @@ import * as hljs from 'highlight.js';
 export class CodeComponent implements AfterViewChecked {
     @Input() language: string;
 
-    @ViewChild('template') template: TemplateRef<any>;
+    @ViewChild('template') template: TemplateRef<void>;
 
     @ViewChild('element') elementRef: ElementRef;
 
@@ -22,13 +22,13 @@ export class CodeComponent implements AfterViewChecked {
     ) { }
 
     ngAfterViewChecked(): void {
-        const code = this.template.createEmbeddedView({}).rootNodes.reduce((acc, node) => node.textContent, '');
+        const code = this.template.createEmbeddedView(void {}).rootNodes.reduce<string>((acc, node: Node) => node.textContent, '');
 
         if (this.code !== code) {
             this.code = code;
 
             const lines = code.replace(/(^\s*[\r\n]|[\r\n]\s*$)/g, '').split('\n');
-            const minPadding = lines.reduce((acc, line) => {
+            const minPadding = lines.reduce<number>((acc, line) => {
                 const startLength = line.length;
                 const endLength = line.replace(/^\s*/, '').length;
                 const padding = startLength - endLength;

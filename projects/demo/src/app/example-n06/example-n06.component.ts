@@ -1,15 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, HostBinding } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
     selector: 'app-example-n06',
     templateUrl: './example-n06.component.html',
     styleUrls: ['./example-n06.component.scss'],
-    host: {
-        '[class.example]': 'true'
-    }
 })
 export class ExampleN06Component {
+    @HostBinding('class.example') classExample = true;
+
     images = [
         {thumbnail: './assets/image-6.jpg', full: './assets/image-6-full.jpg'},
         {thumbnail: './assets/image-7.jpg', full: './assets/image-7-full.jpg'},

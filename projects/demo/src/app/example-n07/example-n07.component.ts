@@ -1,15 +1,17 @@
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, HostBinding, ViewChild } from '@angular/core';
 import { RedZoomDirective } from 'ngx-red-zoom';
+import { SlidesOutputData } from 'ngx-owl-carousel-o';
 
 @Component({
     selector: 'app-example-n07',
     templateUrl: './example-n07.component.html',
     styleUrls: ['./example-n07.component.scss'],
-    host: {
-        '[class.example]': 'true'
-    }
 })
 export class ExampleN07Component {
+    @HostBinding('class.example') classExample = true;
+
+    @ViewChild(RedZoomDirective) redZoom: RedZoomDirective;
+
     images = [
         {thumbnail: './assets/image-9.jpg', full: './assets/image-9-full.jpg'},
         {thumbnail: './assets/image-10.jpg', full: './assets/image-10-full.jpg'},
@@ -22,8 +24,6 @@ export class ExampleN07Component {
         items: 1,
     };
 
-    @ViewChild(RedZoomDirective) redZoom: RedZoomDirective;
-
     get classes(): string {
         return 'red-zoom--style--window' + (this.dragging ? ' red-zoom--disabled' : '');
     }
@@ -32,12 +32,12 @@ export class ExampleN07Component {
 
     constructor(private cd: ChangeDetectorRef) { }
 
-    dragged(data): void {
-        this.dragging = data.dragging;
+    dragged(event: {dragging: boolean; data: SlidesOutputData}): void {
+        this.dragging = event.dragging;
         this.cd.detectChanges();
     }
 
-    translated(data): void {
-        this.currentImage = this.images[data.startPosition];
+    translated(event: SlidesOutputData): void {
+        this.currentImage = this.images[event.startPosition];
     }
 }

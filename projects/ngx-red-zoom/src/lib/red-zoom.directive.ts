@@ -35,21 +35,23 @@ interface Session {
     exportAs: 'redZoom',
 })
 export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy {
+    /* eslint-disable @angular-eslint/no-input-rename */
     @Input('src') @HostBinding('attr.src') src: string;
 
     @Input('redZoom') lensSrc: string;
 
     @Input('redZoomThumb') thumbSrc: string;
 
-    @Input('redZoomLazy') lazy: boolean = false;
+    @Input('redZoomLazy') lazy = false;
 
-    @Input('redZoomClass') classes: string = '';
+    @Input('redZoomClass') classes = '';
 
     @Input('redZoomBehavior') behavior: 'hover' | 'grab' | 'click' = 'hover';
 
-    @Input('redZoomMouseWheel') wheel: boolean = true;
+    @Input('redZoomMouseWheel') wheel = true;
 
-    @Input('redZoomErrorMessage') errorMessage: string = 'An error occurred while loading the image.';
+    @Input('redZoomErrorMessage') errorMessage = 'An error occurred while loading the image.';
+    /* eslint-enable @angular-eslint/no-input-rename */
 
     template: RedZoomTemplate;
     thumbImage: RedZoomImage;
@@ -60,6 +62,10 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
     requestAnimationFrameId = null;
 
     get isImage(): boolean {
+        if (!(this.element.nativeElement instanceof Element)) {
+            throw new Error('this.element.nativeElement should be instance of Element');
+        }
+
         return this.element.nativeElement.tagName === 'IMG';
     }
 
@@ -71,7 +77,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             images.push(this.thumbImage);
         }
 
-        for (let image of images) {
+        for (const image of images) {
             if (status === 'error' || image.status === 'error') {
                 status = 'error';
             } else if (status === 'loading' || image.status === 'loading') {
@@ -81,26 +87,6 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
 
         return status;
     }
-
-    constructor(
-        private element: ElementRef,
-        private renderer: Renderer2,
-        private zone: NgZone,
-        @Inject(PLATFORM_ID) private platformId: string,
-    ) { }
-
-    listen(): void {
-        const startEventName = {
-            'hover': 'mouseenter',
-            'grab': 'mousedown',
-            'click': 'mousedown',
-        }[this.behavior];
-
-        this.unlisten();
-        this.unlisten = this.renderer.listen(this.element.nativeElement, startEventName, this.mouseEnter);
-    }
-
-    unlisten: () => void  = () => {};
 
     onImageChangeStatus = (() => {
         let previousStatus;
@@ -116,7 +102,27 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         };
     })();
 
-    onImageChangeStatusDistinct = () => {
+    constructor(
+        private element: ElementRef,
+        private renderer: Renderer2,
+        private zone: NgZone,
+        @Inject(PLATFORM_ID) private platformId: string,
+    ) { }
+
+    listen(): void {
+        const startEventName = {
+            hover: 'mouseenter',
+            grab: 'mousedown',
+            click: 'mousedown',
+        }[this.behavior];
+
+        this.unlisten();
+        this.unlisten = this.renderer.listen(this.element.nativeElement, startEventName, this.mouseEnter);
+    }
+
+    unlisten: () => void  = () => {};
+
+    onImageChangeStatusDistinct = (): void => {
         this.template.status = this.status;
 
         if (this.status === 'loaded') {
@@ -221,19 +227,19 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         return this.src;
     }
 
-    loadLensImage() {
+    loadLensImage(): void {
         if (this.lensImage.status !== 'loaded') {
             this.lensImage.src = this.lensSrc;
         }
     }
 
-    loadFrameImage() {
+    loadFrameImage(): void {
         if (this.frameImage.status !== 'loaded') {
             this.frameImage.src = this.getThumbSrc();
         }
     }
 
-    mouseEnter = (event: MouseEvent) => {
+    mouseEnter = (event: MouseEvent): void => {
         if (event.cancelable) {
             event.preventDefault();
         }
@@ -283,19 +289,19 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             unListenWheel();
         };
 
-        let unListenMove;
-        let unListenLeave;
-        let unListenWheel;
+        let unListenMove: () => void;
+        let unListenLeave: () => void;
+        const unListenWheel = this.renderer.listen(this.element.nativeElement, 'wheel', onWheel);
 
         if (this.behavior === 'hover') {
             unListenMove = this.renderer.listen(this.element.nativeElement, 'mousemove', onMove);
             unListenLeave = this.renderer.listen(this.element.nativeElement, 'mouseleave', onLeave);
         } else if (this.behavior === 'click') {
             unListenMove = () => {};
-            unListenLeave = this.renderer.listen(document, 'mousedown', (event) => {
-                const element = this.element.nativeElement as HTMLElement;
+            unListenLeave = this.renderer.listen(document, 'mousedown', (downEvent: MouseEvent) => {
+                const element = this.element.nativeElement as Element;
 
-                if (!element.contains(event.target)) {
+                if (!element.contains(downEvent.target as Node)) {
                     onLeave();
                 }
             });
@@ -303,8 +309,6 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             unListenMove = this.renderer.listen(document, 'mousemove', onMove);
             unListenLeave = this.renderer.listen(document, 'mouseup', onLeave);
         }
-
-        unListenWheel = this.renderer.listen(this.element.nativeElement, 'wheel', onWheel);
 
         this.onMouseMove(vector.fromMouseEvent(event));
 
@@ -319,7 +323,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         this.session.destroy = onLeave;
     };
 
-    onMouseMove = (mousePos: VectorNumber) => {
+    onMouseMove = (mousePos: VectorNumber): void => {
         if (this.isImage && this.thumbImage.status !== 'loaded' && this.thumbImage.isFirst) {
             return;
         }
@@ -339,6 +343,10 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
     };
 
     initSession(): void {
+        if (!(this.element.nativeElement instanceof Element)) {
+            throw new Error('this.element.nativeElement should be instance of Element');
+        }
+
         const thumbRect = this.element.nativeElement.getBoundingClientRect();
 
         this.session.thumbSize = vector.fromRectSize(thumbRect);
@@ -426,9 +434,9 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             '--red-zoom-frame-image-y': `${Math.round(frameImagePos.y)}px`,
         });
 
-        const frameRelativePos = vector.map(vector.sub(thumbSize, frameSize), (value, axis) => {
-            return value === 0 ? 0 : (frameLimitedPos[axis] - thumbPos[axis]) / value;
-        });
+        const frameRelativePos = vector.map(vector.sub(thumbSize, frameSize), (value, axis) => (
+            value === 0 ? 0 : (frameLimitedPos[axis] - thumbPos[axis]) / value
+        ));
         const lensImagePos = vector.mul(
             frameRelativePos,
             vector.sub(lensImageSize, lensContainerSize)
@@ -449,7 +457,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         });
     }
 
-    invalidate() {
+    invalidate(): void {
         if (this.session && this.session.active) {
             this.initSession();
             this.move();
@@ -457,6 +465,10 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
     }
 
     forceReflow(): void {
+        if (!(this.element.nativeElement instanceof Element)) {
+            throw new Error('this.element.nativeElement should be instance of Element');
+        }
+
         this.element.nativeElement.getBoundingClientRect();
     }
 }

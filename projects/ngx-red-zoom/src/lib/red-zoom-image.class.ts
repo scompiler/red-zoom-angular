@@ -3,9 +3,11 @@ import * as vector from './vector';
 
 
 export class RedZoomImage {
-    private loading = false;
-
     isFirst = true;
+
+    destroy: () => void;
+
+    private loading = false;
 
     get width(): number {
         return this.element.width;
@@ -72,7 +74,7 @@ export class RedZoomImage {
             this.element = document.createElement('img');
         }
 
-        const _listener = () => {
+        const internalListener = () => {
             if (this.status !== 'loading') {
                 this.isFirst = false;
             }
@@ -80,12 +82,12 @@ export class RedZoomImage {
             this.listener();
         };
 
-        this.element.addEventListener('load', _listener);
-        this.element.addEventListener('error', _listener);
+        this.element.addEventListener('load', internalListener);
+        this.element.addEventListener('error', internalListener);
 
         this.destroy = () => {
-            this.element.removeEventListener('load', _listener);
-            this.element.removeEventListener('error', _listener);
+            this.element.removeEventListener('load', internalListener);
+            this.element.removeEventListener('error', internalListener);
         };
 
         if (className !== null) {
@@ -97,6 +99,4 @@ export class RedZoomImage {
         this.loading = true;
         this.listener();
     }
-
-    destroy: () => void;
 }

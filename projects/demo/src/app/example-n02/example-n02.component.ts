@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, HostBinding, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -6,11 +6,10 @@ import { FormControl } from '@angular/forms';
     templateUrl: './example-n02.component.html',
     styleUrls: ['./example-n02.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    host: {
-        '[class.example]': 'true'
-    }
 })
 export class ExampleN02Component {
+    @HostBinding('class.example') classExample = true;
+
     mode: FormControl = new FormControl('square');
 
     constructor() { }

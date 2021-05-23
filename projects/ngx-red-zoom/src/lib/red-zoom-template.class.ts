@@ -27,8 +27,6 @@ const makeTemplate = (() => {
 
 
 export class RedZoomTemplate {
-    _status: RedZoomStatus = null;
-
     template: HTMLDivElement;
     lens: HTMLDivElement;
     lensBody: HTMLDivElement;
@@ -36,6 +34,8 @@ export class RedZoomTemplate {
     frameBody: HTMLDivElement;
     error: HTMLDivElement;
     errorMessage: HTMLDivElement;
+
+    private privateStatus: RedZoomStatus = null;
 
     private appliedClasses: string[] = [];
 
@@ -53,16 +53,16 @@ export class RedZoomTemplate {
     }
 
     set status(state: RedZoomStatus) {
-        if (this._status !== null) {
-            this.template.classList.remove(`red-zoom--status--${this._status}`);
+        if (this.privateStatus !== null) {
+            this.template.classList.remove(`red-zoom--status--${this.privateStatus}`);
         }
 
-        this._status = state;
+        this.privateStatus = state;
         this.template.classList.add(`red-zoom--status--${state}`);
     }
 
     get status(): RedZoomStatus {
-        return this._status;
+        return this.privateStatus;
     }
 
     set classes(classes: string) {
@@ -81,9 +81,9 @@ export class RedZoomTemplate {
     }
 
     setProperties(properties: {[name: string]: string}): void {
-        for (let name in properties) {
+        Object.keys(properties).forEach((name) => {
             this.template.style.setProperty(name, properties[name]);
-        }
+        });
     }
 
     detach(): void {
@@ -104,7 +104,7 @@ export class RedZoomTemplate {
         this.template.classList.add('red-zoom--active');
     }
 
-    onTransitionEnd = (event: TransitionEvent) => {
+    onTransitionEnd = (event: TransitionEvent): void => {
         if (event.propertyName === 'visibility' && this.isHidden) {
             this.template.remove();
         }

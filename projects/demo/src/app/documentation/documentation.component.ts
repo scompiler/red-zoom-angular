@@ -1,13 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, HostBinding } from '@angular/core';
 
 @Component({
     selector: 'app-documentation',
     templateUrl: './documentation.component.html',
     styleUrls: ['./documentation.component.scss'],
-    host: {
-        '[class.section]': 'true'
-    }
 })
 export class DocumentationComponent {
+    @HostBinding('class.section') classSection = true;
+
     constructor() { }
 }

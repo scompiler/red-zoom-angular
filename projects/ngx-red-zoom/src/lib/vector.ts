@@ -1,7 +1,18 @@
 type Operator = '+'|'-'|'*'|'/'|'min'|'max';
 
-function calc(a: number, op: Operator, b: number) {
-    switch (op) {
+export interface Vector<T> {
+    x: T;
+    y: T;
+}
+
+export type VectorNumber = Vector<number>;
+
+export type VectorString = Vector<string>;
+
+export type VectorBoolean = Vector<boolean>;
+
+function calc(a: number, operator: Operator, b: number) {
+    switch (operator) {
         case '+': return a + b;
         case '-': return a - b;
         case '*': return a * b;
@@ -10,17 +21,6 @@ function calc(a: number, op: Operator, b: number) {
         case 'max': return Math.max(a, b);
     }
 }
-
-export interface Vector<T> {
-    x: T,
-    y: T,
-}
-
-export type VectorNumber = Vector<number>;
-
-export type VectorString = Vector<string>;
-
-export type VectorBoolean = Vector<boolean>;
 
 export function fromRectPos(rect: ClientRect): VectorNumber {
     return {x: rect.left, y: rect.top};
@@ -38,14 +38,14 @@ export function fromMouseEvent(event: MouseEvent): VectorNumber {
     return add({x: event.clientX, y: event.clientY}, fromScroll());
 }
 
-export function op(a: VectorNumber, op: Operator, b: VectorNumber | number): VectorNumber {
+export function op(a: VectorNumber, operator: Operator, b: VectorNumber | number): VectorNumber {
     if (typeof b === 'number') {
         b = {x: b, y: b};
     }
 
     return {
-        x: calc(a.x, op, b.x),
-        y: calc(a.y, op, b.y)
+        x: calc(a.x, operator, b.x),
+        y: calc(a.y, operator, b.y)
     };
 }
 
