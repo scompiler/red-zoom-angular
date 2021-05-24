@@ -15,6 +15,7 @@ import { ExampleN04Component } from './example-n04/example-n04.component';
 import { ExampleN05Component } from './example-n05/example-n05.component';
 import { ExampleN06Component } from './example-n06/example-n06.component';
 import { ExampleN07Component } from './example-n07/example-n07.component';
+import { ExampleN08Component } from './example-n08/example-n08.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CodeComponent } from './code/code.component';
 
@@ -29,6 +30,7 @@ import { CodeComponent } from './code/code.component';
         ExampleN05Component,
         ExampleN06Component,
         ExampleN07Component,
+        ExampleN08Component,
         CodeComponent,
     ],
     imports: [

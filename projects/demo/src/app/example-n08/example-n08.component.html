@@ -1,0 +1,40 @@
+<div class="example__body">
+    <div class="example__content">
+        <div class="typography">
+            <h2>Scale Factor</h2>
+            <p>
+                To limit the scale factor, just set the CSS properties <code>[min/max]-width</code> and
+                <code>[min/max]-height</code> to the <code>.red-zoom__lens-image</code> element.
+            </p>
+
+            <app-code language="scss" ngPreserveWhitespaces>
+                .red-zoom__lens-image {{'{'}}
+                    --red-zoom-min-scale-factor: 1;
+                    --red-zoom-max-scale-factor: 2;
+
+                    min-width: calc(var(--red-zoom-thumb-w) * var(--red-zoom-min-scale-factor));
+                    min-height: calc(var(--red-zoom-thumb-h) * var(--red-zoom-min-scale-factor));
+                    max-width: calc(var(--red-zoom-thumb-w) * var(--red-zoom-max-scale-factor));
+                    max-height: calc(var(--red-zoom-thumb-h) * var(--red-zoom-max-scale-factor));
+                }
+
+            </app-code>
+
+            <p>
+                For these purposes, you can also use the prepared SASS mixins:
+                <code>red-zoom-[min/max]-scale-factor</code>. The first argument is the value of the scale factor,
+                the second is the element relative to which the scale factor is specified, the possible values are
+                <code>'thumb'</code> (default) and <code>'lens-image'</code>.
+            </p>
+
+            <app-code language="scss" ngPreserveWhitespaces>
+                @import '~ngx-red-zoom/styles/mixins/common.scss';
+
+                // The enlarged image cannot be smaller than the thumbnail.
+                @include red-zoom-min-scale-factor(1, 'thumb');
+                // The enlarged image cannot be larger than its natural size.
+                @include red-zoom-max-scale-factor(1, 'lens-image');
+            </app-code>
+        </div>
+    </div>
+</div>

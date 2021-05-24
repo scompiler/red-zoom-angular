@@ -100,3 +100,26 @@
         }
     }
 }
+
+@mixin red-zoom-min-scale-factor($value, $relative: 'thumb') {
+    .red-zoom__lens-image {
+        @if($relative == 'lens-image') {
+            min-width: calc(var(--red-zoom-lens-image-natural-w) * #{$value});
+            min-height: calc(var(--red-zoom-lens-image-natural-h) * #{$value});
+        } @else if ($relative == 'thumb') {
+            min-width: calc(var(--red-zoom-thumb-w) * #{$value});
+            min-height: calc(var(--red-zoom-thumb-h) * #{$value});
+        }
+    }
+}
+@mixin red-zoom-max-scale-factor($value, $relative: 'thumb') {
+    .red-zoom__lens-image {
+        @if($relative == 'lens-image') {
+            max-width: calc(var(--red-zoom-lens-image-natural-w) * #{$value});
+            max-height: calc(var(--red-zoom-lens-image-natural-h) * #{$value});
+        } @else if ($relative == 'thumb') {
+            max-width: calc(var(--red-zoom-thumb-w) * #{$value});
+            max-height: calc(var(--red-zoom-thumb-h) * #{$value});
+        }
+    }
+}

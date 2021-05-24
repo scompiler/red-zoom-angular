@@ -21,6 +21,9 @@
 @import 'scss/library/style-magnifier';
 @import 'scss/library/style-overlay';
 
+// Limit scale factor.
+@include red-zoom-min-scale-factor(1, 'thumb');
+@include red-zoom-max-scale-factor(1, 'lens-image');
 
 .zoom {
     cursor: crosshair;

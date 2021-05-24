@@ -12,13 +12,13 @@
 }
 .example__image {
     width: 320px;
+    margin-right: 56px;
 
     img {
         display: block;
     }
 }
 .example__content {
-    margin-left: 56px;
     margin-top: 20px;
     flex-grow: 1;
     width: calc(100% - 320px - 56px);
