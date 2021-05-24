@@ -10,9 +10,9 @@
     "lint": "ng lint",
     "build-library": "ng build ngx-red-zoom --watch",
     "build-docs": "ng build --prod --base-href /red-zoom-angular/ --output-path docs",
-    "library:build": "ng build ngx-red-zoom --prod",
+    "library:build": "ng build ngx-red-zoom --configuration development",
     "pack": "npm run library:build && npm run pack:scss",
-    "pack:scss": "./node_modules/.bin/gulp pack"
+    "pack:scss": "gulp pack"
   },
   "private": true,
   "dependencies": {
