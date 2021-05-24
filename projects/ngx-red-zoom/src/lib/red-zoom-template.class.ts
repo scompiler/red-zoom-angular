@@ -2,7 +2,7 @@ import { RedZoomStatus } from './red-zoom-status.type';
 
 
 const makeTemplate = (() => {
-    let template: HTMLTemplateElement = null;
+    let template: HTMLTemplateElement|null = null;
 
     return () => {
         if (!template) {
@@ -35,18 +35,29 @@ export class RedZoomTemplate {
     error: HTMLDivElement;
     errorMessage: HTMLDivElement;
 
-    private privateStatus: RedZoomStatus = null;
+    private privateStatus: RedZoomStatus = 'loading';
 
     private appliedClasses: string[] = [];
 
     constructor() {
         this.template = makeTemplate();
-        this.lens = this.template.querySelector('.red-zoom__lens');
-        this.lensBody = this.template.querySelector('.red-zoom__lens-body');
-        this.frame = this.template.querySelector('.red-zoom__frame');
-        this.frameBody = this.template.querySelector('.red-zoom__frame-body');
-        this.error = this.template.querySelector('.red-zoom__error');
-        this.errorMessage = this.template.querySelector('.red-zoom__error-message');
+
+        const getElement = (selector: string) => {
+            const element = this.template.querySelector(selector);
+
+            if (!element) {
+                throw new Error(`Element '${selector}' not found`);
+            }
+
+            return element as HTMLDivElement;
+        };
+
+        this.lens = getElement('.red-zoom__lens');
+        this.lensBody = getElement('.red-zoom__lens-body');
+        this.frame = getElement('.red-zoom__frame');
+        this.frameBody = getElement('.red-zoom__frame-body');
+        this.error = getElement('.red-zoom__error');
+        this.errorMessage = getElement('.red-zoom__error-message');
 
         this.template.addEventListener('transitionend', this.onTransitionEnd);
         this.status = 'loading';

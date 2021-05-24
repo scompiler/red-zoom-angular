@@ -7,28 +7,28 @@ import * as hljs from 'highlight.js';
     styleUrls: ['./code.component.scss']
 })
 export class CodeComponent implements AfterViewChecked {
-    @Input() language: string;
+    @Input() language!: string;
 
-    @ViewChild('template') template: TemplateRef<void>;
+    @ViewChild('template') template!: TemplateRef<void>;
 
-    @ViewChild('element') elementRef: ElementRef;
+    @ViewChild('element') elementRef!: ElementRef;
 
-    code: string;
+    code = '';
 
-    value: string;
+    value = '';
 
     constructor(
         private renderer: Renderer2,
     ) { }
 
     ngAfterViewChecked(): void {
-        const code = this.template.createEmbeddedView(void {}).rootNodes.reduce<string>((acc, node: Node) => node.textContent, '');
+        const code = this.template.createEmbeddedView(void {}).rootNodes.reduce<string>((acc, node: Node) => node.textContent || '', '');
 
         if (this.code !== code) {
             this.code = code;
 
             const lines = code.replace(/(^\s*[\r\n]|[\r\n]\s*$)/g, '').split('\n');
-            const minPadding = lines.reduce<number>((acc, line) => {
+            const minPadding = lines.reduce<number|null>((acc, line) => {
                 const startLength = line.length;
                 const endLength = line.replace(/^\s*/, '').length;
                 const padding = startLength - endLength;

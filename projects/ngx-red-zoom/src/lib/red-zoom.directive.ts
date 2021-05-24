@@ -20,11 +20,11 @@ import { VectorNumber } from './vector';
 
 interface Session {
     active: boolean;
-    thumbSize: vector.VectorNumber;
-    thumbPos: vector.VectorNumber;
-    lensContainerSize: vector.VectorNumber;
-    lensImageSize: vector.VectorNumber;
-    frameSize: vector.VectorNumber;
+    thumbSize: vector.VectorNumber|null;
+    thumbPos: vector.VectorNumber|null;
+    lensContainerSize: vector.VectorNumber|null;
+    lensImageSize: vector.VectorNumber|null;
+    frameSize: vector.VectorNumber|null;
     mousePos: vector.VectorNumber;
     destroy: () => void;
 }
@@ -36,11 +36,11 @@ interface Session {
 })
 export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy {
     /* eslint-disable @angular-eslint/no-input-rename */
-    @Input('src') @HostBinding('attr.src') src: string;
+    @Input('src') @HostBinding('attr.src') src = '';
 
-    @Input('redZoom') lensSrc: string;
+    @Input('redZoom') lensSrc = '';
 
-    @Input('redZoomThumb') thumbSrc: string;
+    @Input('redZoomThumb') thumbSrc = '';
 
     @Input('redZoomLazy') lazy = false;
 
@@ -53,13 +53,13 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
     @Input('redZoomErrorMessage') errorMessage = 'An error occurred while loading the image.';
     /* eslint-enable @angular-eslint/no-input-rename */
 
-    template: RedZoomTemplate;
-    thumbImage: RedZoomImage;
-    frameImage: RedZoomImage;
-    lensImage: RedZoomImage;
+    template!: RedZoomTemplate;
+    thumbImage!: RedZoomImage;
+    frameImage!: RedZoomImage;
+    lensImage!: RedZoomImage;
     scaleFactor = 1;
-    session: Session;
-    requestAnimationFrameId = null;
+    session: Session|null = null;
+    requestAnimationFrameId = 0;
 
     get isImage(): boolean {
         if (!(this.element.nativeElement instanceof Element)) {
@@ -89,7 +89,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
     }
 
     onImageChangeStatus = (() => {
-        let previousStatus;
+        let previousStatus: RedZoomStatus;
 
         return () => {
             if (previousStatus === this.status) {
@@ -263,6 +263,9 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             if (!wheelEvent.cancelable || this.status !== 'loaded' || !this.wheel) {
                 return;
             }
+            if (!this.session) {
+                throw new Error('this.session is null');
+            }
 
             wheelEvent.preventDefault();
 
@@ -327,6 +330,9 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         if (this.isImage && this.thumbImage.status !== 'loaded' && this.thumbImage.isFirst) {
             return;
         }
+        if (!this.session) {
+            throw new Error('this.session is null');
+        }
 
         if (!this.session.active) {
             this.session.active = true;
@@ -345,6 +351,9 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
     initSession(): void {
         if (!(this.element.nativeElement instanceof Element)) {
             throw new Error('this.element.nativeElement should be instance of Element');
+        }
+        if (!this.session) {
+            throw new Error('this.session is null');
         }
 
         const thumbRect = this.element.nativeElement.getBoundingClientRect();
@@ -390,6 +399,13 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
     }
 
     calcFrameSize(): void {
+        if (!this.session) {
+            throw new Error('this.session is null');
+        }
+        if (!this.session.thumbSize) {
+            throw new Error('this.session.thumbSize is null');
+        }
+
         this.session.lensContainerSize = vector.fromRectSize(this.template.lensBody.getBoundingClientRect());
         this.session.lensImageSize = vector.fromRectSize(this.lensImage.element.getBoundingClientRect());
 
@@ -414,6 +430,10 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         }
 
         const { mousePos, thumbSize, thumbPos, frameSize, lensContainerSize, lensImageSize } = this.session;
+
+        if (!frameSize || !thumbPos || !thumbSize || !lensImageSize || !lensContainerSize) {
+            throw new Error('frameSize or thumbPos or thumbSize or lensImageSize or lensContainerSize is null');
+        }
 
         this.template.setProperties({
             '--red-zoom-mouse-x': `${mousePos.x}px`,

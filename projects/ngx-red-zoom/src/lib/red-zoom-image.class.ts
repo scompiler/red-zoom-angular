@@ -3,6 +3,8 @@ import * as vector from './vector';
 
 
 export class RedZoomImage {
+    element: HTMLImageElement;
+
     isFirst = true;
 
     destroy: () => void;
@@ -66,13 +68,11 @@ export class RedZoomImage {
     }
 
     constructor(
-        public element: HTMLImageElement = null,
+        element: HTMLImageElement|null = null,
         public listener: () => void = () => {},
-        className: string = null,
+        className: string|null = null,
     ) {
-        if (element === null) {
-            this.element = document.createElement('img');
-        }
+        this.element = element === null ? document.createElement('img') : element;
 
         const internalListener = () => {
             if (this.status !== 'loading') {

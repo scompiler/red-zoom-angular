@@ -10,7 +10,7 @@ import { SlidesOutputData } from 'ngx-owl-carousel-o';
 export class ExampleN07Component {
     @HostBinding('class.example') classExample = true;
 
-    @ViewChild(RedZoomDirective) redZoom: RedZoomDirective;
+    @ViewChild(RedZoomDirective) redZoom!: RedZoomDirective;
 
     images = [
         {thumbnail: './assets/image-9.jpg', full: './assets/image-9-full.jpg'},
@@ -38,6 +38,10 @@ export class ExampleN07Component {
     }
 
     translated(event: SlidesOutputData): void {
+        if (event.startPosition === undefined) {
+            return;
+        }
+
         this.currentImage = this.images[event.startPosition];
     }
 }
