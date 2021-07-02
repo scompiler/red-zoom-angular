@@ -9,10 +9,10 @@ import { render } from 'github-buttons';
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+    @ViewChild('buttons', {read: ViewContainerRef, static: true}) buttons?: ViewContainerRef;
+
     version = packageJson.version;
     year = new Date().getFullYear();
-
-    @ViewChild('buttons', {read: ViewContainerRef, static: true}) buttons: ViewContainerRef | undefined;
 
     constructor(
         private analytics: Angulartics2GoogleAnalytics,
@@ -30,9 +30,9 @@ export class AppComponent implements OnInit {
                 'data-size': 'large',
                 'data-show-count': 'true',
                 'data-text': 'Star',
-            }, function (el) {
+            }, function(el) {
                 buttons.parentNode?.insertBefore(el, buttons);
-            })
+            });
         }
     }
 }

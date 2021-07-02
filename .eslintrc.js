@@ -42,7 +42,7 @@ module.exports = {
                 'eslint-plugin-jsdoc',
                 '@angular-eslint/eslint-plugin',
                 '@angular-eslint/eslint-plugin-template',
-                '@typescript-eslint'
+                '@typescript-eslint/eslint-plugin'
             ],
             rules: {
                 '@angular-eslint/component-class-suffix': 'error',
