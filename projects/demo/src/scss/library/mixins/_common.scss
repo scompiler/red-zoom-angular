@@ -1,3 +1,6 @@
+@use 'sass:math';
+
+
 @mixin red-zoom-loader(
     $loader-color: #fff,
     $loader-size:  40px
@@ -9,8 +12,8 @@
     border-style: solid;
     border-color: rgba($loader-color, .2);
     border-top-color: rgba($loader-color, 1);
-    left: calc(50% - #{$loader-size / 2});
-    top: calc(50% - #{$loader-size / 2});
+    left: calc(50% - #{math.div($loader-size, 2)});
+    top: calc(50% - #{math.div($loader-size, 2)});
     width: $loader-size;
     height: $loader-size;
     border-radius: 100%;

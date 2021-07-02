@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 .changelog {
     list-style: none;
     padding: 0;
@@ -44,7 +46,7 @@
         width: 4px;
         height: 4px;
         border-radius: 2px;
-        top: ($local-line-height / 2) - 2px;
+        top: (math.div($local-line-height, 2) - 2px);
         left: 0;
         background: #bfbfbf;
     }

@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 @import 'common';
 
 
@@ -64,20 +66,20 @@
             @if ($lens-border-position == outside) {
                 $local-border-width: $lens-border-width;
             } @else if ($lens-border-position == center) {
-                $local-border-width: $lens-border-width / 2;
+                $local-border-width: math.div($lens-border-width, 2);
             }
 
             border-radius: $lens-border-radius + $local-border-width;
-            left: calc(var(--red-zoom-mouse-x, 0px) - #{$lens-size / 2 + $local-border-width} - var(--red-zoom-thumb-x));
-            top: calc(var(--red-zoom-mouse-y, 0px) - #{$lens-size / 2 + $local-border-width} - var(--red-zoom-thumb-y));
+            left: calc(var(--red-zoom-mouse-x, 0px) - #{math.div($lens-size, 2) + $local-border-width} - var(--red-zoom-thumb-x));
+            top: calc(var(--red-zoom-mouse-y, 0px) - #{math.div($lens-size, 2) + $local-border-width} - var(--red-zoom-thumb-y));
             width: $lens-size + $local-border-width * 2;
             height: $lens-size + $local-border-width * 2;
         }
     }
     .red-zoom__lens-body {
         border-radius: $lens-border-radius;
-        left: calc(var(--red-zoom-mouse-x, 0px) - #{$lens-size / 2} - var(--red-zoom-thumb-x));
-        top: calc(var(--red-zoom-mouse-y, 0px) - #{$lens-size / 2} - var(--red-zoom-thumb-y));
+        left: calc(var(--red-zoom-mouse-x, 0px) - #{math.div($lens-size, 2)} - var(--red-zoom-thumb-x));
+        top: calc(var(--red-zoom-mouse-y, 0px) - #{math.div($lens-size, 2)} - var(--red-zoom-thumb-y));
         width: $lens-size;
         height: $lens-size;
     }
