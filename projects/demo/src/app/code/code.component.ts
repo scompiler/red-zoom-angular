@@ -1,5 +1,5 @@
 import { AfterViewChecked, Component, ElementRef, Input, Renderer2, TemplateRef, ViewChild } from '@angular/core';
-import * as hljs from 'highlight.js';
+import hljs from 'highlight.js';
 
 @Component({
     selector: 'app-code',
@@ -42,7 +42,7 @@ export class CodeComponent implements AfterViewChecked {
 
             const preparedCode = lines.map(line => line.substr(minPadding)).join('\n');
 
-            this.value = hljs.highlight(this.language, preparedCode).value;
+            this.value = hljs.highlight(preparedCode, {language: this.language}).value;
             this.renderer.setProperty(this.elementRef.nativeElement, 'innerHTML', this.value);
         }
     }
