@@ -60,3 +60,14 @@
     color: #a6a6a6;
     margin-top: 8px;
 }
+.intro__buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+    margin-left: -8px;
+
+    span {
+        margin-left: 8px;
+        display: flex;
+    }
+}
