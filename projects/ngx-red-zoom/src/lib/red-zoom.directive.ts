@@ -152,7 +152,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             this.template.errorMessage.innerHTML = this.errorMessage;
 
             if (this.isImage) {
-                this.thumbImage = new RedZoomImage(this.element.nativeElement, this.onImageChangeStatus);
+                this.thumbImage = new RedZoomImage(this.element.nativeElement as HTMLImageElement, this.onImageChangeStatus);
             }
 
             this.frameImage = new RedZoomImage(null, this.onImageChangeStatus, 'red-zoom__frame-image');
@@ -172,23 +172,23 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             return;
         }
 
-        if ('src' in changes && !changes.src.firstChange) {
+        if ('src' in changes && !changes['src'].firstChange) {
             this.onChangeThumbSrc();
         }
-        if ('thumbSrc' in changes && !changes.thumbSrc.firstChange) {
+        if ('thumbSrc' in changes && !changes['thumbSrc'].firstChange) {
             this.onChangeThumbSrc();
         }
-        if ('lensSrc' in changes && !changes.lensSrc.firstChange) {
+        if ('lensSrc' in changes && !changes['lensSrc'].firstChange) {
             this.onChangeLensSrc();
         }
-        if ('behavior' in changes && !changes.behavior.firstChange) {
+        if ('behavior' in changes && !changes['behavior'].firstChange) {
             this.listen();
         }
-        if ('classes' in changes && !changes.classes.firstChange) {
+        if ('classes' in changes && !changes['classes'].firstChange) {
             this.template.classes = this.classes;
             this.invalidate();
         }
-        if ('errorMessage' in changes && !changes.errorMessage.firstChange) {
+        if ('errorMessage' in changes && !changes['errorMessage'].firstChange) {
             this.template.errorMessage.innerHTML = this.errorMessage;
         }
     }

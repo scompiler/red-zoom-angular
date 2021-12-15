@@ -1,7 +1,7 @@
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
-import { Angulartics2GoogleAnalytics } from "angulartics2/ga";
+import { Angulartics2GoogleAnalytics } from "angulartics2";
 
 describe('AppComponent', () => {
     beforeEach(waitForAsync(() => {

@@ -113,7 +113,7 @@ module.exports = {
                         }
                     }
                 ],
-                '@typescript-eslint/member-ordering': 'error',
+                '@typescript-eslint/member-ordering': 'off',
                 '@typescript-eslint/naming-convention': 'error',
                 '@typescript-eslint/no-empty-function': 'off',
                 '@typescript-eslint/no-empty-interface': 'error',
