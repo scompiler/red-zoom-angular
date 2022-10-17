@@ -46,7 +46,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
 
     @Input('redZoomClass') classes = '';
 
-    @Input('redZoomBehavior') behavior: 'hover' | 'grab' | 'click' = 'hover';
+    @Input('redZoomBehavior') behavior: 'hover' | 'grab' | 'hoverFreeze' | 'click' = 'hover';
 
     @Input('redZoomMouseWheel') wheel = true;
 
@@ -60,6 +60,8 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
     scaleFactor = 1;
     session: Session|null = null;
     requestAnimationFrameId = 0;
+    isHovering = false;
+    count = 0;
 
     get isImage(): boolean {
         if (!(this.element.nativeElement instanceof Element)) {
@@ -113,6 +115,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         const startEventName = {
             hover: 'mouseenter',
             grab: 'mousedown',
+            hoverFreeze: 'mousedown',
             click: 'mousedown',
         }[this.behavior];
 
@@ -292,6 +295,22 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
             unListenWheel();
         };
 
+        const onHoverOut = () => {
+            unListenMove();
+            unListenWheel();
+        };
+
+        const onHoverLeave = () => {
+            this.template.detach();
+            unListenMove();
+            unListenLeave();
+            unListenWheel();
+        };
+
+        const counterHover = () => {
+            this.count += 1;
+        };
+
         let unListenMove: () => void;
         let unListenLeave: () => void;
         const unListenWheel = this.renderer.listen(this.element.nativeElement, 'wheel', onWheel);
@@ -306,6 +325,27 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
 
                 if (!element.contains(downEvent.target as Node)) {
                     onLeave();
+                }
+            });
+        } else if (this.behavior === 'hoverFreeze') {
+            const element = this.element.nativeElement as Element;
+            counterHover();
+            this.isHovering = !this.isHovering;
+            if (this.isHovering && this.count < 3) {
+                unListenMove = this.renderer.listen(document, 'mousemove', onMove);
+            } else {
+                unListenMove = () => {};
+                unListenLeave = this.renderer.listen(document, 'mousedown', () => {
+                    onHoverOut();
+                    return;
+                });
+            };
+            unListenLeave = this.renderer.listen(document, 'mousedown', (downEvent: MouseEvent) => {
+                if (!element.contains(downEvent.target as Node) || this.count === 3) {
+                    this.isHovering = false;
+                    this.count = 0;
+                    onHoverLeave();
+                    return;
                 }
             });
         } else {

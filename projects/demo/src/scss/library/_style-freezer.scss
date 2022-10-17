@@ -1,0 +1,6 @@
+@import './mixins/style-freezer';
+
+
+.red-zoom--style--freezer {
+    @include red-zoom-style-freezer();
+}
