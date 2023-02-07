@@ -1,5 +1,5 @@
 import { Component, HostBinding } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 
 @Component({
     selector: 'app-example-n04',
@@ -9,7 +9,7 @@ import { FormControl } from '@angular/forms';
 export class ExampleN04Component {
     @HostBinding('class.example') classExample = true;
 
-    behavior: FormControl = new FormControl('hover');
+    behavior: UntypedFormControl = new UntypedFormControl('hover');
 
     constructor() { }
 }

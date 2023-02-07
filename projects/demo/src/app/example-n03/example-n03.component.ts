@@ -1,5 +1,5 @@
 import { Component, HostBinding } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 
 @Component({
     selector: 'app-example-n03',
@@ -9,7 +9,7 @@ import { FormControl } from '@angular/forms';
 export class ExampleN03Component {
     @HostBinding('class.example') classExample = true;
 
-    style: FormControl = new FormControl('magnifier');
+    style: UntypedFormControl = new UntypedFormControl('magnifier');
 
     constructor() { }
 }
