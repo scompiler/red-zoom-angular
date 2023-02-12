@@ -15,7 +15,7 @@
     "directory": "projects/ngx-red-zoom"
   },
   "license": "MIT",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "peerDependencies": {
     "@angular/common": "^15.1.0",
     "@angular/core": "^15.1.0"
