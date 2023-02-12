@@ -1,25 +1,24 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
 import { ExampleN07Component } from './example-n07.component';
+import { CodeComponent } from "../code/code.component";
+import { CarouselModule } from "ngx-owl-carousel-o";
 
 describe('ExampleN07Component', () => {
-    let component: ExampleN07Component;
-    let fixture: ComponentFixture<ExampleN07Component>;
-
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            declarations: [ ExampleN07Component ]
-        })
-            .compileComponents();
-    }));
-
-    beforeEach(() => {
-        fixture = TestBed.createComponent(ExampleN07Component);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            declarations: [
+                ExampleN07Component,
+                CodeComponent,
+            ],
+            imports: [
+                CarouselModule,
+            ],
+        }).compileComponents();
     });
 
     it('should create', () => {
-        expect(component).toBeTruthy();
+        const fixture = TestBed.createComponent(ExampleN07Component);
+        const app = fixture.componentInstance;
+        expect(app).toBeTruthy();
     });
 });

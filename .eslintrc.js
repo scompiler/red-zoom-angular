@@ -5,6 +5,9 @@ module.exports = {
         es6: true,
         node: true
     },
+    ignorePatterns: [
+        '*.spec.ts',
+    ],
     overrides: [
         {
             files: ['*.js'],

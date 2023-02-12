@@ -1,25 +1,18 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
 import { CodeComponent } from './code.component';
 
 describe('CodeComponent', () => {
-    let component: CodeComponent;
-    let fixture: ComponentFixture<CodeComponent>;
-
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            declarations: [ CodeComponent ]
-        })
-            .compileComponents();
-    }));
-
-    beforeEach(() => {
-        fixture = TestBed.createComponent(CodeComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            declarations: [
+                CodeComponent,
+            ],
+        }).compileComponents();
     });
 
     it('should create', () => {
-        expect(component).toBeTruthy();
+        const fixture = TestBed.createComponent(CodeComponent);
+        const app = fixture.componentInstance;
+        expect(app).toBeTruthy();
     });
 });

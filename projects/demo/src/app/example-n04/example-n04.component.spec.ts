@@ -1,25 +1,20 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
 import { ExampleN04Component } from './example-n04.component';
+import { CodeComponent } from "../code/code.component";
 
 describe('ExampleN04Component', () => {
-    let component: ExampleN04Component;
-    let fixture: ComponentFixture<ExampleN04Component>;
-
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            declarations: [ ExampleN04Component ]
-        })
-            .compileComponents();
-    }));
-
-    beforeEach(() => {
-        fixture = TestBed.createComponent(ExampleN04Component);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            declarations: [
+                ExampleN04Component,
+                CodeComponent,
+            ],
+        }).compileComponents();
     });
 
     it('should create', () => {
-        expect(component).toBeTruthy();
+        const fixture = TestBed.createComponent(ExampleN04Component);
+        const app = fixture.componentInstance;
+        expect(app).toBeTruthy();
     });
 });
