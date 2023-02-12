@@ -14,7 +14,7 @@
     "library:build": "ng build ngx-red-zoom --configuration production",
     "pack": "npm run library:build && npm run pack:scss",
     "pack:scss": "gulp pack",
-    "ci:test": "ng test --watch=false --code-coverage --browsers ChromeHeadlessCI --source-map true",
+    "ci:test": "ng test --no-watch --code-coverage --browsers ChromeHeadless --source-map true",
     "ci:lint": "ng lint"
   },
   "private": true,
