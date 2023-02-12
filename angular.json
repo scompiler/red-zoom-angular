@@ -8,9 +8,6 @@
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
-        },
-        "@schematics/angular:application": {
-          "strict": true
         }
       },
       "root": "projects/demo",
@@ -35,7 +32,9 @@
               "node_modules/highlight.js/styles/github.css"
             ],
             "scripts": [],
-            "allowedCommonJsDependencies": ["highlight.js"]
+            "allowedCommonJsDependencies": [
+              "highlight.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -156,8 +155,9 @@
       }
     }
   },
-  "defaultProject": "demo",
   "cli": {
-    "defaultCollection": "@angular-eslint/schematics"
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }

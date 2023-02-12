@@ -15,7 +15,6 @@
     "sourceMap": true,
     "paths": {
       "ngx-red-zoom": [
-        "dist/ngx-red-zoom/ngx-red-zoom",
         "dist/ngx-red-zoom"
       ]
     },
@@ -24,7 +23,7 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "es2017",
+    "target": "es2020",
     "module": "es2020",
     "lib": [
       "es2020",
