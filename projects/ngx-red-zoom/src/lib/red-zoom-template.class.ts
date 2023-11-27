@@ -28,6 +28,7 @@ const makeTemplate = (() => {
 
 export class RedZoomTemplate {
     template: HTMLDivElement;
+    wrapper?: HTMLDivElement;
     lens: HTMLDivElement;
     lensBody: HTMLDivElement;
     frame: HTMLDivElement;
@@ -39,8 +40,9 @@ export class RedZoomTemplate {
 
     private appliedClasses: string[] = [];
 
-    constructor() {
+    constructor(wrapper?: HTMLDivElement) {
         this.template = makeTemplate();
+        this.wrapper = wrapper;
 
         const getElement = (selector: string) => {
             const element = this.template.querySelector(selector);
@@ -106,8 +108,10 @@ export class RedZoomTemplate {
     }
 
     attach(): void {
-        if (this.template.parentNode !== document.body) {
-            document.body.appendChild(this.template);
+        const parentNode = this.wrapper || document.body;
+
+        if (this.template.parentNode !== parentNode) {
+            parentNode.appendChild(this.template);
         }
     }
 

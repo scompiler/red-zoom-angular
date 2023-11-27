@@ -50,6 +50,8 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
 
     @Input('redZoomMouseWheel') wheel = true;
 
+    @Input('redZoomWrapper') wrapper?: HTMLDivElement;
+
     @Input('redZoomErrorMessage') errorMessage = 'An error occurred while loading the image.';
     /* eslint-enable @angular-eslint/no-input-rename */
 
@@ -149,7 +151,7 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         }
 
         this.zone.runOutsideAngular(() => {
-            this.template = new RedZoomTemplate();
+            this.template = new RedZoomTemplate(this.wrapper);
             this.template.classes = this.classes;
             this.template.errorMessage.innerHTML = this.errorMessage;
 
