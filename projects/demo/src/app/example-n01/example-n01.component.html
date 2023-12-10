@@ -18,22 +18,22 @@
                     Import module:
 
                     <app-code language="typescript" ngPreserveWhitespaces>
-                        import {{ '{' }} RedZoomModule } from 'ngx-red-zoom';
+                        import {{ '{' }} RedZoomModule {{ '}' }} from 'ngx-red-zoom';
 
-                        @NgModule({{ '{' }}
+                        {{ '@NgModule({' }}
                             imports: [
                                 RedZoomModule
                             ]
-                        })
-                        export class AppModule {{ '{' }} }
+                        {{ '})' }}
+                        export class AppModule {{ '{ }' }}
                     </app-code>
                 </li>
                 <li>
                     Import styles:
 
                     <app-code language="scss" ngPreserveWhitespaces>
-                        @import '~ngx-red-zoom/styles/base.scss';
-                        @import '~ngx-red-zoom/styles/style-window.scss';
+                        {{"@import '~ngx-red-zoom/styles/base.scss';"}}
+                        {{"@import '~ngx-red-zoom/styles/style-window.scss';"}}
                     </app-code>
                 </li>
                 <li>

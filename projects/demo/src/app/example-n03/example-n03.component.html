@@ -34,8 +34,8 @@
 
             <app-code language="scss" ngPreserveWhitespaces>
                 // sass
-                @import '~ngx-red-zoom/styles/base.scss';
-                @import '~ngx-red-zoom/styles/style-{{ style.value }}.scss';
+                {{"@import '~ngx-red-zoom/styles/base.scss';"}}
+                {{"@import '~ngx-red-zoom/styles/style-"}}{{ style.value }}.scss';
             </app-code>
 
             <app-code language="html" ngPreserveWhitespaces>
@@ -53,14 +53,14 @@
 
             <app-code language="scss" ngPreserveWhitespaces>
                 // sass
-                @import '~ngx-red-zoom/styles/base.scss';
-                @import '~ngx-red-zoom/styles/mixins/style-{{ style.value }}.scss';
+                {{"@import '~ngx-red-zoom/styles/base.scss';"}}
+                {{"@import '~ngx-red-zoom/styles/mixins/style-"}}{{ style.value }}.scss';
 
                 .red-zoom--style--custom {{ '{' }}
-                    @include red-zoom-style-{{ style.value }}(
+                    {{"@include red-zoom-style-"}}{{ style.value }}(
                         // you settings here
                     );
-                }
+                {{ '}' }}
             </app-code>
         </div>
     </div>

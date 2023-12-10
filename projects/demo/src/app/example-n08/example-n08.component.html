@@ -16,7 +16,7 @@
                     min-height: calc(var(--red-zoom-thumb-h) * var(--red-zoom-min-scale-factor));
                     max-width: calc(var(--red-zoom-thumb-w) * var(--red-zoom-max-scale-factor));
                     max-height: calc(var(--red-zoom-thumb-h) * var(--red-zoom-max-scale-factor));
-                }
+                {{'}'}}
 
             </app-code>
 
@@ -28,12 +28,12 @@
             </p>
 
             <app-code language="scss" ngPreserveWhitespaces>
-                @import '~ngx-red-zoom/styles/mixins/common.scss';
+                {{"@import '~ngx-red-zoom/styles/mixins/common.scss';"}}
 
                 // The enlarged image cannot be smaller than the thumbnail.
-                @include red-zoom-min-scale-factor(1, 'thumb');
+                {{"@include red-zoom-min-scale-factor(1, 'thumb');"}}
                 // The enlarged image cannot be larger than its natural size.
-                @include red-zoom-max-scale-factor(1, 'lens-image');
+                {{"@include red-zoom-max-scale-factor(1, 'lens-image');"}}
             </app-code>
         </div>
     </div>
