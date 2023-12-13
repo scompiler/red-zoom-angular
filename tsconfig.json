@@ -3,8 +3,6 @@
   "compileOnSave": false,
   "compilerOptions": {
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -12,14 +10,15 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "sourceMap": true,
+    "skipLibCheck": true,
     "paths": {
       "ngx-red-zoom": [
-        "dist/ngx-red-zoom"
+        "./dist/ngx-red-zoom"
       ]
     },
+    "esModuleInterop": true,
+    "sourceMap": true,
     "declaration": false,
-    "downlevelIteration": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
