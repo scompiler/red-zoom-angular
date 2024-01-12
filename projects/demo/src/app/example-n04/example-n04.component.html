@@ -6,7 +6,7 @@
             width="320"
             redZoom="./assets/image-3-full.jpg"
             [redZoomLazy]="false"
-            redZoomClass="red-zoom--style--window"
+            redZoomClass="red-zoom--style--freezer"
             [redZoomBehavior]="behavior.value"
             [style.cursor]="behavior.value === 'hover' ? 'crosshair' : 'zoom-in'"
             class="zoom">
@@ -23,6 +23,10 @@
                 <label>
                     <input type="radio" [formControl]="behavior" name="behavior" value="grab">
                     <span>Grab</span>
+                </label>
+                <label>
+                    <input type="radio" [formControl]="behavior" name="behavior" value="hoverFreeze">
+                    <span>Hover-Freeze</span>
                 </label>
                 <label>
                     <input type="radio" [formControl]="behavior" name="behavior" value="click">

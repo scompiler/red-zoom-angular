@@ -20,6 +20,7 @@
 @import 'scss/library/style-window';
 @import 'scss/library/style-magnifier';
 @import 'scss/library/style-overlay';
+@import 'scss/library/style-freezer';
 
 // Limit scale factor.
 @include red-zoom-min-scale-factor(1, 'thumb');
