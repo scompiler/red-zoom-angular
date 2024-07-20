@@ -31,6 +31,7 @@ interface Session {
 
 
 @Directive({
+    // eslint-disable-next-line @angular-eslint/directive-selector
     selector: '[redZoom]',
     exportAs: 'redZoom',
 })
@@ -127,10 +128,8 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
 
         if (this.status === 'loaded') {
             this.template.setProperties({
-                /* eslint-disable @typescript-eslint/naming-convention */
                 '--red-zoom-lens-image-natural-w': `${this.lensImage.naturalWidth}px`,
                 '--red-zoom-lens-image-natural-h': `${this.lensImage.naturalHeight}px`,
-                /* eslint-enable @typescript-eslint/naming-convention */
             });
 
             if (this.session && this.session.active) {
@@ -368,14 +367,12 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         this.template.frameBody.appendChild(this.frameImage.element);
 
         this.template.setProperties({
-            /* eslint-disable @typescript-eslint/naming-convention */
             '--red-zoom-thumb-x': `${this.session.thumbPos.x}px`,
             '--red-zoom-thumb-y': `${this.session.thumbPos.y}px`,
             '--red-zoom-thumb-w': `${this.session.thumbSize.x}px`,
             '--red-zoom-thumb-h': `${this.session.thumbSize.y}px`,
             '--red-zoom-thumb-size-max': `${vector.flatMax(this.session.thumbSize)}px`,
             '--red-zoom-thumb-size-min': `${vector.flatMin(this.session.thumbSize)}px`,
-            /* eslint-enable @typescript-eslint/naming-convention */
         });
 
         if (this.status === 'loaded') {
@@ -423,10 +420,8 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         );
 
         this.template.setProperties({
-            /* eslint-disable @typescript-eslint/naming-convention */
             '--red-zoom-frame-w': `${this.session.frameSize.x}px`,
             '--red-zoom-frame-h': `${this.session.frameSize.y}px`,
-            /* eslint-enable @typescript-eslint/naming-convention */
         });
     }
 
@@ -442,10 +437,8 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         }
 
         this.template.setProperties({
-            /* eslint-disable @typescript-eslint/naming-convention */
             '--red-zoom-mouse-x': `${mousePos.x}px`,
             '--red-zoom-mouse-y': `${mousePos.y}px`,
-            /* eslint-enable @typescript-eslint/naming-convention */
         });
 
         const framePos = vector.sub(mousePos, vector.div(frameSize, 2));
@@ -456,12 +449,10 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         const frameImagePos = vector.sub(thumbPos, vector.round(frameLimitedPos));
 
         this.template.setProperties({
-            /* eslint-disable @typescript-eslint/naming-convention */
             '--red-zoom-frame-x': `${Math.round(frameLimitedPos.x)}px`,
             '--red-zoom-frame-y': `${Math.round(frameLimitedPos.y)}px`,
             '--red-zoom-frame-image-x': `${Math.round(frameImagePos.x)}px`,
             '--red-zoom-frame-image-y': `${Math.round(frameImagePos.y)}px`,
-            /* eslint-enable @typescript-eslint/naming-convention */
         });
 
         const frameRelativePos = vector.map(vector.sub(thumbSize, frameSize), (value, axis) => (
@@ -478,14 +469,12 @@ export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy 
         );
 
         this.template.setProperties({
-            /* eslint-disable @typescript-eslint/naming-convention */
             '--red-zoom-lens-image-base-x': `${-lensImagePos.x}px`,
             '--red-zoom-lens-image-base-y': `${-lensImagePos.y}px`,
             '--red-zoom-lens-image-center-offset-x': `${lensImageCenterOffset.x}px`,
             '--red-zoom-lens-image-center-offset-y': `${lensImageCenterOffset.y}px`,
             '--red-zoom-lens-image-frame-offset-x': `${-lensImageFrameOffset.x}px`,
             '--red-zoom-lens-image-frame-offset-y': `${-lensImageFrameOffset.y}px`,
-            /* eslint-enable @typescript-eslint/naming-convention */
         });
     }
 

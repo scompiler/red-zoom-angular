@@ -26,12 +26,10 @@ export class AppComponent implements OnInit {
 
             render({
                 href: 'https://github.com/scompiler/red-zoom-angular',
-                /* eslint-disable @typescript-eslint/naming-convention */
                 'aria-label': 'Star scompiler/red-zoom-angular on GitHub',
                 'data-size': 'large',
                 'data-show-count': 'true',
                 'data-text': 'Star',
-                /* eslint-enable @typescript-eslint/naming-convention */
             }, function(el) {
                 buttons.parentNode?.insertBefore(el, buttons);
             });
