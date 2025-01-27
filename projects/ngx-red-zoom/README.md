@@ -1,11 +1,12 @@
 # NgxRedZoom
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.1.0.
+This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 19.1.3.
 
 ## Code scaffolding
 
 Run `ng generate component component-name --project ngx-red-zoom` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project ngx-red-zoom`.
-> Note: Don't forget to add `--project ngx-red-zoom` or else it will be added to the default project in your `angular.json` file. 
+
+> Note: Don't forget to add `--project ngx-red-zoom` or else it will be added to the default project in your `angular.json` file.
 
 ## Build
 

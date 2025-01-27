@@ -34,6 +34,7 @@ interface Session {
     // eslint-disable-next-line @angular-eslint/directive-selector
     selector: '[redZoom]',
     exportAs: 'redZoom',
+    standalone: false
 })
 export class RedZoomDirective implements AfterContentInit, OnChanges, OnDestroy {
     /* eslint-disable @angular-eslint/no-input-rename */

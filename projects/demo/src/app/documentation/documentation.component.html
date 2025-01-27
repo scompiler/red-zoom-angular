@@ -18,60 +18,78 @@
 
     <table>
         <tbody>
-        <tr>
-            <th>redZoom</th>
-            <td>string</td>
-            <td>
-                The path to the full version of the image. Required. Can be empty.<br>
-                <hr>
-                <i>If left blank, the path to the full version of the image will be the same as in the <code>src</code> or <code>redZoomThumb</code> attribute. TODO: not implemented.</i>
-            </td>
-        </tr>
-        <tr>
-            <th>redZoomThumb</th>
-            <td>string</td>
-            <td>The path to the thumbnail image used in the frame. Required if the <code>src</code> attribute is missing.</td>
-        </tr>
-        <tr>
-            <th>redZoomLazy</th>
-            <td>boolean</td>
-            <td>If true, the full version of the image will only start loading after the activation event (mouseenter/mousedown) is triggered. (default: false)</td>
-        </tr>
-        <tr>
-            <th>redZoomBehavior</th>
-            <td>string</td>
-            <td>
-                Activation event. (default: 'hover')<br>
-                Possible values: <code>'hover'</code>, <code>'grab'</code>, <code>'click'</code>.
-            </td>
-        </tr>
-        <tr>
-            <th>redZoomClass</th>
-            <td>string</td>
-            <td>A list of CSS classes that should be applied to the root (<code>.red-zoom</code>) element.</td>
-        </tr>
-        <tr>
-            <th>redZoomMouseWheel</th>
-            <td>boolean</td>
-            <td>
-                Enables or disables changing the magnification factor using the mouse wheel. (default: true)
-            </td>
-        </tr>
-        <tr>
-            <th>redZoomTouch</th>
-            <td>boolean</td>
-            <td><i>TODO: Not implemented.</i></td>
-        </tr>
-        <tr>
-            <th>redZoomGestures</th>
-            <td>boolean</td>
-            <td><i>TODO: Not implemented.</i></td>
-        </tr>
-        <tr>
-            <th>redZoomErrorMessage</th>
-            <td>string</td>
-            <td>Use this attribute to provide your own error message.</td>
-        </tr>
+            <tr>
+                <th>redZoom</th>
+                <td>string</td>
+                <td>
+                    The path to the full version of the image. Required. Can be
+                    empty.<br />
+                    <hr />
+                    <i
+                        >If left blank, the path to the full version of the
+                        image will be the same as in the <code>src</code> or
+                        <code>redZoomThumb</code> attribute. TODO: not
+                        implemented.</i
+                    >
+                </td>
+            </tr>
+            <tr>
+                <th>redZoomThumb</th>
+                <td>string</td>
+                <td>
+                    The path to the thumbnail image used in the frame. Required
+                    if the <code>src</code> attribute is missing.
+                </td>
+            </tr>
+            <tr>
+                <th>redZoomLazy</th>
+                <td>boolean</td>
+                <td>
+                    If true, the full version of the image will only start
+                    loading after the activation event (mouseenter/mousedown) is
+                    triggered. (default: false)
+                </td>
+            </tr>
+            <tr>
+                <th>redZoomBehavior</th>
+                <td>string</td>
+                <td>
+                    Activation event. (default: 'hover')<br />
+                    Possible values: <code>'hover'</code>, <code>'grab'</code>,
+                    <code>'click'</code>.
+                </td>
+            </tr>
+            <tr>
+                <th>redZoomClass</th>
+                <td>string</td>
+                <td>
+                    A list of CSS classes that should be applied to the root
+                    (<code>.red-zoom</code>) element.
+                </td>
+            </tr>
+            <tr>
+                <th>redZoomMouseWheel</th>
+                <td>boolean</td>
+                <td>
+                    Enables or disables changing the magnification factor using
+                    the mouse wheel. (default: true)
+                </td>
+            </tr>
+            <tr>
+                <th>redZoomTouch</th>
+                <td>boolean</td>
+                <td><i>TODO: Not implemented.</i></td>
+            </tr>
+            <tr>
+                <th>redZoomGestures</th>
+                <td>boolean</td>
+                <td><i>TODO: Not implemented.</i></td>
+            </tr>
+            <tr>
+                <th>redZoomErrorMessage</th>
+                <td>string</td>
+                <td>Use this attribute to provide your own error message.</td>
+            </tr>
         </tbody>
     </table>
 
@@ -79,54 +97,56 @@
 
     <table>
         <tbody>
-        <tr>
-            <th>--red-zoom-thumb-[x/y]</th>
-            <td>Thumbnail position relative to the page in pixels.</td>
-        </tr>
-        <tr>
-            <th>--red-zoom-thumb-[w/h]</th>
-            <td>Thumbnail size in pixels.</td>
-        </tr>
-        <tr>
-            <th>--red-zoom-thumb-size-[max/min]</th>
-            <td>Max/min size of thumbnail in pixels.</td>
-        </tr>
-        <tr>
-            <th>--red-zoom-frame-[x/y]</th>
-            <td>Position of the frame relative to the page in pixels.</td>
-        </tr>
-        <tr>
-            <th>--red-zoom-frame-[w/h]</th>
-            <td>Size of the frame in pixels.</td>
-        </tr>
-        <tr>
-            <th>--red-zoom-frame-image-[x/y]</th>
-            <td>Position of the frame image relative to the frame in pixels.</td>
-        </tr>
-        <tr>
-            <th>--red-zoom-lens-image-natural-[w/h]</th>
-            <td>Original size of lens image in pixels.</td>
-        </tr>
-        <tr>
-            <th>--red-zoom-lens-image-[x/y]</th>
-            <td>Lens image position relative to the lens in pixels.</td>
-        </tr>
-        <tr>
-            <th>--red-zoom-lens-image-center-offset-[x/y]</th>
-            <td>TODO: describe.</td>
-        </tr>
-        <tr>
-            <th>--red-zoom-lens-image-frame-offset-[x/y]</th>
-            <td>TODO: describe.</td>
-        </tr>
-        <tr>
-            <th>--red-zoom-scale-factor</th>
-            <td>TODO: Not implemented.</td>
-        </tr>
-        <tr>
-            <th>--red-zoom-mouse-[x/y]</th>
-            <td>Mouse position relative to the page in pixels.</td>
-        </tr>
+            <tr>
+                <th>--red-zoom-thumb-[x/y]</th>
+                <td>Thumbnail position relative to the page in pixels.</td>
+            </tr>
+            <tr>
+                <th>--red-zoom-thumb-[w/h]</th>
+                <td>Thumbnail size in pixels.</td>
+            </tr>
+            <tr>
+                <th>--red-zoom-thumb-size-[max/min]</th>
+                <td>Max/min size of thumbnail in pixels.</td>
+            </tr>
+            <tr>
+                <th>--red-zoom-frame-[x/y]</th>
+                <td>Position of the frame relative to the page in pixels.</td>
+            </tr>
+            <tr>
+                <th>--red-zoom-frame-[w/h]</th>
+                <td>Size of the frame in pixels.</td>
+            </tr>
+            <tr>
+                <th>--red-zoom-frame-image-[x/y]</th>
+                <td>
+                    Position of the frame image relative to the frame in pixels.
+                </td>
+            </tr>
+            <tr>
+                <th>--red-zoom-lens-image-natural-[w/h]</th>
+                <td>Original size of lens image in pixels.</td>
+            </tr>
+            <tr>
+                <th>--red-zoom-lens-image-[x/y]</th>
+                <td>Lens image position relative to the lens in pixels.</td>
+            </tr>
+            <tr>
+                <th>--red-zoom-lens-image-center-offset-[x/y]</th>
+                <td>TODO: describe.</td>
+            </tr>
+            <tr>
+                <th>--red-zoom-lens-image-frame-offset-[x/y]</th>
+                <td>TODO: describe.</td>
+            </tr>
+            <tr>
+                <th>--red-zoom-scale-factor</th>
+                <td>TODO: Not implemented.</td>
+            </tr>
+            <tr>
+                <th>--red-zoom-mouse-[x/y]</th>
+                <td>Mouse position relative to the page in pixels.</td>
+            </tr>
         </tbody>
     </table>
 
@@ -141,7 +161,9 @@
         <li>Support for scrollable containers;</li>
         <li>Add the ability to follow the scroll position;</li>
         <li>Add "toggle" behavior;</li>
-        <li>Add the ability to customize the step of changing the zoom ratio;</li>
+        <li>
+            Add the ability to customize the step of changing the zoom ratio;
+        </li>
         <li>Provide the ability to replace the template.</li>
     </ul>
 
@@ -155,6 +177,10 @@
             </tr>
         </tbody>
         <tbody>
+            <tr>
+                <td>0.15.0</td>
+                <td>19.1.x</td>
+            </tr>
             <tr>
                 <td>0.14.0</td>
                 <td>18.1.x</td>
@@ -184,6 +210,16 @@
 
     <h2>Changelog</h2>
     <ul class="changelog">
+        <li class="changelog__item">
+            <div class="changelog__title">
+                <span class="changelog__number">Version 0.15.0</span>
+                <span class="changelog__date">January 27, 2025</span>
+            </div>
+
+            <ul class="changelog__list">
+                <li>Updated: Angular from 18.1 to 19.1.</li>
+            </ul>
+        </li>
         <li class="changelog__item">
             <div class="changelog__title">
                 <span class="changelog__number">Version 0.14.0</span>
@@ -252,7 +288,10 @@
 
             <ul class="changelog__list">
                 <li>Updated: Angular from 12.0 to 12.1.</li>
-                <li>Fixed: SASS deprecation warning due to use of the division operator.</li>
+                <li>
+                    Fixed: SASS deprecation warning due to use of the division
+                    operator.
+                </li>
             </ul>
         </li>
         <li class="changelog__item">

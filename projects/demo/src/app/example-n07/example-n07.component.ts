@@ -6,6 +6,7 @@ import { SlidesOutputData } from 'ngx-owl-carousel-o';
     selector: 'app-example-n07',
     templateUrl: './example-n07.component.html',
     styleUrls: ['./example-n07.component.scss'],
+    standalone: false
 })
 export class ExampleN07Component {
     @HostBinding('class.example') classExample = true;
