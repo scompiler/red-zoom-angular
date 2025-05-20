@@ -30,7 +30,7 @@
     "angulartics2": "^12.2.1",
     "github-buttons": "^2.28.0",
     "highlight.js": "^11.10.0",
-    "ngx-owl-carousel-o": "^18.0.0",
+    "ngx-owl-carousel-o": "^19.0.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
@@ -42,7 +42,7 @@
     "@angular/language-service": "^19.2.11",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^20.14.11",
-    "angular-eslint": "18.1.0",
+    "angular-eslint": "19.4.0",
     "del": "^6.1.1",
     "eslint": "^9.6.0",
     "eslint-config-prettier": "^9.1.0",
@@ -56,6 +56,6 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "ng-packagr": "^19.2.2",
     "typescript": "~5.5.2",
-    "typescript-eslint": "8.0.0-alpha.38"
+    "typescript-eslint": "^8.32.1"
   }
 }
