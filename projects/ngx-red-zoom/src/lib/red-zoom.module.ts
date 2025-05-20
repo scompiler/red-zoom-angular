@@ -3,7 +3,7 @@ import { RedZoomDirective } from './red-zoom.directive';
 
 
 @NgModule({
-    declarations: [
+    imports: [
         RedZoomDirective
     ],
     exports: [

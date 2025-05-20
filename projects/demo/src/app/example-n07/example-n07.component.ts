@@ -1,12 +1,19 @@
 import { ChangeDetectorRef, Component, HostBinding, ViewChild } from '@angular/core';
+import { NgFor } from '@angular/common';
 import { RedZoomDirective } from 'ngx-red-zoom';
-import { SlidesOutputData } from 'ngx-owl-carousel-o';
+import { CarouselModule, SlidesOutputData } from 'ngx-owl-carousel-o';
+import { CodeComponent } from '../code/code.component';
 
 @Component({
     selector: 'app-example-n07',
     templateUrl: './example-n07.component.html',
     styleUrls: ['./example-n07.component.scss'],
-    standalone: false
+    imports: [
+        NgFor,
+        RedZoomDirective,
+        CarouselModule,
+        CodeComponent
+    ]
 })
 export class ExampleN07Component {
     @HostBinding('class.example') classExample = true;

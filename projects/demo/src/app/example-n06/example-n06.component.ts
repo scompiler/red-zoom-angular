@@ -1,11 +1,19 @@
 import { Component, HostBinding } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import { UntypedFormControl, ReactiveFormsModule } from '@angular/forms';
+import { NgFor } from '@angular/common';
+import { CodeComponent } from '../code/code.component';
+import { RedZoomDirective } from 'ngx-red-zoom';
 
 @Component({
     selector: 'app-example-n06',
     templateUrl: './example-n06.component.html',
     styleUrls: ['./example-n06.component.scss'],
-    standalone: false
+    imports: [
+        ReactiveFormsModule,
+        NgFor,
+        CodeComponent,
+        RedZoomDirective
+    ]
 })
 export class ExampleN06Component {
     @HostBinding('class.example') classExample = true;

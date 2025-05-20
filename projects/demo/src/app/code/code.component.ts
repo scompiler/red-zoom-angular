@@ -4,8 +4,7 @@ import hljs from 'highlight.js';
 @Component({
     selector: 'app-code',
     templateUrl: './code.component.html',
-    styleUrls: ['./code.component.scss'],
-    standalone: false
+    styleUrls: ['./code.component.scss']
 })
 export class CodeComponent implements AfterViewChecked {
     @Input() language!: string;

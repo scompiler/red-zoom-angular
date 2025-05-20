@@ -1,12 +1,16 @@
 import { Component, HostBinding, ViewEncapsulation } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import { UntypedFormControl, ReactiveFormsModule } from '@angular/forms';
+import { RedZoomDirective } from 'ngx-red-zoom';
 
 @Component({
     selector: 'app-example-n02',
     templateUrl: './example-n02.component.html',
     styleUrls: ['./example-n02.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    standalone: false
+    imports: [
+        ReactiveFormsModule,
+        RedZoomDirective
+    ]
 })
 export class ExampleN02Component {
     @HostBinding('class.example') classExample = true;
