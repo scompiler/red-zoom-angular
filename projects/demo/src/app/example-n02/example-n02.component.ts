@@ -6,6 +6,7 @@ import { UntypedFormControl } from '@angular/forms';
     templateUrl: './example-n02.component.html',
     styleUrls: ['./example-n02.component.scss'],
     encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class ExampleN02Component {
     @HostBinding('class.example') classExample = true;

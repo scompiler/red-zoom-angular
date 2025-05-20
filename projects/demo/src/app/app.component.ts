@@ -6,7 +6,8 @@ import { render } from 'github-buttons';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss']
+    styleUrls: ['./app.component.scss'],
+    standalone: false
 })
 export class AppComponent implements OnInit {
     @ViewChild('buttons', {read: ViewContainerRef, static: true}) buttons?: ViewContainerRef;
