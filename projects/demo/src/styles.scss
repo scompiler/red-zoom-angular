@@ -1,29 +1,30 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import '../../../node_modules/ngx-owl-carousel-o/lib/styles/scss/owl.carousel';
+@use '../../../node_modules/ngx-owl-carousel-o/lib/styles/scss/owl.carousel';
 
 // site
-@import 'scss/common';
-@import 'scss/angular-logo';
-@import 'scss/logo';
-@import 'scss/intro';
-@import 'scss/section';
-@import 'scss/example';
-@import 'scss/typography';
-@import 'scss/copyright';
-@import 'scss/changelog';
-@import 'scss/gallery';
-@import 'scss/button-group';
-@import 'scss/radio-image';
+@use 'scss/common';
+@use 'scss/angular-logo';
+@use 'scss/logo';
+@use 'scss/intro';
+@use 'scss/section';
+@use 'scss/example';
+@use 'scss/typography';
+@use 'scss/copyright';
+@use 'scss/changelog';
+@use 'scss/gallery';
+@use 'scss/button-group';
+@use 'scss/radio-image';
 // red-zoom
-@import 'scss/library/base';
-@import 'scss/library/style-window';
-@import 'scss/library/style-magnifier';
-@import 'scss/library/style-overlay';
+@use 'scss/library/base';
+@use 'scss/library/style-window';
+@use 'scss/library/style-magnifier';
+@use 'scss/library/style-overlay';
+@use 'scss/library/mixins/common' as libCommon;
 
 // Limit scale factor.
-@include red-zoom-min-scale-factor(1, 'thumb');
-@include red-zoom-max-scale-factor(1, 'lens-image');
+@include libCommon.red-zoom-min-scale-factor(1, 'thumb');
+@include libCommon.red-zoom-max-scale-factor(1, 'lens-image');
 
 .zoom {
     cursor: crosshair;

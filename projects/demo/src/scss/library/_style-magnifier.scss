@@ -1,6 +1,6 @@
-@import './mixins/style-magnifier';
+@use './mixins/style-magnifier';
 
 
 .red-zoom--style--magnifier {
-    @include red-zoom-style-magnifier();
+    @include style-magnifier.red-zoom-style-magnifier();
 }

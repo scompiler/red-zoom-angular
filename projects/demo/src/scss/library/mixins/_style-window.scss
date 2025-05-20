@@ -1,6 +1,5 @@
 @use 'sass:math';
-
-@import 'common';
+@use 'common';
 
 
 @mixin red-zoom-style-window(
@@ -36,7 +35,7 @@
         z-index: 1;
 
         &:before {
-            @include red-zoom-loader(
+            @include common.red-zoom-loader(
                 $loader-color: $loader-color,
                 $loader-size: $loader-size
             );
@@ -128,7 +127,7 @@
         }
     }
 
-    @include red-zoom-states($transition-duration, $error-overlay-color, $error-font-color);
+    @include common.red-zoom-states($transition-duration, $error-overlay-color, $error-font-color);
 }
 
 @mixin red-zoom-style-window-lens-position() {
