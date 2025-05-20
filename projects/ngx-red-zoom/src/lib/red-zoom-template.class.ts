@@ -93,7 +93,7 @@ export class RedZoomTemplate {
         return getComputedStyle(this.template).visibility === 'hidden';
     }
 
-    setProperties(properties: {[name: string]: string}): void {
+    setProperties(properties: Record<string, string>): void {
         Object.keys(properties).forEach((name) => {
             this.template.style.setProperty(name, properties[name]);
         });
