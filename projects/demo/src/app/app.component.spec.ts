@@ -13,13 +13,11 @@ import { DocumentationComponent } from "./documentation/documentation.component"
 import { CodeComponent } from "./code/code.component";
 import { CarouselModule } from "ngx-owl-carousel-o";
 
-describe('ExampleN08Component', () => {
+describe('AppComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [
                 CarouselModule,
-            ],
-            declarations: [
                 AppComponent,
                 ExampleN01Component,
                 ExampleN02Component,

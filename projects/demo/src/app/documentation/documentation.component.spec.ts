@@ -4,7 +4,7 @@ import { DocumentationComponent } from './documentation.component';
 describe('DocumentationComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [
+            imports: [
                 DocumentationComponent,
             ],
         }).compileComponents();
@@ -16,4 +16,3 @@ describe('DocumentationComponent', () => {
         expect(app).toBeTruthy();
     });
 });
-

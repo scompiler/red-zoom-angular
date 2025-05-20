@@ -6,11 +6,9 @@ import { CarouselModule } from "ngx-owl-carousel-o";
 describe('ExampleN07Component', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [
+            imports: [
                 ExampleN07Component,
                 CodeComponent,
-            ],
-            imports: [
                 CarouselModule,
             ],
         }).compileComponents();

@@ -5,7 +5,7 @@ import { CodeComponent } from "../code/code.component";
 describe('ExampleN06Component', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [
+            imports: [
                 ExampleN06Component,
                 CodeComponent,
             ],
@@ -18,4 +18,3 @@ describe('ExampleN06Component', () => {
         expect(app).toBeTruthy();
     });
 });
-
