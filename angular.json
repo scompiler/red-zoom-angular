@@ -45,7 +45,11 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "outputPath": {
+                "base": "docs",
+                "browser": ""
+              }
             },
             "development": {
               "optimization": false,

@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "build-library": "ng build ngx-red-zoom --watch",
-    "build-docs": "ng build demo --configuration production --base-href /red-zoom-angular/ --output-path docs",
+    "build-docs": "ng build demo --configuration production --base-href /red-zoom-angular/",
     "demo:build": "ng build demo --configuration production",
     "library:build": "ng build ngx-red-zoom --configuration production",
     "pack": "npm run library:build && npm run pack:scss",
