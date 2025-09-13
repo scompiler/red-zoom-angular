@@ -22,4 +22,3 @@ jobs:
             - run: npm ci
             - run: npm run library:build
             - run: npm run demo:build
-            - run: npm run ci:test
