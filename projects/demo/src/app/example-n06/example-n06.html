@@ -1,0 +1,39 @@
+<div class="example__body">
+    <div class="example__image">
+        <img [src]="currentImage.value.thumbnail" alt="" width="320" [redZoom]="currentImage.value.full" redZoomClass="red-zoom--style--window" [redZoomLazy]="true" class="zoom">
+    </div>
+    <div class="example__content">
+        <div class="typography">
+            <h2>Gallery</h2>
+
+            <div class="radio-image">
+                @for (image of images; track image.full) {
+                    <label>
+                        <input type="radio" [formControl]="currentImage" name="gallery" [value]="image">
+                        <span>
+                            <img [src]="image.thumbnail" alt="">
+                        </span>
+                    </label>
+                }
+            </div>
+
+            <p>RedZoom supports hot swap images. So you can use it in image gallery.</p>
+
+            <app-code language="typescript" ngPreserveWhitespaces>
+                // code
+                const currentImage = {{ '{' }}
+                    thumbnail: '{{ currentImage.value.thumbnail }}',
+                    full: '{{ currentImage.value.full }}',
+                &#125;;
+            </app-code>
+
+            <app-code language="html" ngPreserveWhitespaces>
+                &lt;!-- template --&gt;
+                &lt;img
+                    [src]="currentImage.thumbnail"
+                    [redZoom]="currentImage.full"
+                &gt;
+            </app-code>
+        </div>
+    </div>
+</div>

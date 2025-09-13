@@ -1,0 +1,67 @@
+<div class="example__body">
+    <div class="example__image">
+        <img
+            src="./assets/image-4.jpg"
+            alt=""
+            width="320"
+            redZoom="./assets/image-4-full.jpg"
+            [redZoomLazy]="false"
+            [redZoomClass]="'red-zoom--style--'+style.value"
+            class="zoom">
+    </div>
+    <div class="example__content">
+        <div class="typography">
+            <h2>Customization And Styles</h2>
+
+            <div class="button-group">
+                <label>
+                    <input type="radio" [formControl]="style" name="style" value="magnifier">
+                    <span>Magnifier</span>
+                </label>
+                <label>
+                    <input type="radio" [formControl]="style" name="style" value="window">
+                    <span>Window</span>
+                </label>
+                <label>
+                    <input type="radio" [formControl]="style" name="style" value="overlay">
+                    <span>Overlay</span>
+                </label>
+            </div>
+
+            <p>
+                RedZoom comes with three predefined styles, you can use one of them as shown below:
+            </p>
+
+            <app-code language="scss" ngPreserveWhitespaces>
+                // sass
+                &#64;use 'ngx-red-zoom/styles/base.scss';
+                &#64;use 'ngx-red-zoom/styles/style-{{ style.value }}.scss';
+            </app-code>
+
+            <app-code language="html" ngPreserveWhitespaces>
+                &lt;!-- html --&gt;
+                &lt;img
+                    src="./assets/image.jpg"
+                    redZoom="./assets/image-full.jpg"
+                    redZoomClass="red-zoom--style--{{ style.value }}"
+                &gt;
+            </app-code>
+
+            <p>
+                You can also create your own amazing style or customize an existing style using mixins:
+            </p>
+
+            <app-code language="scss" ngPreserveWhitespaces>
+                // sass
+                &#64;use 'ngx-red-zoom/styles/base.scss';
+                &#64;use 'ngx-red-zoom/styles/mixins/style-{{ style.value }}.scss';
+
+                .red-zoom--style--custom {{ '{' }}
+                    &#64;include style-{{ style.value }}.red-zoom-style-{{ style.value }}(
+                        // you settings here
+                    );
+                &#125;
+            </app-code>
+        </div>
+    </div>
+</div>

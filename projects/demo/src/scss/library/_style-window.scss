@@ -1,8 +1,8 @@
-@import './mixins/style-window';
+@use './mixins/style-window';
 
 
 .red-zoom--style--window {
-    @include red-zoom-style-window(
+    @include style-window.red-zoom-style-window(
         $overlay-color: rgba(#e50032, .5)
     );
 

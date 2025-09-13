@@ -1,5 +1,5 @@
-@import './mixins/style-overlay';
+@use './mixins/style-overlay';
 
 .red-zoom--style--overlay {
-    @include red-zoom-style-overlay();
+    @include style-overlay.red-zoom-style-overlay();
 }

@@ -7,55 +7,55 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint",
     "build-library": "ng build ngx-red-zoom --watch",
     "build-docs": "ng build demo --configuration production --base-href /red-zoom-angular/ --output-path docs",
     "demo:build": "ng build demo --configuration production",
     "library:build": "ng build ngx-red-zoom --configuration production",
     "pack": "npm run library:build && npm run pack:scss",
     "pack:scss": "gulp pack",
-    "ci:test": "ng test --no-watch --code-coverage --browsers ChromeHeadless --source-map true",
-    "ci:lint": "ng lint"
+    "ci:test": "ng test --no-watch --code-coverage --browsers ChromeHeadless --source-map true"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "singleQuote": true,
+    "overrides": [
+      {
+        "files": "*.html",
+        "options": {
+          "parser": "angular"
+        }
+      }
+    ]
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^18.1.0",
-    "@angular/common": "^18.1.0",
-    "@angular/compiler": "^18.1.0",
-    "@angular/core": "^18.1.0",
-    "@angular/forms": "^18.1.0",
-    "@angular/platform-browser": "^18.1.0",
-    "@angular/platform-browser-dynamic": "^18.1.0",
-    "@angular/router": "^18.1.0",
-    "angulartics2": "^12.2.1",
-    "github-buttons": "^2.28.0",
-    "highlight.js": "^11.10.0",
-    "ngx-owl-carousel-o": "^18.0.0",
+    "@angular/animations": "^20.3.0",
+    "@angular/common": "^20.3.0",
+    "@angular/compiler": "^20.3.0",
+    "@angular/core": "^20.3.0",
+    "@angular/forms": "^20.3.0",
+    "@angular/platform-browser": "^20.3.0",
+    "@angular/router": "^20.3.0",
+    "github-buttons": "^2.29.1",
+    "highlight.js": "^11.11.1",
+    "ngx-owl-carousel-o": "^20.0.1",
     "rxjs": "~7.8.0",
-    "tslib": "^2.3.0",
-    "zone.js": "~0.14.3"
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^18.1.1",
-    "@angular/cli": "^18.1.1",
-    "@angular/compiler-cli": "^18.1.0",
-    "@angular/language-service": "^18.1.1",
+    "@angular/build": "^20.3.1",
+    "@angular/cli": "^20.3.1",
+    "@angular/compiler-cli": "^20.3.0",
     "@types/jasmine": "~5.1.0",
-    "@types/node": "^20.14.11",
-    "angular-eslint": "18.1.0",
-    "del": "^6.1.1",
-    "eslint": "^9.6.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-jsdoc": "^48.8.1",
-    "gulp": "^4.0.2",
-    "jasmine-core": "^5.1.2",
-    "karma": "^6.4.3",
+    "del": "^8.0.0",
+    "gulp": "^5.0.1",
+    "jasmine-core": "~5.9.0",
+    "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "ng-packagr": "^18.1.0",
-    "typescript": "~5.5.2",
-    "typescript-eslint": "8.0.0-alpha.38"
+    "ng-packagr": "^20.3.0",
+    "typescript": "~5.9.2"
   }
 }

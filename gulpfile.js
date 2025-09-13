@@ -3,7 +3,7 @@ const del = require('del');
 
 
 function clean() {
-    return del('package');
+    return del.deleteAsync('package');
 }
 
 

@@ -1,5 +1,4 @@
-@import 'common';
-
+@use 'common';
 
 @mixin red-zoom-style-overlay(
     $transition-duration:   .5s,
@@ -20,7 +19,7 @@
         background: $overlay-color;
 
         &:before {
-            @include red-zoom-loader(
+            @include common.loader(
                 $loader-color: $loader-color,
                 $loader-size: $loader-size
             );
@@ -41,5 +40,5 @@
         transition: opacity $transition-duration;
     }
 
-    @include red-zoom-states($transition-duration, $error-overlay-color, $error-font-color);
+    @include common.states($transition-duration, $error-overlay-color, $error-font-color);
 }

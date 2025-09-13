@@ -1,7 +1,6 @@
 @use 'sass:math';
 
-
-@mixin red-zoom-loader(
+@mixin loader(
     $loader-color: #fff,
     $loader-size:  40px
 ) {
@@ -25,7 +24,7 @@
     opacity: 0;
 }
 
-@mixin red-zoom-states(
+@mixin states(
     $transition-duration,
     $error-overlay-color,
     $error-font-color
@@ -104,7 +103,7 @@
     }
 }
 
-@mixin red-zoom-min-scale-factor($value, $relative: 'thumb') {
+@mixin min-scale-factor($value, $relative: 'thumb') {
     .red-zoom__lens-image {
         @if($relative == 'lens-image') {
             min-width: calc(var(--red-zoom-lens-image-natural-w) * #{$value});
@@ -115,7 +114,8 @@
         }
     }
 }
-@mixin red-zoom-max-scale-factor($value, $relative: 'thumb') {
+
+@mixin max-scale-factor($value, $relative: 'thumb') {
     .red-zoom__lens-image {
         @if($relative == 'lens-image') {
             max-width: calc(var(--red-zoom-lens-image-natural-w) * #{$value});

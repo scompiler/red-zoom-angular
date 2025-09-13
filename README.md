@@ -11,21 +11,24 @@ Examples, documentation, changelog are available [here](https://scompiler.github
    ```bash
    npm install ngx-red-zoom
    ```
-2. Import module:
+2. Import the RedZoomDirective in the component where you want to use it:
    ```typescript
-   import { RedZoomModule } from 'ngx-red-zoom';
-   
-   @NgModule({
+   import { RedZoomDirective } from 'ngx-red-zoom';
+
+   @Component({
+       selector: 'app-root',
        imports: [
-           RedZoomModule
-       ]
+           RedZoomDirective,
+       ],
+       templateUrl: './app.html',
+       styleUrl: './app.scss',
    })
-   export class AppModule { }
+   export class App { }
    ```
 3. Import styles:
    ```scss
-   @import '~ngx-red-zoom/styles/base.scss';
-   @import '~ngx-red-zoom/styles/style-window.scss';
+   @use 'ngx-red-zoom/styles/base.scss';
+   @use 'ngx-red-zoom/styles/style-window.scss';
    ```
 4. Add directive to your image tag:
    ```angular2html

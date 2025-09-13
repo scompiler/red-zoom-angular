@@ -1,0 +1,56 @@
+<div class="example__body">
+    <div class="example__image">
+        <img src="./assets/image-1.jpg" alt="" width="320" redZoom="./assets/image-1-full.jpg" redZoomClass="red-zoom--style--window" [redZoomLazy]="true" class="zoom">
+    </div>
+    <div class="example__content">
+        <div class="typography">
+            <h2>Getting Started</h2>
+
+            <ol>
+                <li>
+                    To install RedZoom, run the command below:
+
+                    <app-code language="bash" ngPreserveWhitespaces>
+                        npm install ngx-red-zoom
+                    </app-code>
+                </li>
+                <li>
+                    Import the RedZoomDirective in the component where you want to use it:
+
+                    <app-code language="typescript" ngPreserveWhitespaces>
+                        {{ 'import { RedZoomDirective }' }} from 'ngx-red-zoom';
+
+                        {{ '@Component({' }}
+                            selector: 'app-root',
+                            imports: [
+                                RedZoomDirective,
+                            ],
+                            templateUrl: './app.html',
+                            styleUrl: './app.scss',
+                        {{ '})' }}
+                        {{ 'export class App { }' }}
+                    </app-code>
+                </li>
+                <li>
+                    Import styles:
+
+                    <app-code language="scss" ngPreserveWhitespaces>
+                        &#64;use 'ngx-red-zoom/styles/base.scss';
+                        &#64;use 'ngx-red-zoom/styles/style-window.scss';
+                    </app-code>
+                </li>
+                <li>
+                    Add directive to your image tag:
+
+                    <app-code language="html" ngPreserveWhitespaces>
+                        &lt;img
+                            src="example.jpg"
+                            redZoom="example.full.jpg"
+                            redZoomClass="red-zoom--style--window"
+                        &gt;
+                    </app-code>
+                </li>
+            </ol>
+        </div>
+    </div>
+</div>
